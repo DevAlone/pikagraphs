@@ -2,5 +2,6 @@ pikabot_graphs/settings.py
 db.sqlite3
 .last_timestamp
 *.swp
+*.swo
 *.pyc
 .ropeproject
