@@ -6,13 +6,10 @@ from core.models import UserPlusesCountEntry, UserMinusesCountEntry
 
 
 def index(request):
-    user = User.objects.get(name='l4rever')
-    userEntries = \
-        UserRatingEntry.objects.filter(user=user).order_by('timestamp')
+    users = User.objects.all()
 
     return render(request, 'core/index.html', {
-        'user': user,
-        'userDataEntries': userEntries,
+        'users': users,
     })
 
 
