@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+{% block title %}{{ user.name }}{% endblock %}
+{% block content %}
+<div id="graph_visualisation"></div>
+<script type="text/javascript">
+
+var container = document.getElementById('graph_visualisation');
+var items = [
+	{% for entry in userDataEntries %}
+	{x: new Date({{ entry.timestamp }} * 1000), y: {{ entry.value }}, /*label: '{{ entry.user.name }}'*/},
+	{% endfor %}
+];
+
+var dataset = new vis.DataSet(items);
+var options = {
+	// styltart: '2014-06-10',
+	// end: '2014-06-18'
+	// style: 'surface'
+	// style:'bar',
+	// barChart: {width:50, align:'center'}, // align: left, center, right
+	drawPoints: true,
+	dataAxis: {
+		// icons:true,
+		left: {
+			format: function(value) { return value; }
+		}
+	},
+	orientation:'bottom',
+	shaded: {
+		orientation: 'bottom'
+    },
+};
+
+var graph2d = new vis.Graph2d(container, dataset, options);
+</script>
+{% endblock %}

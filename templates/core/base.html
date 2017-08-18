@@ -1,0 +1,16 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8" />
+	<title>{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'core/style.css' %}">
+
+	<script src="{% static 'core/vis.js/vis.js' %}"></script>
+	<link href="{% static 'core/vis.js/vis-timeline-graph2d.min.css' %}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+{% block content %}{% endblock %}
+</body>
+</html>
