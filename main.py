@@ -166,11 +166,13 @@ def processUser(username):
 
         print(username + ':' + str(userData))
     except IndexError as ex:
-        print('Exception(probably parsing error): ' + str(ex))
+        print('Exception(probably parsing error): ' + ex.__repr__())
+        print('\t{0}'.format(ex.args))
     except Exception as ex:
         # TODO: find where is list index out of range
         # It would be great to add logging of this shit here
-        print('Exception: ' + str(ex))
+        print('Exception: ' + ex.__repr__())
+        print('\t{0}'.format(ex.args))
     except:
         print('error durint processing user ' + username)
 
