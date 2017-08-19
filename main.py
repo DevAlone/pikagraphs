@@ -22,7 +22,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserPlusesCountEntry, UserMinusesCountEntry
 
 # constants
-NUMBER_OF_WORKERS = 5
+NUMBER_OF_WORKERS = 15
 # /constants
 
 # globals
