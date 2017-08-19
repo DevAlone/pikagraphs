@@ -22,7 +22,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserPlusesCountEntry, UserMinusesCountEntry
 
 # constants
-NUMBER_OF_WORKERS = 15
+NUMBER_OF_WORKERS = 10
 # /constants
 
 # globals
@@ -188,8 +188,8 @@ def worker():
             processUser(item)
             print('end processing user ' + item)
 
-            usernamesQueue.task_done()
-            time.sleep(random.randint(1, 5))
+            usernamesQueue.task_done?!?jedi=0, ()?!? (a, *_*b*_*) ?!?jedi?!?
+            time.sleep(random.randint(1, 2))
         # else:
         #     print('waiting for user...')
 
