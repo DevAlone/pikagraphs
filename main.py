@@ -188,7 +188,8 @@ def worker():
             processUser(item)
             print('end processing user ' + item)
 
-            usernamesQueue.task_done?!?jedi=0, ()?!? (a, *_*b*_*) ?!?jedi?!?
+            usernamesQueue.task_done()
+
             time.sleep(random.randint(1, 2))
         # else:
         #     print('waiting for user...')
