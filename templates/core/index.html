@@ -4,7 +4,7 @@
 {% block title %}{{ user.name }}{% endblock %}
 {% block content %}
 {% for user in users %}
-<a href="{% url 'core:user' user.name %}">{{ user.name }}</a>
+<a href="{% url 'core:user' user.name %}">{{ user.name }}</a><br>
 {% empty %}
 There are no users here :(
 {% endfor %}
