@@ -190,7 +190,7 @@ def worker():
 
             usernamesQueue.task_done()
 
-            time.sleep(random.randint(1, 2))
+            time.sleep(random.randint(0, 1))
         # else:
         #     print('waiting for user...')
 
