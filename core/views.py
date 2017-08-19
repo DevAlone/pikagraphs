@@ -6,7 +6,7 @@ from core.models import UserPlusesCountEntry, UserMinusesCountEntry
 
 
 def index(request):
-    users = User.objects.all()
+    users = User.objects.all().order_by('name')
 
     return render(request, 'core/index.html', {
         'users': users,
