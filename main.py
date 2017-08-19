@@ -54,7 +54,7 @@ class UserProfileData:
 def getUserProfileData(username):
     userData = UserProfileData()
 
-    connection = http.client.HTTPSConnection("pikabu.ru", timeout=10)
+    connection = http.client.HTTPSConnection("pikabu.ru", timeout=20)
     connection.request("GET", "/profile/" + username)
     response = connection.getresponse()
 
