@@ -238,7 +238,7 @@ if __name__ == "__main__":
             with open('usernames') as f:
                 for line in f:
                     if(len(line.strip()) > 0):
-                        usernamesQueue.put(line.strip())
+                        usernamesQueue.put(line.strip().lower())
         except:
             print('file "usernames" not found')
 
