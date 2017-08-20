@@ -12,7 +12,10 @@ import ntplib
 import tor
 
 import os
+import sys
 import django
+
+import traceback
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pikabot_graphs.settings")
@@ -77,15 +80,15 @@ def getUserProfileData(username):
         .//span[@class='b-user-profile__label' and text()=\"комментариев\"]\
         /following-sibling::span[@class='b-user-profile__value']")[0].text)
     userData.postsCount = int(tree.xpath("\
-        .//span[@class='b-user-profile__label' and text()=\"добавил постов\"]\
-        /following-sibling::span[@class='b-user-profile__value']")[0].text)
+       .//span[@class='b-user-profile__label' and contains(text(), \"постов\")]\
+       /following-sibling::span[@class='b-user-profile__value']")[0].text)
     userData.hotPostsCount = int(tree.xpath("\
         .//span[@class='b-user-profile__label' \
         and starts-with(text(), \", из них в \")]\
         /following-sibling::span[@class='b-user-profile__value']")[0].text)
     userPlusesMinusesCount = tree.xpath("\
-        .//span[@class='b-user-profile__label' and text()=\"поставил\"]\
-        /following-sibling::span[@class='b-user-profile__value']")[0]\
+  .//span[@class='b-user-profile__label' and starts-with(text(), \"поставил\")]\
+  /following-sibling::span[@class='b-user-profile__value']")[0]\
         .text_content()
 
     matches = re.search(r'^.*?([0-9]+).*плюс.*?([0-9]+).*$',
@@ -169,13 +172,17 @@ def processUser(username):
             value=user.minusesCount))
 
         print(username + ':' + str(userData))
-    except IndexError as ex:
-        print('Exception(probably parsing error): ' + ex.__repr__())
-        print('\t{0}'.format(ex.args))
     except Exception as ex:
         # TODO: find where is list index out of range
         # It would be great to add logging of this shit here
-        print('Exception: ' + ex.__repr__())
+
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print('Exception:', exc_type, fname, exc_tb.tb_lineno)
+
+        print('Traceback: ', traceback.format_exc())
+
+        print(ex.__repr__())
         print('\t{0}'.format(ex.args))
     except:
         print('error durint processing user ' + username)
