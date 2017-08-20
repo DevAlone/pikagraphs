@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import http.client
+# import http.client
 from lxml import html
 import re
 import threading
@@ -9,6 +9,7 @@ from queue import Queue
 import time
 import random
 import ntplib
+import tor
 
 import os
 import django
@@ -23,6 +24,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
 
 # constants
 NUMBER_OF_WORKERS = 10
+START_TOR_PORT = 30000
 # /constants
 
 # globals
@@ -54,11 +56,13 @@ class UserProfileData:
 def getUserProfileData(username):
     userData = UserProfileData()
 
-    connection = http.client.HTTPSConnection("pikabu.ru", timeout=20)
-    connection.request("GET", "/profile/" + username)
-    response = connection.getresponse()
+#    connection = http.client.HTTPSConnection("pikabu.ru", timeout=20)
+#    connection.request("GET", "/profile/" + username)
+#    response = connection.getresponse()
 
-    data = response.read()
+#    data = response.read()
+    data = tor.get("https://pikabu.ru/profile/" + username)
+    data = data.decode('cp1251')
 
     tree = html.fromstring(data)
 
@@ -230,6 +234,8 @@ if __name__ == "__main__":
             time.sleep(1)
 
     print('time delta is ' + str(timeDelta))
+
+    tor.init(NUMBER_OF_WORKERS, START_TOR_PORT)
 
     for i in range(NUMBER_OF_WORKERS):
         threading.Thread(target=worker).start()
