@@ -6,3 +6,5 @@ db.sqlite3*
 *.swo
 *.pyc
 .ropeproject
+bot.log
+start_bot.sh
