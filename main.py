@@ -26,7 +26,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserPlusesCountEntry, UserMinusesCountEntry
 
 # constants
-NUMBER_OF_WORKERS = 10
+NUMBER_OF_WORKERS = 7
 START_TOR_PORT = 30000
 # /constants
 
