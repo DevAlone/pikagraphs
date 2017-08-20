@@ -1,6 +1,7 @@
 pikabot_graphs/settings.py
-db.sqlite3
 .last_timestamp
+db.sqlite3
+db.sqlite3*
 *.swp
 *.swo
 *.pyc
