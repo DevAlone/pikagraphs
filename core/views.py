@@ -43,3 +43,10 @@ def user(request, username):
         'minuses': minusesEntries,
         'subscribers': subscribersEntries,
     })
+
+
+def secret_page_for_l4rever(request):
+    users = User.objects.all().order_by('-subscribersCount')
+    return render(request, 'core/secret_page_for_l4rever.html', {
+        'users': users,
+    })
