@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cat usernames | sort -f -u > usernames.new
+cat usernames | tr '[:upper:]' '[:lower:]' | sort -f -u > usernames.new
 mv usernames.new usernames
