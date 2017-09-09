@@ -1,33 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# import http.client
-from lxml import html
-import re
 import threading
 from queue import Queue
 import time
 import random
 import ntplib
-import tor
 
 import os
 import sys
-import django
 
 import traceback
 
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pikabot_graphs.settings")
-django.setup()
+import bot.init_django_models
 
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserPostsCountEntry, UserHotPostsCountEntry, \
-                        UserPlusesCountEntry, UserMinusesCountEntry
+                        UserPlusesCountEntry, UserMinusesCountEntry, \
+                        UserSubscribersCountEntry
+import bot.user
 
 # constants
-NUMBER_OF_WORKERS = 7
-START_TOR_PORT = 30000
+NUMBER_OF_WORKERS = 1
+# START_TOR_PORT = 30000
 # /constants
 
 # globals
@@ -36,78 +31,8 @@ usernamesQueue = Queue()
 # /globals
 
 
-class UserProfileData:
-    rating = 0
-    commentsCount = 0
-    postsCount = 0
-    hotPostsCount = 0
-    plusesCount = 0
-    minusesCount = 0
-
-    def __str__(self):
-        return "{ 'rating': " + str(self.rating) \
-            + ", 'commentsCount': " + str(self.commentsCount) \
-            + ", 'postsCount': " + str(self.postsCount) \
-            + ", 'hotPostsCount': " + str(self.hotPostsCount) \
-            + ", 'plusesCount': " + str(self.plusesCount) \
-            + ", 'minusesCount': " + str(self.minusesCount) + " }"
-
-    def __repr__(self):
-        return self.__str__()
-
-
-def getUserProfileData(username):
-    userData = UserProfileData()
-
-#    connection = http.client.HTTPSConnection("pikabu.ru", timeout=20)
-#    connection.request("GET", "/profile/" + username)
-#    response = connection.getresponse()
-
-#    data = response.read()
-    data = tor.get("https://pikabu.ru/profile/" + username)
-    data = data.decode('cp1251')
-
-    tree = html.fromstring(data)
-
-    try:
-        userData.rating = int(tree.xpath("\
-        .//span[@class='b-user-profile__label' and text()=\"рейтинг\"]\
-        /following-sibling::span[@class='b-user-profile__value']")[0].text)
-    except:
-        userData.rating = None
-
-    userData.commentsCount = int(tree.xpath("\
-        .//span[@class='b-user-profile__label' and text()=\"комментариев\"]\
-        /following-sibling::span[@class='b-user-profile__value']")[0].text)
-    userData.postsCount = int(tree.xpath("\
-       .//span[@class='b-user-profile__label' and contains(text(), \"постов\")]\
-       /following-sibling::span[@class='b-user-profile__value']")[0].text)
-    userData.hotPostsCount = int(tree.xpath("\
-        .//span[@class='b-user-profile__label' \
-        and starts-with(text(), \", из них в \")]\
-        /following-sibling::span[@class='b-user-profile__value']")[0].text)
-    userPlusesMinusesCount = tree.xpath("\
-  .//span[@class='b-user-profile__label' and starts-with(text(), \"поставил\")]\
-  /following-sibling::span[@class='b-user-profile__value']")[0]\
-        .text_content()
-
-    matches = re.search(r'^.*?([0-9]+).*плюс.*?([0-9]+).*$',
-                        userPlusesMinusesCount, re.DOTALL)
-
-    userData.plusesCount = int(matches.group(1))
-    userData.minusesCount = int(matches.group(2))
-
-    return userData
-
-
 def saveModelIfLastIsNotTheSame(model):
     lastEntry = type(model).objects.filter(user=model.user).last()
-    # print('save: ')
-    # print('last value: ' + str(lastEntry.value))
-    # print('value: ' + str(model.value))
-    # print('lastEntry is none: ' + str(lastEntry is None))
-    # print('type of last entry value' + str(type(lastEntry.value)))
-    # print('type of model value: ' + str(type(model.value)))
 
     if lastEntry is None or int(lastEntry.value) != int(model.value):
         print('saving...', end='')
@@ -120,28 +45,33 @@ def saveModelIfLastIsNotTheSame(model):
 
 def processUser(username):
     try:
-        userData = getUserProfileData(username)
+        userData = bot.user.getUserProfileData(username, fast=True)
 
         try:
             user = User.objects.get(name=username)
         except User.DoesNotExist:
             user = User()
             user.name = username
-            user.rating = 0
 
-        if userData.rating is not None:
-            user.rating = userData.rating
-        user.commentsCount = userData.commentsCount
-        user.postsCount = userData.postsCount
-        user.hotPostsCount = userData.hotPostsCount
-        user.plusesCount = userData.plusesCount
-        user.minusesCount = userData.minusesCount
+        user.rating = userData['rating']
+        user.commentsCount = userData['commentsCount']
+        user.postsCount = userData['postsCount']
+        user.hotPostsCount = userData['hotPostsCount']
+        user.plusesCount = userData['plusesCount']
+        user.minusesCount = userData['minusesCount']
         user.lastUpdateTimestamp = int(os.times().elapsed + timeDelta)
+        try:
+            user.subscribersCount = userData['subscribersCount']
+        except KeyError:
+            pass
+        try:
+            user.isRatingBan = userData['isRatingBan']
+        except KeyError:
+            pass
 
         user.save()
 
-        if userData.rating is not None:
-            saveModelIfLastIsNotTheSame(UserRatingEntry(
+        saveModelIfLastIsNotTheSame(UserRatingEntry(
                 timestamp=user.lastUpdateTimestamp,
                 user=user,
                 value=user.rating))
@@ -170,6 +100,11 @@ def processUser(username):
             timestamp=user.lastUpdateTimestamp,
             user=user,
             value=user.minusesCount))
+
+        saveModelIfLastIsNotTheSame(UserSubscribersCountEntry(
+            timestamp=user.lastUpdateTimestamp,
+            user=user,
+            value=user.subscribersCount))
 
         print(username + ':' + str(userData))
     except Exception as ex:
@@ -204,11 +139,10 @@ def worker():
             usernamesQueue.task_done()
 
             time.sleep(random.randint(0, 1))
-        # else:
-        #     print('waiting for user...')
 
 
-if __name__ == "__main__":
+def updateTime():
+    global timeDelta
     if os.times().elapsed == 0:
         print("Sorry, your platform isn't supported")
         exit(1)
@@ -242,7 +176,10 @@ if __name__ == "__main__":
 
     print('time delta is ' + str(timeDelta))
 
-    tor.init(NUMBER_OF_WORKERS, START_TOR_PORT)
+
+if __name__ == "__main__":
+    updateTime()
+#    tor.init(NUMBER_OF_WORKERS, START_TOR_PORT)
 
     for i in range(NUMBER_OF_WORKERS):
         threading.Thread(target=worker).start()

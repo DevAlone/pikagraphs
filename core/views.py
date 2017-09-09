@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from core.models import User, UserRatingEntry, UserCommentsCountEntry
 from core.models import UserPostsCountEntry, UserHotPostsCountEntry
 from core.models import UserPlusesCountEntry, UserMinusesCountEntry
+from core.models import UserSubscribersCountEntry
 
 
 def index(request):
@@ -28,6 +29,9 @@ def user(request, username):
         UserPlusesCountEntry.objects.filter(user=user).order_by('timestamp')
     minusesEntries = \
         UserMinusesCountEntry.objects.filter(user=user).order_by('timestamp')
+    subscribersEntries = \
+        UserSubscribersCountEntry.objects.filter(user=user)\
+        .order_by('timestamp')
 
     return render(request, 'core/user.html', {
         'user': user,
@@ -36,5 +40,6 @@ def user(request, username):
         'posts': postsEntries,
         'hotPosts': hotPostsEntries,
         'pluses': plusesEntries,
-        'minuses': minusesEntries
+        'minuses': minusesEntries,
+        'subscribers': subscribersEntries,
     })

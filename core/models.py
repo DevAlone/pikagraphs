@@ -10,6 +10,8 @@ class User(models.Model):
     plusesCount = models.IntegerField(default=0)
     minusesCount = models.IntegerField(default=0)
     lastUpdateTimestamp = models.BigIntegerField(default=0)
+    subscribersCount = models.IntegerField(default=0)
+    isRatingBan = models.BooleanField(default=False)
 
     class Meta:
         db_table = "user"
@@ -76,6 +78,17 @@ class UserPlusesCountEntry(models.Model):
 
 
 class UserMinusesCountEntry(models.Model):
+    timestamp = models.BigIntegerField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    value = models.IntegerField()
+
+    def __str__(self):
+        return self.user.name
+
+    __repr__ = __str__
+
+
+class UserSubscribersCountEntry(models.Model):
     timestamp = models.BigIntegerField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
