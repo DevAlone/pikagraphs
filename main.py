@@ -24,7 +24,9 @@ import bot.user
 NUMBER_OF_WORKERS = 1
 # START_TOR_PORT = 30000
 MIN_UPDATING_PERIOD = 5
-MAX_UPDATING_PERIOD = 60 * 5
+MAX_UPDATING_PERIOD = 60 * 10
+MIN_UPDATING_DELTA = 1
+MAX_UPDATING_DELTA = 60
 # /constants
 
 # globals
@@ -76,16 +78,15 @@ def processUser(username):
                 wasUserDataChanged = True
         except KeyError:
             pass
-
-        # TODO: define coefficints above
-        delta = (getTimestamp() - user.lastUpdateTimestamp) / 8
-        if delta > MAX_UPDATING_PERIOD / 8:
-            delta = MAX_UPDATING_PERIOD / 8
+        
+        delta = abs((getTimestamp() - user.lastUpdateTimestamp) / 8)
+        if delta > MAX_UPDATING_DELTA:
+            delta = MAX_UPDATING_DELTA
         if wasUserDataChanged:
-            user.updatingPeriod -= 2
+            user.updatingPeriod -= MIN_UPDATING_DELTA * 2
             user.updatingPeriod -= delta * 2
         else:
-            user.updatingPeriod += 1
+            user.updatingPeriod += MIN_UPDATING_DELTA
             user.updatingPeriod += delta
 
         if user.updatingPeriod < MIN_UPDATING_PERIOD:
