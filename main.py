@@ -23,12 +23,17 @@ import bot.user
 # constants
 NUMBER_OF_WORKERS = 1
 # START_TOR_PORT = 30000
+MIN_UPDATING_PERIOD = 5
+MAX_UPDATING_PERIOD = 60 * 5
 # /constants
 
 # globals
 timeDelta = None
 usernamesQueue = Queue()
 # /globals
+
+def getTimestamp():
+    return int(os.times().elapsed + timeDelta)
 
 
 def saveModelIfLastIsNotTheSame(model):
@@ -45,13 +50,48 @@ def saveModelIfLastIsNotTheSame(model):
 
 def processUser(username):
     try:
-        userData = bot.user.getUserProfileData(username, fast=True)
-
         try:
             user = User.objects.get(name=username)
         except User.DoesNotExist:
             user = User()
             user.name = username
+
+        userData = bot.user.getUserProfileData(username, fast=True)
+
+        wasUserDataChanged = False
+        if      user.rating != userData['rating'] or \
+                        user.commentsCount != userData['commentsCount'] or \
+                        user.postsCount != userData['postsCount'] or \
+                        user.hotPostsCount != userData['hotPostsCount'] or \
+                        user.plusesCount != userData['plusesCount'] or \
+                        user.minusesCount != userData['minusesCount']:
+            wasUserDataChanged = True
+        try:
+            if user.subscribersCount != userData['subscribersCount']:
+                wasUserDataChanged = True
+        except KeyError:
+            pass
+        try:
+            if user.isRatingBan != userData['isRatingBan']:
+                wasUserDataChanged = True
+        except KeyError:
+            pass
+
+        # TODO: define coefficints above
+        delta = (getTimestamp() - user.lastUpdateTimestamp) / 8
+        if delta > MAX_UPDATING_PERIOD / 8:
+            delta = MAX_UPDATING_PERIOD / 8
+        if wasUserDataChanged:
+            user.updatingPeriod -= 2
+            user.updatingPeriod -= delta * 2
+        else:
+            user.updatingPeriod += 1
+            user.updatingPeriod += delta
+
+        if user.updatingPeriod < MIN_UPDATING_PERIOD:
+            user.updatingPeriod = MIN_UPDATING_PERIOD
+        elif user.updatingPeriod > MAX_UPDATING_PERIOD:
+            user.updatingPeriod = MAX_UPDATING_PERIOD
 
         user.rating = userData['rating']
         user.commentsCount = userData['commentsCount']
@@ -59,7 +99,7 @@ def processUser(username):
         user.hotPostsCount = userData['hotPostsCount']
         user.plusesCount = userData['plusesCount']
         user.minusesCount = userData['minusesCount']
-        user.lastUpdateTimestamp = int(os.times().elapsed + timeDelta)
+        user.lastUpdateTimestamp = getTimestamp()
         try:
             user.subscribersCount = userData['subscribersCount']
         except KeyError:
@@ -72,9 +112,9 @@ def processUser(username):
         user.save()
 
         saveModelIfLastIsNotTheSame(UserRatingEntry(
-                timestamp=user.lastUpdateTimestamp,
-                user=user,
-                value=user.rating))
+            timestamp=user.lastUpdateTimestamp,
+            user=user,
+            value=user.rating))
 
         saveModelIfLastIsNotTheSame(UserCommentsCountEntry(
             timestamp=user.lastUpdateTimestamp,
@@ -179,7 +219,7 @@ def updateTime():
 
 if __name__ == "__main__":
     updateTime()
-#    tor.init(NUMBER_OF_WORKERS, START_TOR_PORT)
+
 
     for i in range(NUMBER_OF_WORKERS):
         threading.Thread(target=worker).start()
@@ -191,7 +231,18 @@ if __name__ == "__main__":
             with open('usernames') as f:
                 for line in f:
                     if(len(line.strip()) > 0):
-                        usernamesQueue.put(line.strip().lower())
+                        username = line.strip().lower()
+
+                        try:
+                            user = User.objects.get(name=username)
+                        except User.DoesNotExist:
+                            user = User()
+                            user.name = username
+                            user.save()
+
+                        # if it's time to update, put user in queue
+                        if user.lastUpdateTimestamp + user.updatingPeriod < getTimestamp():
+                            usernamesQueue.put(username)
         except:
             print('file "usernames" not found')
 

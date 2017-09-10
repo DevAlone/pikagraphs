@@ -12,6 +12,7 @@ class User(models.Model):
     lastUpdateTimestamp = models.BigIntegerField(default=0)
     subscribersCount = models.IntegerField(default=0)
     isRatingBan = models.BooleanField(default=False)
+    updatingPeriod = models.IntegerField(default=1)
 
     class Meta:
         db_table = "user"

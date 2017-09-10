@@ -1,3 +1,5 @@
+migrations/
+.idea/
 pikabot_graphs/settings.py
 .last_timestamp
 db.sqlite3
