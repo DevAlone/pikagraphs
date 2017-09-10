@@ -78,7 +78,7 @@ def processUser(username):
                 wasUserDataChanged = True
         except KeyError:
             pass
-        
+
         delta = abs((getTimestamp() - user.lastUpdateTimestamp) / 8)
         if delta > MAX_UPDATING_DELTA:
             delta = MAX_UPDATING_DELTA
@@ -166,10 +166,9 @@ def processUser(username):
 
 def worker():
     while True:
-        time.sleep(1)
+        time.sleep(0.5)
 
         item = None
-
         item = usernamesQueue.get()
 
         if item is not None:
@@ -178,8 +177,6 @@ def worker():
             print('end processing user ' + item)
 
             usernamesQueue.task_done()
-
-            time.sleep(random.randint(0, 1))
 
 
 def updateTime():
