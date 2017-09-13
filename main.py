@@ -25,7 +25,7 @@ NUMBER_OF_WORKERS = 1
 # START_TOR_PORT = 30000
 MIN_UPDATING_PERIOD = 60
 MAX_UPDATING_PERIOD = 60 * 45
-MIN_UPDATING_DELTA = 10
+MIN_UPDATING_DELTA = 2
 MAX_UPDATING_DELTA = 60
 # /constants
 
@@ -83,8 +83,8 @@ def processUser(username):
         if delta > MAX_UPDATING_DELTA:
             delta = MAX_UPDATING_DELTA
         if wasUserDataChanged:
-            user.updatingPeriod -= MIN_UPDATING_DELTA * 2
-            user.updatingPeriod -= delta * 2
+            user.updatingPeriod -= MIN_UPDATING_DELTA * 1.5
+            user.updatingPeriod -= delta * 1.5
         else:
             user.updatingPeriod += MIN_UPDATING_DELTA
             user.updatingPeriod += delta
