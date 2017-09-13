@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo $1 >> usernames
-bash ./normalizeUsernames.sh
+# bash ./normalizeUsernames.sh
