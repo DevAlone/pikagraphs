@@ -24,7 +24,7 @@ class User(models.Model):
 
 
 class UserRatingEntry(models.Model):
-    timestamp = models.BigIntegerField(primary_key=True)
+    timestamp = models.BigIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
 
@@ -35,7 +35,7 @@ class UserRatingEntry(models.Model):
 
 
 class UserCommentsCountEntry(models.Model):
-    timestamp = models.BigIntegerField(primary_key=True)
+    timestamp = models.BigIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
 
@@ -46,7 +46,7 @@ class UserCommentsCountEntry(models.Model):
 
 
 class UserPostsCountEntry(models.Model):
-    timestamp = models.BigIntegerField(primary_key=True)
+    timestamp = models.BigIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
 
@@ -57,7 +57,7 @@ class UserPostsCountEntry(models.Model):
 
 
 class UserHotPostsCountEntry(models.Model):
-    timestamp = models.BigIntegerField(primary_key=True)
+    timestamp = models.BigIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
 
@@ -68,7 +68,7 @@ class UserHotPostsCountEntry(models.Model):
 
 
 class UserPlusesCountEntry(models.Model):
-    timestamp = models.BigIntegerField(primary_key=True)
+    timestamp = models.BigIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
 
@@ -79,7 +79,7 @@ class UserPlusesCountEntry(models.Model):
 
 
 class UserMinusesCountEntry(models.Model):
-    timestamp = models.BigIntegerField(primary_key=True)
+    timestamp = models.BigIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
 
@@ -90,7 +90,7 @@ class UserMinusesCountEntry(models.Model):
 
 
 class UserSubscribersCountEntry(models.Model):
-    timestamp = models.BigIntegerField(primary_key=True)
+    timestamp = models.BigIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     value = models.IntegerField()
 
