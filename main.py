@@ -24,7 +24,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
 import bot.user
 
 # constants
-NUMBER_OF_WORKERS = 10
+NUMBER_OF_WORKERS = 100
 # START_TOR_PORT = 30000
 MIN_UPDATING_PERIOD = 60 * 3
 MAX_UPDATING_PERIOD = 60 * 60
@@ -180,7 +180,7 @@ def processUser(username):
 
 def worker():
     while True:
-        time.sleep(1)
+        time.sleep(0.5)
 
         item = None
         item = usernamesQueue.get()
