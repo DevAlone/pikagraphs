@@ -8,7 +8,7 @@ from core.models import UserSubscribersCountEntry
 
 
 def index(request):
-    users = User.objects.all().order_by('lastUpdateTimestamp')
+    users = User.objects.all().order_by('-lastUpdateTimestamp')
 
     return render(request, 'core/index.html', {
         'users': users,
