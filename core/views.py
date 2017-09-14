@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
 
 from core.models import User, UserRatingEntry, UserCommentsCountEntry
 from core.models import UserPostsCountEntry, UserHotPostsCountEntry
@@ -50,3 +51,7 @@ def secret_page_for_l4rever(request):
     return render(request, 'core/secret_page_for_l4rever.html', {
         'users': users,
     })
+
+
+def OK(request):
+    return HttpResponse("OK")
