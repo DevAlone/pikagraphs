@@ -24,7 +24,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
 import bot.user
 
 # constants
-NUMBER_OF_WORKERS = 50
+NUMBER_OF_WORKERS = 1
 # START_TOR_PORT = 30000
 MIN_UPDATING_PERIOD = 60 * 3
 MAX_UPDATING_PERIOD = 60 * 60
@@ -61,17 +61,18 @@ def processUser(username):
             user = User()
             user.name = username
 
-        sent = False
-        while not sent:
-            try:
-                proxies = proxy_utils.getProxyDict(
-                    proxy_receiver_client.getNextProxy(True))
-                userData = bot.user.getUserProfileData(username, fast=True,
-                                                       proxies=proxies)
-                sent = True
-            except Exception as ex:
-                print('error during get profile: ' + repr(ex))
-                time.sleep(0.1)
+        # sent = False
+        # while not sent:
+        #     try:
+        #         proxies = proxy_utils.getProxyDict(
+        #             proxy_receiver_client.getNextProxy(True))
+        #         userData = bot.user.getUserProfileData(username, fast=True,
+        #                                                proxies=proxies)
+        #         sent = True
+        #     except Exception as ex:
+        #         print('error during get profile: ' + repr(ex))
+        #         time.sleep(0.1)
+        userData = bot.user.getUserProfileData(username, fast=True)
 
 
         wasUserDataChanged = False
@@ -232,7 +233,7 @@ def updateTime():
 if __name__ == "__main__":
     updateTime()
 
-    proxy_receiver_client.init()
+    # proxy_receiver_client.init()
 
     for i in range(NUMBER_OF_WORKERS):
         threading.Thread(target=worker).start()
@@ -266,4 +267,4 @@ if __name__ == "__main__":
         else:
             usernamesQueue.join()
 
-    proxy_receiver_client.clean()
+    # proxy_receiver_client.clean()
