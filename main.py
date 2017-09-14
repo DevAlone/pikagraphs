@@ -24,7 +24,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
 import bot.user
 
 # constants
-NUMBER_OF_WORKERS = 100
+NUMBER_OF_WORKERS = 50
 # START_TOR_PORT = 30000
 MIN_UPDATING_PERIOD = 60 * 3
 MAX_UPDATING_PERIOD = 60 * 60
