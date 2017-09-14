@@ -9,9 +9,9 @@ except:
 # import tor
 
 
-def getUserProfileData(username, fast=False):
+def getUserProfileData(username, fast=False, proxies={}):
     if fast:
-        return _getUserProfileDataFast(username)
+        return _getUserProfileDataFast(username, proxies=proxies)
 
     userData = {}
 
@@ -56,8 +56,8 @@ def getUserProfileData(username, fast=False):
     return userData
 
 
-def _getUserProfileDataFast(username):
-    jsonData = json.loads(api.getUserProfile(username).text)
+def _getUserProfileDataFast(username, proxies):
+    jsonData = json.loads(api.getUserProfile(username, proxies=proxies).text)
     jsonData = jsonData['response']['user']
 
     userData = {}

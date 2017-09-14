@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import bot.init_django_models
+
+from  bot import proxy_receiver_client
+from  bot import proxy_utils
 import threading
 from queue import Queue
 import time
-import random
+# import random
 import ntplib
 
 import os
@@ -12,7 +16,6 @@ import sys
 
 import traceback
 
-import bot.init_django_models
 
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserPostsCountEntry, UserHotPostsCountEntry, \
@@ -21,7 +24,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
 import bot.user
 
 # constants
-NUMBER_OF_WORKERS = 1
+NUMBER_OF_WORKERS = 10
 # START_TOR_PORT = 30000
 MIN_UPDATING_PERIOD = 60 * 3
 MAX_UPDATING_PERIOD = 60 * 60
@@ -58,7 +61,18 @@ def processUser(username):
             user = User()
             user.name = username
 
-        userData = bot.user.getUserProfileData(username, fast=True)
+        sent = False
+        while not sent:
+            try:
+                proxies = proxy_utils.getProxyDict(
+                    proxy_receiver_client.getNextProxy(True))
+                userData = bot.user.getUserProfileData(username, fast=True,
+                                                       proxies=proxies)
+                sent = True
+            except Exception as ex:
+                print('error during get profile: ' + repr(ex))
+                time.sleep(0.1)
+
 
         wasUserDataChanged = False
         if      user.rating != userData['rating'] or \
@@ -166,7 +180,7 @@ def processUser(username):
 
 def worker():
     while True:
-        time.sleep(0.5)
+        time.sleep(1)
 
         item = None
         item = usernamesQueue.get()
@@ -218,6 +232,7 @@ def updateTime():
 if __name__ == "__main__":
     updateTime()
 
+    proxy_receiver_client.init()
 
     for i in range(NUMBER_OF_WORKERS):
         threading.Thread(target=worker).start()
@@ -239,7 +254,8 @@ if __name__ == "__main__":
                             user.save()
 
                         # if it's time to update, put user in queue
-                        if user.lastUpdateTimestamp + user.updatingPeriod < getTimestamp():
+                        if user.lastUpdateTimestamp + \
+                                user.updatingPeriod < getTimestamp():
                             usernamesQueue.put(username)
         except:
             print('file "usernames" not found')
@@ -249,3 +265,5 @@ if __name__ == "__main__":
             time.sleep(1)
         else:
             usernamesQueue.join()
+
+    proxy_receiver_client.clean()
