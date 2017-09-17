@@ -8,7 +8,11 @@ from django.conf import settings
 import time
 import threading
 import json
+import os
+import sys
+import traceback
 from queue import Queue
+
 
 
 class CommunitiesModule(Module):
@@ -81,7 +85,14 @@ class CommunitiesModule(Module):
 
             print('community {} is processed'.format(communityUrlName))
         except Exception as ex:
-            print('error in communities module: ' + repr(ex))
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print('Exception:', exc_type, fname, exc_tb.tb_lineno)
+
+            print('Traceback: ', traceback.format_exc())
+
+            print(ex.__repr__())
+            print('\t{0}'.format(ex.args))
         except:
             print('error in communities module')
 
