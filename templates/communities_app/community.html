@@ -1,0 +1,90 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+{% block title %}{{ community.name }}{% endblock %}
+{% block content %}
+<center><h2>{{ community.name }}</h2></center>
+
+<style>
+td { 
+	padding: 10px; 
+}
+</style>
+<br>
+<table>
+	<tr>
+		<td>url name</td>
+		<td>{{ community.urlName }}</td>
+	</tr>
+	<r>
+		<td>subscribers count</td>
+		<td>{{ community.subscribersCount }}</td>
+	</tr>
+	<tr>
+		<td>posts count</td>
+		<td>{{ community.storiesCount }}</td>
+	</tr>
+	<tr>
+		<td>last updated time</td>
+		<td id="communityLastUpdatedTime">{{ community.lastUpdateTimestamp }}</td>
+	</tr>
+</table>
+<br>
+<script>
+communityLastUpdatedTime.textContent = new Date({{ community.lastUpdateTimestamp }} * 1000);
+</script>
+
+<h3>Subscribers</h3>
+<div id="subscribers_graph_visualisation"></div>
+<script type="text/javascript">
+var container = document.getElementById('subscribers_graph_visualisation');
+var items = [
+	{% for entry in counters %}
+	{x: new Date({{ entry.timestamp }} * 1000), y: {{ entry.subscribersCount }} },
+	{% endfor %}
+];
+
+var dataset = new vis.DataSet(items);
+var options = {
+	dataAxis: {
+		left: {
+			format: function(value) { return value; }
+		}
+	},
+	orientation:'bottom',
+	shaded: {
+		orientation: 'bottom'
+    },
+};
+
+var graph2d = new vis.Graph2d(container, dataset, options);
+</script>
+
+<h3>Posts</h3>
+<div id="stories_graph_visualisation"></div>
+<script type="text/javascript">
+var container = document.getElementById('stories_graph_visualisation');
+var items = [
+	{% for entry in counters %}
+	{x: new Date({{ entry.timestamp }} * 1000), y: {{ entry.storiesCount }} },
+	{% endfor %}
+];
+
+var dataset = new vis.DataSet(items);
+var options = {
+	dataAxis: {
+		left: {
+			format: function(value) { return value; }
+		}
+	},
+	orientation:'bottom',
+	shaded: {
+		orientation: 'bottom'
+    },
+};
+
+var graph2d = new vis.Graph2d(container, dataset, options);
+</script>
+
+
+{% endblock %}

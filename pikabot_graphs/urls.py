@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     #    url(r'^admin/', admin.site.urls),
     url(r'^', include('core.urls')),
+    url(r'^communities/', include('communities_app.urls')),
 ]
 
 if settings.DEBUG:

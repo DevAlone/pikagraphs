@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'communities_app.apps.CommunitiesAppConfig',
     'core.apps.CoreConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -128,3 +129,19 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'media'),
 ]
+
+# Bot settings
+
+USERS_MODULE = {
+    'NUMBER_OF_WORKERS': 1,
+    'MIN_UPDATING_PERIOD': 60 * 3,
+    'MAX_UPDATING_PERIOD': 60 * 60,
+    'MIN_UPDATING_DELTA': 2,
+    'MAX_UPDATING_DELTA': 60,
+}
+
+COMMUNITIES_MODULE = {
+    'UPDATING_PERIOD': 60 * 60
+}
+
+# / Bot settings

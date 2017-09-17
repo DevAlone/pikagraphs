@@ -1,0 +1,11 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+{% block title %}communities{% endblock %}
+{% block content %}
+{% for community in communities %}
+	<a href="{% url 'communities_app:community' community.urlName %}" alt="{{ community.urlName }}">{{ community.name }}</a><br>
+{% empty %}
+There are no communities here :(
+{% endfor %}
+{% endblock %}

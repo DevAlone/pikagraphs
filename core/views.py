@@ -16,6 +16,7 @@ def index(request):
 
 
 def user(request, username):
+    username = username.lower()
     user = get_object_or_404(User, name=username)
 
     ratingEntries = \
