@@ -11,7 +11,7 @@ if __name__ == "__main__":
     precise_time.init()
 
     modules = [
-        # UsersModule(),
+        UsersModule(),
         CommunitiesModule()
     ]
 
