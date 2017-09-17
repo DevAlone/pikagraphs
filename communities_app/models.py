@@ -8,9 +8,6 @@ class Community(models.Model):
     storiesCount = models.IntegerField(default=0)
     lastUpdateTimestamp = models.BigIntegerField(default=0)
 
-    class Meta:
-        db_table = "community"
-
     def __str__(self):
         return self.name
 
