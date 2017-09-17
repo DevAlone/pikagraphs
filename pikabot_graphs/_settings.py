@@ -141,7 +141,7 @@ USERS_MODULE = {
 }
 
 COMMUNITIES_MODULE = {
-    'UPDATING_PERIOD': 60 * 60
+    'UPDATING_PERIOD': 1  # 60 * 60
 }
 
 # / Bot settings

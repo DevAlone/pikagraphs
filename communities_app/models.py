@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Community(models.Model):
-    urlName = models.CharField(max_length=50, primary_key=True)
+    urlName = models.CharField(max_length=50)
     name = models.CharField(max_length=100, default="")
     subscribersCount = models.IntegerField(default=0)
     storiesCount = models.IntegerField(default=0)
