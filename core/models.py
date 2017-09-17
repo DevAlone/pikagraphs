@@ -14,9 +14,6 @@ class User(models.Model):
     isRatingBan = models.BooleanField(default=False)
     updatingPeriod = models.IntegerField(default=1)
 
-    class Meta:
-        db_table = "user"
-
     def __str__(self):
         return self.name
 
