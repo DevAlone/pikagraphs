@@ -48,8 +48,8 @@ def secret_page_for_lactarius(request):
     lastDay = 0
     for entry in countersEntries:
         daysSinceEpoch = (datetime.datetime.utcfromtimestamp(
-            entry.timestamp) -
-            datetime.datetime.utcfromtimestamp(0)
+            entry.timestamp - 3600 * 3) -
+            datetime.datetime.utcfromtimestamp(-3600 * 3)
         ).days
 
         if daysSinceEpoch > lastDay:
