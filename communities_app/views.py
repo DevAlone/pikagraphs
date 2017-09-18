@@ -2,8 +2,6 @@ from django.shortcuts import render, get_object_or_404
 
 from communities_app.models import Community, CommunityCountersEntry
 
-import pytz
-
 import datetime
 import time
 import copy
@@ -48,7 +46,7 @@ def secret_page_for_lactarius(request):
     lastDay = 0
     for entry in countersEntries:
         daysSinceEpoch = (datetime.datetime.utcfromtimestamp(
-            entry.timestamp + 3600 * 3) -
+            getMoscowTimestamp(entry.timestamp)) -
             datetime.datetime.utcfromtimestamp(0)
         ).days
 
@@ -59,7 +57,8 @@ def secret_page_for_lactarius(request):
                 for i in range(n):
                     fakeResult = copy.copy(resultArray[-1])
                     dateTime = datetime.datetime(
-                        1970, 1, 1, 3, 0, 0) + datetime.timedelta(
+                        1970, 1, 1, 3, 0, 0, tzinfo=datetime.timezone.utc) + \
+                        datetime.timedelta(
                             lastDay + i + 1)
                     fakeResult.timestamp = time.mktime(dateTime.timetuple())
                     resultArray.append(fakeResult)
