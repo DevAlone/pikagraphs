@@ -47,7 +47,7 @@ def secret_page_for_lactarius(request):
     resultArray = []
     lastDay = 0
     for entry in countersEntries:
-        daysSinceEpoch = (datetime.datetime.fromtimestamp(
+        daysSinceEpoch = (datetime.datetime.utcfromtimestamp(
             entry.timestamp) -
             datetime.datetime(1970, 1, 1, 0, 0)
         ).days
@@ -59,7 +59,7 @@ def secret_page_for_lactarius(request):
                 for i in range(n):
                     fakeResult = copy.copy(resultArray[-1])
                     dateTime = datetime.datetime(
-                        1970, 1, 1, 3, 0, 0) + datetime.timedelta(
+                        1970, 1, 1, 0, 0, 0) + datetime.timedelta(
                             lastDay + i + 1)
                     fakeResult.timestamp = time.mktime(dateTime.timetuple())
                     resultArray.append(fakeResult)
