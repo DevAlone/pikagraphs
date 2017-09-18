@@ -48,7 +48,7 @@ def secret_page_for_lactarius(request):
     lastDay = 0
     for entry in countersEntries:
         daysSinceEpoch = (datetime.datetime.fromtimestamp(
-            getMoscowTimestamp(entry.timestamp)) -
+            entry.timestamp) -
             datetime.datetime(1970, 1, 1, 3, 0)
         ).days
 
