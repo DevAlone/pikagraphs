@@ -49,7 +49,7 @@ def secret_page_for_lactarius(request):
     for entry in countersEntries:
         daysSinceEpoch = (datetime.datetime.fromtimestamp(
             entry.timestamp) -
-            datetime.datetime(1970, 1, 1, 3, 0)
+            datetime.datetime(1970, 1, 1, 0, 0)
         ).days
 
         if daysSinceEpoch > lastDay:
