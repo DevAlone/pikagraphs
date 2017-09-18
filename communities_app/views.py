@@ -52,19 +52,19 @@ def secret_page_for_lactarius(request):
             datetime.datetime(1970, 1, 1, 0, 0)
         ).days
 
-        if daysSinceEpoch > lastDay:
+        if daysSinceEpoch > lastDay or True:
             # print('d: ' + str(daysSinceEpoch - lastDay))
-            if lastDay != 0 and daysSinceEpoch - lastDay > 1:
+            if False and lastDay != 0 and daysSinceEpoch - lastDay > 1:
                 n = daysSinceEpoch - lastDay - 1
                 for i in range(n):
                     fakeResult = copy.copy(resultArray[-1])
                     dateTime = datetime.datetime(
-                        1970, 1, 1, 0, 0, 0) + datetime.timedelta(
+                        1970, 1, 1, 3, 0, 0) + datetime.timedelta(
                             lastDay + i + 1)
                     fakeResult.timestamp = time.mktime(dateTime.timetuple())
                     resultArray.append(fakeResult)
 
-            # entry.timestamp = getMoscowTimestamp(entry.timestamp)
+            entry.timestamp = getMoscowTimestamp(entry.timestamp)
             resultArray.append(entry)
             lastDay = daysSinceEpoch
 
