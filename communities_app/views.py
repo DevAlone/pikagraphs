@@ -48,11 +48,11 @@ def secret_page_for_lactarius(request):
     lastDay = 0
     for entry in countersEntries:
         daysSinceEpoch = (datetime.datetime.utcfromtimestamp(
-            entry.timestamp) -
-            datetime.datetime(1970, 1, 1, 0, 0)
+            getMoscowTimestamp(entry.timestamp)) -
+            datetime.datetime.utcfromtimestamp(getMoscowTimestamp(0))
         ).days
 
-        if daysSinceEpoch > lastDay or True:
+        if daysSinceEpoch > lastDay:
             # print('d: ' + str(daysSinceEpoch - lastDay))
             if False and lastDay != 0 and daysSinceEpoch - lastDay > 1:
                 n = daysSinceEpoch - lastDay - 1
