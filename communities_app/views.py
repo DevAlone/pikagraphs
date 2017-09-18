@@ -64,7 +64,7 @@ def secret_page_for_lactarius(request):
                     fakeResult.timestamp = time.mktime(dateTime.timetuple())
                     resultArray.append(fakeResult)
 
-            entry.timestamp = entry.timestamp
+            entry.timestamp = getMoscowTimestamp(entry.timestamp)
             resultArray.append(entry)
             lastDay = daysSinceEpoch
 
