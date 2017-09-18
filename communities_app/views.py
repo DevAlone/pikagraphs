@@ -11,8 +11,8 @@ import copy
 
 def index(request):
     communities = Community.objects.all().order_by('-lastUpdateTimestamp')
-    for c in communities:
-        print(c.urlName)
+    # for c in communities:
+    #     print(c.urlName)
 
     return render(request, 'communities_app/index.html', {
         'communities': communities,
@@ -53,18 +53,18 @@ def secret_page_for_lactarius(request):
         ).days
 
         if daysSinceEpoch > lastDay:
-            print('d: ' + str(daysSinceEpoch - lastDay))
+            # print('d: ' + str(daysSinceEpoch - lastDay))
             if lastDay != 0 and daysSinceEpoch - lastDay > 1:
                 n = daysSinceEpoch - lastDay - 1
                 for i in range(n):
                     fakeResult = copy.copy(resultArray[-1])
                     dateTime = datetime.datetime(
-                        1970, 1, 1, 0, 0, 0) + datetime.timedelta(
+                        1970, 1, 1, 3, 0, 0) + datetime.timedelta(
                             lastDay + i + 1)
                     fakeResult.timestamp = time.mktime(dateTime.timetuple())
                     resultArray.append(fakeResult)
 
-            entry.timestamp = getMoscowTimestamp(entry.timestamp)
+            # entry.timestamp = getMoscowTimestamp(entry.timestamp)
             resultArray.append(entry)
             lastDay = daysSinceEpoch
 
