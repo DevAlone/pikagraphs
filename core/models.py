@@ -9,7 +9,7 @@ class User(models.Model):
     hotPostsCount = models.IntegerField(default=0)
     plusesCount = models.IntegerField(default=0)
     minusesCount = models.IntegerField(default=0)
-    lastUpdateTimestamp = models.BigIntegerField(default=0)
+    lastUpdateTimestamp = models.BigIntegerField(default=0, db_index=True)
     subscribersCount = models.IntegerField(default=0)
     isRatingBan = models.BooleanField(default=False)
     updatingPeriod = models.IntegerField(default=1)
