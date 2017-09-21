@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'communities_app.apps.CommunitiesAppConfig',
+    'fakeadmin.apps.FakeadminConfig',
     'core.apps.CoreConfig',
     'django.contrib.admin',
     'django.contrib.auth',

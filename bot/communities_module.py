@@ -93,6 +93,7 @@ class CommunitiesModule(Module):
 
             print(ex.__repr__())
             print('\t{0}'.format(ex.args))
+            print('res: ' + res.text)
         except:
             print('error in communities module')
 

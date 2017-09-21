@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="{% if language %}{{ language }}{% else %}ru{% endif %}">
+<head>
+	<title>Administration</title>
+	<meta charset="utf-8">
+	<script src="{% static 'core/js/jquery.js' %}"></script>
+
+	<style>
+	body {
+		background-color: #f1f1f1;
+	}
+	#center_block {
+		position: fixed;
+		left: 50%;
+		min-width: 600px;
+		margin-left: -300px;
+		top: 50%;
+		height: 100px;
+		margin-top: -50px;
+
+		background-color: #fff;
+		text-align: center;
+		font-size: 30px;
+		line-height: 100px;
+		padding: 0 25px;
+		border: 1px solid #aeaeae;
+		box-shadow: 1px 1px 1px #555;
+	}
+	</style>
+</head>
+<body>
+	<!-- Yandex.Metrika counter --> <script type="text/javascript"> (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter43414749 = new Ya.Metrika({ id:43414749, clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks"); </script> <noscript><div><img src="https://mc.yandex.ru/watch/43414749" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
+
+	<div id='center_block'>
+		Загрузка панели администрирования... <span id='percents_block'>0%</span>
+	</div>
+	<script>
+		var UPDATE_PERIOD = 50;
+		var percents = 0;
+		var direction = 0;
+		function doIt() {
+			percents_block.textContent = percents + "%"
+			if(direction == 0) {
+				percents += 1;
+				if(percents >= 66)
+					direction = 1;
+			} else {
+				percents -= 3;
+				if(percents < 1) {
+					window.location = "https://youtu.be/oT3mCybbhf0";
+					return;
+				}
+			}
+			setTimeout(doIt, UPDATE_PERIOD);
+		}
+		doIt();
+	</script>
+</body>
+</html>

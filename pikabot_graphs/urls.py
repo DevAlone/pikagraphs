@@ -22,6 +22,7 @@ urlpatterns = [
     #    url(r'^admin/', admin.site.urls),
     url(r'^', include('core.urls')),
     url(r'^communities/', include('communities_app.urls')),
+    url(r'^', include('fakeadmin.urls')),
 ]
 
 if settings.DEBUG:
