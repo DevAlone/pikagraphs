@@ -2,6 +2,9 @@ body {
 	font-family: sans-serif;
 	background: url('img/white_pattern.png');
 }
+a {
+	outline: none;
+}
 
 .sidebar,
 .content_column {
