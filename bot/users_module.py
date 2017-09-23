@@ -109,7 +109,7 @@ class UsersModule(Module):
                 delta = settings.USERS_MODULE['MAX_UPDATING_DELTA']
             if wasUserDataChanged:
                 user.updatingPeriod -= settings.USERS_MODULE['MIN_UPDATING_DELTA']  # * 1.5
-                user.updatingPeriod -= delta  # * 1.5
+                user.updatingPeriod -= delta  * 1.5
             else:
                 user.updatingPeriod += settings.USERS_MODULE['MIN_UPDATING_DELTA']
                 user.updatingPeriod += delta
