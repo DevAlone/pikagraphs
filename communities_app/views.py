@@ -52,12 +52,12 @@ def secret_page_for_lactarius(request):
 
         if daysSinceEpoch > lastDay:
             # print('d: ' + str(daysSinceEpoch - lastDay))
-            if False and lastDay != 0 and daysSinceEpoch - lastDay > 1:
+            if lastDay != 0 and daysSinceEpoch - lastDay > 1:
                 n = daysSinceEpoch - lastDay - 1
                 for i in range(n):
                     fakeResult = copy.copy(resultArray[-1])
                     dateTime = datetime.datetime(
-                        1970, 1, 1, 3, 0, 0, tzinfo=datetime.timezone.utc) + \
+                        1970, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc) + \
                         datetime.timedelta(
                             lastDay + i + 1)
                     fakeResult.timestamp = time.mktime(dateTime.timetuple())
