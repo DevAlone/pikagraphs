@@ -3,8 +3,8 @@ from django.shortcuts import render, get_object_or_404
 from communities_app.models import Community, CommunityCountersEntry
 
 import datetime
-import time
-import copy
+# import time
+# import copy
 
 
 def index(request):
@@ -51,17 +51,16 @@ def secret_page_for_lactarius(request):
         ).days
 
         if daysSinceEpoch > lastDay:
-            # print('d: ' + str(daysSinceEpoch - lastDay))
-            if lastDay != 0 and daysSinceEpoch - lastDay > 1:
-                n = daysSinceEpoch - lastDay - 1
-                for i in range(n):
-                    fakeResult = copy.copy(resultArray[-1])
-                    dateTime = datetime.datetime(
-                        1970, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc) + \
-                        datetime.timedelta(
-                            lastDay + i + 1)
-                    fakeResult.timestamp = time.mktime(dateTime.timetuple())
-                    resultArray.append(fakeResult)
+            # if lastDay != 0 and daysSinceEpoch - lastDay > 1:
+            #     n = daysSinceEpoch - lastDay - 1
+            #     for i in range(n):
+            #         fakeResult = copy.copy(resultArray[-1])
+            #         dateTime = datetime.datetime(
+            #            1970, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc) + \
+            #            datetime.timedelta(
+            #                lastDay + i + 1)
+            #        fakeResult.timestamp = time.mktime(dateTime.timetuple())
+            #        resultArray.append(fakeResult)
 
             entry.timestamp = getMoscowTimestamp(entry.timestamp)
             resultArray.append(entry)
