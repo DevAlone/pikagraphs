@@ -81,3 +81,36 @@ a {
 	padding: 10px;
 	
 }
+
+#searchTextbox {
+    display: block;
+    width: 100%;
+}
+
+#searchResultBox > * {
+    display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+
+    background: #fff;
+    padding: 5px 20px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: 0.25s;
+}
+#searchResultBox > *:hover {
+    /*border: 1px solid #ffcc00;*/
+    /*box-shadow: 1px 1px 3px #ffcc00;*/
+    cursor: pointer;
+}
+#searchResultBox > *:hover span {
+    color: blue;
+}
+
+#searchResultBox > * > .rating {
+
+}

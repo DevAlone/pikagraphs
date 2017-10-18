@@ -8,9 +8,27 @@ from core.models import UserSubscribersCountEntry
 
 
 def index(request):
-    users = User.objects.all().order_by('-lastUpdateTimestamp')
+    users = User.objects.all().order_by('-rating')[:5]  # .order_by('-lastUpdateTimestamp')
+    graphs = []
+    for user in users:
+        graph = {
+            'user': user,
+            'points': UserRatingEntry.objects.filter(user=user).order_by('timestamp'),
+        }
+        graphs.append(graph)
+        # for entry in UserRatingEntry.objects.filter(user=user).order_by('timestamp'):
+        #     graph['points'].append(entry)
 
     return render(request, 'core/index.html', {
+        'users': users,
+        'graphs': graphs,
+    })
+
+
+def users(request):
+    users = User.objects.all()  # .order_by('-lastUpdateTimestamp')
+
+    return render(request, 'core/users.html', {
         'users': users,
     })
 

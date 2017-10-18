@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'communities_app.apps.CommunitiesAppConfig',
     'fakeadmin.apps.FakeadminConfig',
     'core.apps.CoreConfig',
+    'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

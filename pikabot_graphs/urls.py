@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^', include('core.urls')),
     url(r'^communities/', include('communities_app.urls')),
     url(r'^', include('fakeadmin.urls')),
+    url(r'^api/', include('api.urls')),
 ]
 
 if settings.DEBUG:

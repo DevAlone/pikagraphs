@@ -1,0 +1,351 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+{% block title %}Пользователи{% endblock %}
+{% block head %}
+
+<script>
+    usernames = [
+        {% for user in users %}{name: "{{ user.name }}", rating: {{ user.rating }}}, {% endfor %}
+    ];
+</script>
+{% endblock %}
+
+{% block content %}
+<script>
+var l4reverSignupTimestamp = 1274536587;
+function _l4rverEasterEggTimer() {
+    l4reverEasterEgg.getElementsByClassName('value')[0].textContent = parseInt(Date.now() / 1000 - l4reverSignupTimestamp) ;
+    setTimeout(_l4rverEasterEggTimer, 1000);
+}
+
+function _executeL4reverEasterEgg() {
+    l4reverEasterEgg.style = "display: block;";
+    _l4rverEasterEggTimer();
+}
+
+function executeL4reverEasterEgg() {
+    setTimeout(_executeL4reverEasterEgg, 30 * 1000);
+}
+
+var userSearchOptions = {
+  shouldSort: true,
+  threshold: 0.6,
+  location: 0,
+  distance: 100,
+  maxPatternLength: 32,
+  minMatchCharLength: 1,
+  keys: [
+    "name",
+  ]
+};
+var usersSearch = new Fuse(usernames, userSearchOptions);
+
+function processSearchTextboxInput()
+{
+    users = usersSearch.search(searchTextbox.value);
+    searchResultBox.textContent = ""
+    for(var i = 0; i < 5 && i < users.length; ++i) {
+        userEl = document.createElement('div');
+        usernameEl = document.createElement('span');
+        usernameEl.textContent = users[i].name;
+        ratingEl = document.createElement('span');
+        ratingEl.setAttribute('class', 'rating');
+        ratingEl.textContent = users[i].rating;
+
+        userEl.appendChild(usernameEl);
+        userEl.appendChild(ratingEl);
+        userEl.username = users[i].name;
+        userEl.onclick = function() { renderUserPage(this.username); };
+        searchResultBox.appendChild(userEl);
+    }
+}
+function renderUserPage(username)
+{
+    getUserInfo(username, function (response) {
+        if (response.error !== undefined) {
+            console.log('fuck');
+            return;
+        }
+        user = response;
+        getUserGraphs(username, function(response) {
+            if (response.error !== undefined) {
+                console.log('fuck');
+                return;
+            }
+            graphs = response;
+            _renderUserPage(user, graphs.ratingEntries.items,
+                            graphs.commentsEntries.items, graphs.postsEntries.items, graphs.hotPostsEntries.items,
+                            graphs.minusesEntries.items, graphs.plusesEntries.items, graphs.subscribersEntries.items);
+        });
+    });
+}
+
+function _renderUserPage(user, ratingEntries,
+            commentsEntries, postsEntries, hotPostsEntries, minusesEntries, plusesEntries, subscribersEntries)
+{
+//    user = get from server
+/*    user = {
+        'name': 'test',
+        'rating': 9000,
+        'commentsCount': 1,
+        'postsCount': 2,
+        'hotPostsCount': 3,
+        'plusesCount': 4,
+        'minusesCount': 5,
+        'lastUpdateTimestamp': 6,
+        'subscribersCount': 7,
+        'isRatingBan': true,
+        'updatingPeriod': 8,
+    }*/
+    username = user.name;
+
+    userPage.textContent = "";
+
+    var l4reverEasterEgg = {}
+
+    if (username == 'l4rever') {
+        l4reverEasterEgg = {
+            id: 'l4reverEasterEgg',
+            className: 'item',
+            style: 'display: none',
+            content: [
+                {
+                    className: 'key',
+                    content: 'Секунд',
+                },
+                {
+                    className: 'value',
+                    content: parseInt(Date.now() / 1000 - l4reverSignupTimestamp),
+                },
+                {
+                    tag: 'script',
+                    content: 'executeL4reverEasterEgg();',
+                },
+            ]
+        };
+    }
+
+    var userInfoDom = {
+        className: 'userInfo',
+        content: [
+            {
+                className: 'item',
+                content: [
+                    {
+                        className: 'key',
+                        content: 'Рейтинг',
+                    },
+                    {
+                        className: 'value',
+                        content: user.rating,
+                    },
+                ]
+            },
+            {
+                className: 'item',
+                content: [
+                    {
+                        className: 'key',
+                        content: 'Комментариев',
+                    },
+                    {
+                        className: 'value',
+                        content: user.commentsCount,
+                    },
+                ]
+            },
+            {
+                className: 'item',
+                content: [
+                    {
+                        className: 'key',
+                        content: 'Постов',
+                    },
+                    {
+                        className: 'value',
+                        content: user.postsCount,
+                    },
+                ]
+            },
+            {
+                className: 'item',
+                content: [
+                    {
+                        className: 'key',
+                        content: 'Горячих из них',
+                    },
+                    {
+                        className: 'value',
+                        content: user.hotPostsCount,
+                    },
+                ]
+            },
+            {
+                className: 'item',
+                content: [
+                    {
+                        className: 'key',
+                        content: 'плюсов',
+                    },
+                    {
+                        className: 'value',
+                        content: user.plusesCount,
+                    },
+                ]
+            },
+            {
+                className: 'item',
+                content: [
+                    {
+                        className: 'key',
+                        content: 'минусов',
+                    },
+                    {
+                        className: 'value',
+                        content: user.minusesCount,
+                    },
+                ]
+            },
+            {
+                className: 'item',
+                content: [
+                    {
+                        className: 'key',
+                        content: 'подписчиков',
+                    },
+                    {
+                        className: 'value',
+                        content: user.subscribersCount,
+                    },
+                ]
+            },
+            l4reverEasterEgg,
+        ]
+    };
+    function makeGraphDom(id, name) {
+        dom = {
+            id: id,
+            content: [
+                {
+                    tag: 'h3',
+                    content: name
+                },
+                {
+                    id: 'chartdiv_' + id,
+                    style: 'width: 100%; height: 500px;',
+                    content: 'test',
+                },
+            ]
+        }
+
+        return dom;
+    }
+    var ratingGraphDom = makeGraphDom('ratingGraphDom', 'рейтинг');
+    var commentsGraphDom = makeGraphDom('commentsGraphDom', 'комментарии');
+    var postsGraphDom = makeGraphDom('postsGraphDom', 'посты');
+    var hotPostsGraphDom = makeGraphDom('hotPostsGraphDom', 'горячие посты');
+    var plusesGraphDom = makeGraphDom('plusesGraphDom', 'плюсы');
+    var minusesGraphDom = makeGraphDom('minusesGraphDom', 'минусы');
+    var subscribersGraphDom = makeGraphDom('subscribersGraphDom', 'подписчики');
+
+    var dom = [
+        {
+            tag: 'h1',
+            content: username,
+        },
+        userInfoDom,
+        ratingGraphDom,
+        commentsGraphDom,
+        postsGraphDom,
+        hotPostsGraphDom,
+        plusesGraphDom,
+        minusesGraphDom,
+        subscribersGraphDom,
+    ];
+    generateDOM(dom, userPage);
+
+
+    function renderGraph(graph_id, data) {
+    console.log("GRAPH!!!!!" + JSON.stringify(data));
+        for(var i = 0; i < data.length; ++i) {
+            data[i].date = new Date(data[i].timestamp * 1000);
+        }
+        console.log("1GRAPH!!!!!" + JSON.stringify(data));
+
+        var chart = AmCharts.makeChart(graph_id, {
+            "type": "serial",
+            "theme": "light",
+            "marginRight": 80,
+            "autoMarginOffset": 20,
+            "marginTop": 7,
+            "dataProvider": data,
+            "valueAxes": [{
+                "axisAlpha": 0.2,
+                "dashLength": 1,
+                "position": "left"
+            }],
+            "mouseWheelZoomEnabled": true,
+            "graphs": [{
+                "id": "g1",
+                "balloonText": "[[value]]",
+                "bullet": "round",
+                "bulletBorderAlpha": 1,
+                "bulletColor": "#FFFFFF",
+                "hideBulletsCount": 50,
+                "title": "red line",
+                "valueField": "value",
+                "useLineColorForBulletBorder": true,
+                "balloon":{
+                    "drop":true
+                }
+            }],
+            "chartScrollbar": {
+                "autoGridCount": true,
+                "graph": "g1",
+                "scrollbarHeight": 40
+            },
+            "chartCursor": {
+               "limitToGraph":"g1"
+            },
+            "categoryField": "date",
+            "categoryAxis": {
+                "parseDates": true,
+                "axisColor": "#DADADA",
+                "dashLength": 1,
+                "minorGridEnabled": true
+            },
+            "export": {
+                "enabled": true
+            }
+        });
+
+        chart.addListener("rendered", zoomChart);
+        zoomChart();
+
+        // this method is called when chart is first inited as we listen for "rendered" event
+        function zoomChart() {
+            // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
+            chart.zoomToIndexes(data.length - 40, data.length - 1);
+        }
+    }
+
+    renderGraph('chartdiv_ratingGraphDom', ratingEntries);
+    renderGraph('chartdiv_commentsGraphDom', commentsEntries);
+    renderGraph('chartdiv_postsGraphDom', postsEntries);
+    renderGraph('chartdiv_hotPostsGraphDom', hotPostsEntries);
+    renderGraph('chartdiv_plusesGraphDom', plusesEntries);
+    renderGraph('chartdiv_minusesGraphDom', minusesEntries);
+    renderGraph('chartdiv_subscribersGraphDom', subscribersEntries);
+}
+</script>
+
+<input id="searchTextbox" placeholder="введи ник пикабушника" type="text" oninput="processSearchTextboxInput()">
+<div id="searchResultBox">
+
+</div>
+
+<div id="userPage">
+    <h1><center>Ну же, введи уже что-нибудь в эту форму.</center></h1>
+</div>
+{% endblock %}
