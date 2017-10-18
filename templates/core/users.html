@@ -269,7 +269,7 @@ function _renderUserPage(user, ratingEntries,
     function renderGraph(graph_id, data) {
     console.log("GRAPH!!!!!" + JSON.stringify(data));
         for(var i = 0; i < data.length; ++i) {
-            data[i].date = new Date(data[i].timestamp * 1000);
+            data[i].date = data[i].timestamp * 1000;  // new Date(data[i].timestamp * 1000);
         }
         console.log("1GRAPH!!!!!" + JSON.stringify(data));
 
