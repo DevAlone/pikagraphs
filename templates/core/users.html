@@ -281,8 +281,8 @@ function _renderUserPage(user, ratingEntries,
             "marginTop": 7,
             "dataProvider": data,
             "valueAxes": [{
-                "axisAlpha": 0.2,
-                "dashLength": 1,
+                /*"axisAlpha": 0.2,
+                "dashLength": 1,*/
                 "position": "left"
             }],
             "mouseWheelZoomEnabled": true,
@@ -310,6 +310,7 @@ function _renderUserPage(user, ratingEntries,
             },
             "categoryField": "date",
             "categoryAxis": {
+                "minPeriod": "mm",
                 "parseDates": true,
                 "axisColor": "#DADADA",
                 "dashLength": 1,
