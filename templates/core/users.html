@@ -64,17 +64,20 @@ function processSearchTextboxInput(currElement)
 
 function renderUserPage(username)
 {
+    showLoadingAnimation(userPage);
     searchResultBox.textContent = "";
     searchTextbox.value = "";
     getUserInfo(username, function (response) {
         if (response.error !== undefined) {
-            console.log('fuck');
+            console.log(JSON.stringify(response));
+            showError(userPage, 'Что-то пошло не так, возможно у вас закончились талоны на интернет');
             return;
         }
         user = response;
         getUserGraphs(username, function(response) {
             if (response.error !== undefined) {
-                console.log('fuck');
+                console.log(JSON.stringify(response));
+                showError(userPage, 'Что-то пошло не так, возможно у вас закончились талоны на интернет');
                 return;
             }
             graphs = response;

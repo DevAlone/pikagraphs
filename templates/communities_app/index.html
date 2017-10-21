@@ -49,16 +49,19 @@ function renderCommunityPage(urlName)
 {
     searchResultBox.textContent = "";
     searchTextbox.value = "";
+    showLoadingAnimation(communityPage);
 
     getCommunityInfo(urlName, function(response) {
         if(response.error !== undefined) {
-            console.log('fuck');
+            console.log(JSON.stringify(response));
+            showError(communityPage, 'Что-то пошло не так, возможно у вас закончились талоны на интернет');
             return;
         }
         community = response;
         getCommunityGraphs(urlName, function(response) {
             if (response.error !== undefined) {
-                console.log('fuck');
+                console.log(JSON.stringify(response));
+                showError(communityPage, 'Что-то пошло не так, возможно у вас закончились талоны на интернет');
                 return;
             }
             graphs = response;
