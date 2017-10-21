@@ -2,11 +2,14 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, UserHotPostsCountEntry, UserMinusesCountEntry, \
     UserPlusesCountEntry, UserPostsCountEntry, UserSubscribersCountEntry
+from communities_app.models import Community, CommunityCountersEntry
 
 
 def user_info(request, username):
+    username = username.lower()
     user = get_object_or_404(User, name=username)
-    data = {
+
+    return JsonResponse({
         'username': user.name,
         'rating': user.rating,
         'commentsCount': user.commentsCount,
@@ -18,9 +21,20 @@ def user_info(request, username):
         'lastUpdateTimestamp': user.lastUpdateTimestamp,
         'isRatingBan': user.isRatingBan,
         'updatingPeriod': user.updatingPeriod,
-    }
+    })
 
-    return JsonResponse(data)
+
+def community_info(request, urlName):
+    urlName = urlName.lower()
+    community = get_object_or_404(Community, urlName=urlName)
+
+    return JsonResponse({
+        'urlName': community.urlName,
+        'name': community.name,
+        'subscribersCount': community.subscribersCount,
+        'storiesCount': community.storiesCount,
+        'lastUpdateTimestamp': community.lastUpdateTimestamp,
+    })
 
 
 def user_graph(request, username, type):
@@ -28,7 +42,7 @@ def user_graph(request, username, type):
 
 
 def user_graphs(request, username):
-    data = {
+    return JsonResponse({
         'ratingEntries': _user_graph(username, 'rating'),
         'commentsEntries': _user_graph(username, 'comments'),
         'postsEntries': _user_graph(username, 'posts'),
@@ -36,12 +50,11 @@ def user_graphs(request, username):
         'minusesEntries': _user_graph(username, 'pluses'),
         'plusesEntries': _user_graph(username, 'minuses'),
         'subscribersEntries': _user_graph(username, 'subscribers'),
-    }
-
-    return JsonResponse(data)
+    })
 
 
 def _user_graph(username, type):
+    username = username.lower()
     user = get_object_or_404(User, name=username)
     Type = {
         'rating': UserRatingEntry,
@@ -62,3 +75,17 @@ def _user_graph(username, type):
     }
 
     return data
+
+
+def community_graphs(request, urlName):
+    urlName = urlName.lower()
+    community = get_object_or_404(Community, urlName=urlName)
+
+    return JsonResponse({
+        'items': [
+            {
+                'timestamp': item.timestamp,
+                'subscribersCount': item.subscribersCount,
+                'storiesCount': item.storiesCount,
+            } for item in CommunityCountersEntry.objects.filter(community=community)]
+    })

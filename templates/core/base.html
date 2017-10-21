@@ -24,6 +24,7 @@
     <script src="{% static 'core/js/fuse.min.js' %}"></script>
     <script src="{% static 'core/js/dom_generator.js' %}"></script>
     <script src="{% static 'core/js/api.js' %}"></script>
+    <script src="{% static 'core/js/main.js' %}"></script>
     
 	<link rel="stylesheet" type="text/css" href="{% static 'core/style.css' %}">
 
@@ -76,9 +77,6 @@
                 </div>
             </div>
         </div>
-        <div class="item">
-            <a href="#">Топы</a>
-        </div>
     </div>
 </div>
 <script>
@@ -108,6 +106,31 @@ $(".sidebar .menu .item .submenu[opened=true]").siblings('.hide_show_button').cl
     {% endblock %}
 </div>
 
-<p style="color: #fff">Pikagraphs is watching you.</p>
+<p class="_1984">Pikagraphs is watching you.</p>
+<div id="popup" style="display: none;">
+
+    <div id="popup_content">
+something
+    </div>
+    <div id="popup_close_button" onclick="hidePopup();">
+        X
+    </div>
+</div>
+<div id="scrollToTopElement" onclick="scrollToTop()" title="Go to top">Go to top</div>
+<script>
+SCROLL_TO_TOP_THRESHOLD = 100
+window.onscroll = function() {
+    if (document.body.scrollTop > SCROLL_TO_TOP_THRESHOLD || document.documentElement.scrollTop > SCROLL_TO_TOP_THRESHOLD) {
+        scrollToTopElement.style.display = "block";
+    } else {
+        scrollToTopElement.style.display = "none";
+    }
+}
+
+function scrollToTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
+</script>
 </body>
 </html>

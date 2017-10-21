@@ -112,17 +112,20 @@ class CommunitiesModule(Module):
 
     def worker(self):
         while True:
-            time.sleep(0.5)
+            try:
+                time.sleep(0.5)
 
-            item = None
-            item = self.communitiesQueue.get()
+                item = None
+                item = self.communitiesQueue.get()
 
-            if item is not None:
-                print('start processing community ' + item)
-                self.processCommunity(item)
-                print('end processing community ' + item)
+                if item is not None:
+                    print('start processing community ' + item)
+                    self.processCommunity(item)
+                    print('end processing community ' + item)
 
-                self.communitiesQueue.task_done()
+                    self.communitiesQueue.task_done()
+            except:
+                pass
 
     communitiesQueue = Queue()
     thread = None

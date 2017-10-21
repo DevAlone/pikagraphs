@@ -1,10 +1,9 @@
-
 function getUserInfo(username, responseHandler)
 {
     ajaxGet("/api/user_info/" + username + "/", function(result) {
         responseHandler(JSON.parse(result));
     }, function(status) {
-        return { error: status }
+        responseHandler({ error: status });
     });
 }
 
@@ -13,7 +12,7 @@ function getUserGraphs(username, responseHandler)
     ajaxGet("/api/user_graphs/" + username + "/", function(result) {
         responseHandler(JSON.parse(result));
     }, function(status) {
-        return { error: status }
+        responseHandler({ error: status });
     });
 }
 
@@ -22,7 +21,25 @@ function getUserGraph(username, graphType, responseHandler)
     ajaxGet("/api/user_graph/" + username + "/" + graphType + "/", function(result) {
         responseHandler(JSON.parse(result));
     }, function(status) {
-        return { error: status }
+        responseHandler({ error: status });
+    });
+}
+
+function getCommunityInfo(urlName, responseHandler)
+{
+    ajaxGet("/api/community_info/" + urlName + "/", function(result) {
+        responseHandler(JSON.parse(result));
+    }, function(status) {
+        responseHandler({ error: status });
+    });
+}
+
+function getCommunityGraphs(urlName, responseHandler)
+{
+    ajaxGet("/api/community_graphs/" + urlName + "/", function(result) {
+        responseHandler(JSON.parse(result));
+    }, function(status) {
+        responseHandler({ error: status });
     });
 }
 

@@ -1,11 +1,265 @@
 {% extends "core/base.html" %}
 
 {% load static %}
-{% block title %}communities{% endblock %}
+{% block title %}Сообщества{% endblock %}
+{% block head %}
+
+<script>
+    communities = [
+        {% for community in communities %}{urlName: "{{ community.urlName }}", name: "{{ community.name }}",}, {% endfor %}
+    ];
+</script>
+{% endblock %}
+
 {% block content %}
-{% for community in communities %}
-	<a href="{% url 'communities_app:community' community.urlName %}" alt="{{ community.urlName }}">{{ community.name }}</a><br>
-{% empty %}
-There are no communities here :(
-{% endfor %}
+<script>
+var communitiesSearchOptions = {
+  shouldSort: true,
+  threshold: 0.6,
+  location: 0,
+  distance: 100,
+  maxPatternLength: 32,
+  minMatchCharLength: 1,
+  keys: [
+    "name",
+    "urlName",
+  ]
+};
+var communitiesSearch = new Fuse(communities, communitiesSearchOptions);
+
+function processSearchTextboxInput(currElement)
+{
+    items = communitiesSearch.search(currElement.value);
+    searchResultBox.textContent = ""
+    for(var i = 0; i < 5 && i < items.length; ++i) {
+        elem = document.createElement('div');
+        nameEl = document.createElement('span');
+        nameEl.textContent = items[i].name;
+
+        elem.appendChild(nameEl);
+
+        elem.urlName = items[i].urlName;
+        elem.onclick = function() { renderCommunityPage(this.urlName); };
+        searchResultBox.appendChild(elem);
+    }
+}
+
+
+function renderCommunityPage(urlName)
+{
+    searchResultBox.textContent = "";
+    searchTextbox.value = "";
+
+    getCommunityInfo(urlName, function(response) {
+        if(response.error !== undefined) {
+            console.log('fuck');
+            return;
+        }
+        community = response;
+        getCommunityGraphs(urlName, function(response) {
+            if (response.error !== undefined) {
+                console.log('fuck');
+                return;
+            }
+            graphs = response;
+            _renderCommunityPage(community, graphs);
+        });
+    });
+}
+
+function _renderCommunityPage(community, graphEntries)
+{
+    communityPage.textContent = "";
+
+    var communityInfoDom = {
+        tag: 'table',
+        className: 'infoBlock',
+        content: [
+            {
+                tag: 'tr',
+                className: 'item',
+                content: [
+                    {
+                        tag: 'td',
+                        className: 'key',
+                        content: 'Подписчиков',
+                    },
+                    {
+                        tag: 'td',
+                        className: 'value',
+                        content: community.subscribersCount,
+                    },
+                ]
+            },
+            {
+                tag: 'tr',
+                className: 'item',
+                content: [
+                    {
+                        tag: 'td',
+                        className: 'key',
+                        content: 'Постов',
+                    },
+                    {
+                        tag: 'td',
+                        className: 'value',
+                        content: community.storiesCount,
+                    },
+                ]
+            },
+        ]
+    };
+    function makeGraphDom(id, name) {
+        dom = {
+            id: id,
+            content: [
+                {
+                    tag: 'h3',
+                    content: name
+                },
+                {
+                    id: 'chartdiv_' + id,
+                    style: 'width: 100%; height: 500px;',
+                    content: '',
+                },
+            ]
+        }
+
+        return dom;
+    }
+    var graphDom = makeGraphDom('graphDom', 'Красивый график');
+
+    var dom = [
+        {
+            tag: 'h1',
+            className: 'community_name_h1',
+            content: [
+                {
+                    tag: 'a',
+                    title: 'Посмотреть на пикабу',
+                    href: 'https://pikabu.ru/community/' + community.urlName,
+                    target: '_blank',
+                    content: community.name,
+                }
+            ],
+        },
+        communityInfoDom,
+        graphDom
+    ];
+    generateDOM(dom, communityPage);
+
+    function renderGraph(graph_id, data) {
+        console.log(JSON.stringify(data))
+        for(var i = 0; i < data.length; ++i) {
+            data[i].date = data[i].timestamp * 1000;
+        }
+
+        var chart = AmCharts.makeChart(graph_id, {
+            "type": "serial",
+            "theme": "light",
+            "legend": {
+                "useGraphSettings": true
+            },
+            "marginRight": 80,
+            "autoMarginOffset": 20,
+            "marginTop": 7,
+            "dataProvider": data,
+            "valueAxes": [{
+                "id":"v1",
+                "axisColor": "#FF6600",
+                "axisThickness": 2,
+                "axisAlpha": 1,
+                "position": "left"
+            }, {
+                "id":"v2",
+                "axisColor": "#FCD202",
+                "axisThickness": 2,
+                "axisAlpha": 1,
+                "position": "right"
+            },
+            ],
+            "mouseWheelZoomEnabled": false,
+            "graphs": [{
+                "id": "v1",
+                "balloonText": "[[value]]",
+                "bullet": "round",
+                "bulletBorderAlpha": 1,
+                "bulletColor": "#FFFFFF",
+                "hideBulletsCount": 50,
+                "title": "Подписчиков",
+                "valueField": "subscribersCount",
+                "useLineColorForBulletBorder": true,
+                "balloon":{
+                    "drop":true
+                }
+            },{
+                "id": "v2",
+                "balloonText": "[[value]]",
+                "bullet": "round",
+                "bulletBorderAlpha": 1,
+                "bulletColor": "#FFFFFF",
+                "hideBulletsCount": 50,
+                "title": "Постов",
+                "valueField": "storiesCount",
+                "useLineColorForBulletBorder": true,
+                "balloon":{
+                    "drop":true
+                }
+            },
+            ],
+            "chartScrollbar": {
+                "autoGridCount": true,
+                "graph": "v1",
+                "scrollbarHeight": 40
+            },
+            "chartCursor": {
+               "limitToGraph":"v1"
+            },
+            "categoryField": "date",
+            "categoryAxis": {
+                "minPeriod": "mm",
+                "parseDates": true,
+                "axisColor": "#DADADA",
+                "dashLength": 1,
+                "minorGridEnabled": true
+            },
+            "export": {
+                "enabled": true
+            }
+        });
+
+        chart.addListener("rendered", zoomChart);
+        zoomChart();
+        // this method is called when chart is first inited as we listen for "rendered" event
+        function zoomChart() {
+            // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
+            chart.zoomToIndexes(data.length - 40, data.length - 1);
+        }
+    }
+    renderGraph('chartdiv_graphDom', graphEntries.items);
+}
+
+
+function showAllCommunities()
+{
+    html = "<table class='popup_table'>";
+    for(var i = 0; i < communities.length; ++i) {
+        html += "<tr>";
+        html += "<td title='" + communities[i].urlName + "'>" + communities[i].name + "</td>";
+        html += "<td><a href='https://pikabu.ru/community/" + communities[i].urlName + "' target='_blank'>Смотреть на пикабу</a></td>";
+        html += "</tr>";
+    }
+    html += "</table>";
+    showPopup(html);
+}
+</script>
+<input id="searchTextbox" placeholder="введи название сообщества" type="text" oninput="processSearchTextboxInput(this)">
+<div id="searchResultBox">
+
+</div>
+<a class="showAllButton" href="#" onclick="showAllCommunities()">Посмотреть всех</a>
+
+<div id="communityPage">
+    <h1><center>Ну же, введи уже что-нибудь в эту форму.</center></h1>
+</div>
 {% endblock %}

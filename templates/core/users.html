@@ -20,7 +20,7 @@ function _l4rverEasterEggTimer() {
 }
 
 function _executeL4reverEasterEgg() {
-    l4reverEasterEgg.style = "display: block;";
+    l4reverEasterEgg.style = "display: table-row;";
     _l4rverEasterEggTimer();
 }
 
@@ -41,10 +41,11 @@ var userSearchOptions = {
 };
 var usersSearch = new Fuse(usernames, userSearchOptions);
 
-function processSearchTextboxInput()
+function processSearchTextboxInput(currElement)
 {
-    users = usersSearch.search(searchTextbox.value);
-    searchResultBox.textContent = ""
+    console.log(currElement.value);
+    users = usersSearch.search(currElement.value);
+    searchResultBox.textContent = "";
     for(var i = 0; i < 5 && i < users.length; ++i) {
         userEl = document.createElement('div');
         usernameEl = document.createElement('span');
@@ -60,8 +61,11 @@ function processSearchTextboxInput()
         searchResultBox.appendChild(userEl);
     }
 }
+
 function renderUserPage(username)
 {
+    searchResultBox.textContent = "";
+    searchTextbox.value = "";
     getUserInfo(username, function (response) {
         if (response.error !== undefined) {
             console.log('fuck');
@@ -84,21 +88,7 @@ function renderUserPage(username)
 function _renderUserPage(user, ratingEntries,
             commentsEntries, postsEntries, hotPostsEntries, minusesEntries, plusesEntries, subscribersEntries)
 {
-//    user = get from server
-/*    user = {
-        'name': 'test',
-        'rating': 9000,
-        'commentsCount': 1,
-        'postsCount': 2,
-        'hotPostsCount': 3,
-        'plusesCount': 4,
-        'minusesCount': 5,
-        'lastUpdateTimestamp': 6,
-        'subscribersCount': 7,
-        'isRatingBan': true,
-        'updatingPeriod': 8,
-    }*/
-    username = user.name;
+    username = user.username;
 
     userPage.textContent = "";
 
@@ -106,15 +96,18 @@ function _renderUserPage(user, ratingEntries,
 
     if (username == 'l4rever') {
         l4reverEasterEgg = {
+            tag: 'tr',
             id: 'l4reverEasterEgg',
             className: 'item',
             style: 'display: none',
             content: [
                 {
+                    tag: 'td',
                     className: 'key',
                     content: 'Секунд',
                 },
                 {
+                    tag: 'td',
                     className: 'value',
                     content: parseInt(Date.now() / 1000 - l4reverSignupTimestamp),
                 },
@@ -127,94 +120,116 @@ function _renderUserPage(user, ratingEntries,
     }
 
     var userInfoDom = {
-        className: 'userInfo',
+        tag: 'table',
+        className: 'infoBlock',
         content: [
             {
+                tag: 'tr',
                 className: 'item',
                 content: [
                     {
+                        tag: 'td',
                         className: 'key',
                         content: 'Рейтинг',
                     },
                     {
+                        tag: 'td',
                         className: 'value',
                         content: user.rating,
                     },
                 ]
             },
             {
+                tag: 'tr',
                 className: 'item',
                 content: [
                     {
+                        tag: 'td',
                         className: 'key',
                         content: 'Комментариев',
                     },
                     {
+                        tag: 'td',
                         className: 'value',
                         content: user.commentsCount,
                     },
                 ]
             },
             {
+                tag: 'tr',
                 className: 'item',
                 content: [
                     {
+                        tag: 'td',
                         className: 'key',
                         content: 'Постов',
                     },
                     {
+                        tag: 'td',
                         className: 'value',
                         content: user.postsCount,
                     },
                 ]
             },
             {
+                tag: 'tr',
                 className: 'item',
                 content: [
                     {
+                        tag: 'td',
                         className: 'key',
                         content: 'Горячих из них',
                     },
                     {
+                        tag: 'td',
                         className: 'value',
                         content: user.hotPostsCount,
                     },
                 ]
             },
             {
+                tag: 'tr',
                 className: 'item',
                 content: [
                     {
+                        tag: 'td',
                         className: 'key',
                         content: 'плюсов',
                     },
                     {
+                        tag: 'td',
                         className: 'value',
                         content: user.plusesCount,
                     },
                 ]
             },
             {
+                tag: 'tr',
                 className: 'item',
                 content: [
                     {
+                        tag: 'td',
                         className: 'key',
                         content: 'минусов',
                     },
                     {
+                        tag: 'td',
                         className: 'value',
                         content: user.minusesCount,
                     },
                 ]
             },
             {
+                tag: 'tr',
                 className: 'item',
                 content: [
                     {
+                        tag: 'td',
                         className: 'key',
                         content: 'подписчиков',
                     },
                     {
+                        tag: 'td',
                         className: 'value',
                         content: user.subscribersCount,
                     },
@@ -234,7 +249,7 @@ function _renderUserPage(user, ratingEntries,
                 {
                     id: 'chartdiv_' + id,
                     style: 'width: 100%; height: 500px;',
-                    content: 'test',
+                    content: '',
                 },
             ]
         }
@@ -252,7 +267,16 @@ function _renderUserPage(user, ratingEntries,
     var dom = [
         {
             tag: 'h1',
-            content: username,
+            className: 'username_h1',
+            content: [
+                {
+                    tag: 'a',
+                    title: 'Посмотреть на пикабу',
+                    href: 'https://pikabu.ru/profile/' + username,
+                    target: '_blank',
+                    content: username,
+                }
+            ],
         },
         userInfoDom,
         ratingGraphDom,
@@ -267,11 +291,9 @@ function _renderUserPage(user, ratingEntries,
 
 
     function renderGraph(graph_id, data) {
-    console.log("GRAPH!!!!!" + JSON.stringify(data));
         for(var i = 0; i < data.length; ++i) {
             data[i].date = data[i].timestamp * 1000;  // new Date(data[i].timestamp * 1000);
         }
-        console.log("1GRAPH!!!!!" + JSON.stringify(data));
 
         var chart = AmCharts.makeChart(graph_id, {
             "type": "serial",
@@ -285,7 +307,7 @@ function _renderUserPage(user, ratingEntries,
                 "dashLength": 1,*/
                 "position": "left"
             }],
-            "mouseWheelZoomEnabled": true,
+            "mouseWheelZoomEnabled": false,
             "graphs": [{
                 "id": "g1",
                 "balloonText": "[[value]]",
@@ -339,12 +361,27 @@ function _renderUserPage(user, ratingEntries,
     renderGraph('chartdiv_minusesGraphDom', minusesEntries);
     renderGraph('chartdiv_subscribersGraphDom', subscribersEntries);
 }
+
+function showAllUsers()
+{
+    html = "<table class='popup_table'>";
+    for(var i = 0; i < usernames.length; ++i) {
+        html += "<tr>";
+        html += "<td>" + usernames[i].name + "</td>";
+        html += "<td>" + usernames[i].rating + "</td>";
+        html += "<td><a href='https://pikabu.ru/profile/" + usernames[i].name + "' target='_blank'>Смотреть на пикабу</a></td>";
+        html += "</tr>";
+    }
+    html += "</table>";
+    showPopup(html);
+}
 </script>
 
-<input id="searchTextbox" placeholder="введи ник пикабушника" type="text" oninput="processSearchTextboxInput()">
+<input id="searchTextbox" placeholder="введи ник пикабушника" type="text" oninput="processSearchTextboxInput(this)">
 <div id="searchResultBox">
 
 </div>
+<a class="showAllButton" href="#" onclick="showAllUsers()">Посмотреть всех</a>
 
 <div id="userPage">
     <h1><center>Ну же, введи уже что-нибудь в эту форму.</center></h1>
