@@ -33,8 +33,8 @@ class CommunitiesModule(Module):
             community.urlName = community_url_name
             community.save()
 
-        if community.lastUpdateTimestamp + settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] >= precise_time.getTimestamp():
-            return
+        # if community.lastUpdateTimestamp + settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] >= precise_time.getTimestamp():
+        #     return
 
         self._logger.debug('start processing community {}'.format(community_url_name))
 
