@@ -20,7 +20,7 @@ function _showLoadingAnimation(elem)
 
 function showLoadingAnimation(elem)
 {
-    elem.innerHTML = '<h1 id="loading_element">Загрузка</div>';
+    elem.innerHTML = '<h1 id="loading_element">Загрузка...</div>';
 
     _showLoadingAnimation(elem);
 }

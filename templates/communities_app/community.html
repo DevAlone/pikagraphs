@@ -2,6 +2,13 @@
 
 {% load static %}
 {% block title %}{{ community.name }}{% endblock %}
+
+{% block head %}
+<script src="{% static 'core/vis.js/vis.js' %}"></script>
+<link href="{% static 'core/vis.js/vis-timeline-graph2d.min.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+
 {% block content %}
 <center><h2>{{ community.name }}</h2></center>
 

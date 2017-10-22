@@ -1,131 +1,66 @@
-from bot import api
 from bot.module import Module
 from bot import precise_time
+from bot.api.client import Client
 
 from communities_app.models import Community, CommunityCountersEntry
 from django.conf import settings
 
-import time
-import threading
-import json
-import os
-import sys
-import traceback
-from queue import Queue
-
-
 
 class CommunitiesModule(Module):
+    processPeriod = 10 * 60
+
     def __init__(self):
-        self.thread = threading.Thread(target=self.worker)
-        self.thread.start()
+        super(CommunitiesModule, self).__init__('communities_module')
 
-    def process(self):
-        if not self.communitiesQueue.empty():
-            print('communities queue is not empty')
-            return
+    async def _process(self):
+        with Client() as client:
+            for i in range(1, 10000):
+                res = await client.get_communities(page=i, sort='act', community_type='all')
+                communities = res['list']
+                if len(communities) == 0:
+                    break
 
-        print('processing communities file...')
+                for community in communities:
+                    self._processCommunity(community, client)
+
+    def _processCommunity(self, json_data, client):
+        community_url_name = json_data['link_name']
 
         try:
-            with open('communities') as f:
-                for line in f:
-                    if len(line.strip()) > 0:
-                        communityUrlName = line.strip().replace('\n', '').lower()
-
-                        try:
-                            community = Community.objects.get(urlName=communityUrlName)
-                        except Community.DoesNotExist:
-                            community = Community()
-                            community.urlName = communityUrlName
-                            community.save()
-
-                        # if it's time to update, put community in queue
-                        if community.lastUpdateTimestamp + \
-                                settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] < precise_time.getTimestamp():
-                            self.communitiesQueue.put(communityUrlName)
-                            community.lastUpdateTimestamp = precise_time.getTimestamp()
-        except:
-            print('file "communities" not found')
-
-    def processCommunity(self, communityUrlName):
-        try:
-            res = api.getCommunity(communityUrlName)
-            jsonData = json.loads(res.text)['response']
-            name = jsonData['name']
-            subscribersCount = jsonData['subscribers']
-            storiesCount = jsonData['stories']
-            name = jsonData['name']
-
-            try:
-                community = Community.objects.get(urlName=communityUrlName)
-            except Community.DoesNotExist:
-                community = Community()
-                community.urlName = communityUrlName
-                community.save()
-
-            wasDataChanged = False
-            if community.subscribersCount != subscribersCount \
-                    or community.storiesCount != storiesCount \
-                    or community.name != name:
-                wasDataChanged = True
-
-            community.name = name
-            community.subscribersCount = subscribersCount
-            community.storiesCount = storiesCount
-            community.lastUpdateTimestamp = precise_time.getTimestamp()
+            community = Community.objects.get(urlName=community_url_name)
+        except Community.DoesNotExist:
+            community = Community()
+            community.urlName = community_url_name
             community.save()
 
-            self.saveCountersIfLastIsNotTheSame(CommunityCountersEntry(
-                timestamp=community.lastUpdateTimestamp,
-                community=community,
-                subscribersCount=subscribersCount,
-                storiesCount=storiesCount
-            ))
+        if community.lastUpdateTimestamp + settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] >= precise_time.getTimestamp():
+            return
 
-            print('community {} is processed'.format(communityUrlName))
-        except Exception as ex:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print('Exception:', exc_type, fname, exc_tb.tb_lineno)
+        self._logger.debug('start processing community {}'.format(community_url_name))
 
-            print('Traceback: ', traceback.format_exc())
+        subscribers_count = json_data['subscribers']
+        stories_count = json_data['stories']
+        name = json_data['name']
 
-            print(ex.__repr__())
-            print('\t{0}'.format(ex.args))
-            print('res: ' + res.text)
-        except:
-            print('error in communities module')
+        community.name = name
+        community.subscribersCount = subscribers_count
+        community.storiesCount = stories_count
+        community.lastUpdateTimestamp = precise_time.getTimestamp()
+        community.save()
 
-    def saveCountersIfLastIsNotTheSame(self, model):
+        self._saveCountersIfLastIsNotTheSame(CommunityCountersEntry(
+            timestamp=community.lastUpdateTimestamp,
+            community=community,
+            subscribersCount=subscribers_count,
+            storiesCount=stories_count
+        ))
+
+        self._logger.debug('end processing community {}'.format(community_url_name))
+
+    def _saveCountersIfLastIsNotTheSame(self, model):
         lastEntry = type(model).objects.filter(community=model.community).last()
 
         if lastEntry is None \
                 or int(lastEntry.subscribersCount) != int(model.subscribersCount) \
                 or int(lastEntry.storiesCount) != int(model.storiesCount):
-            print('saving...', end='')
             model.save()
-        else:
-            print('not saving', end='')
-
-        print(' type ' + str(type(model)))
-
-    def worker(self):
-        while True:
-            try:
-                time.sleep(0.5)
-
-                item = None
-                item = self.communitiesQueue.get()
-
-                if item is not None:
-                    print('start processing community ' + item)
-                    self.processCommunity(item)
-                    print('end processing community ' + item)
-
-                    self.communitiesQueue.task_done()
-            except:
-                pass
-
-    communitiesQueue = Queue()
-    thread = None
