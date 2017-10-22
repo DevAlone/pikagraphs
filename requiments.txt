@@ -1,0 +1,3 @@
+aiohttp
+django
+psycopg2
