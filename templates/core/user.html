@@ -2,6 +2,12 @@
 
 {% load static %}
 {% block title %}{{ user.name }}{% endblock %}
+
+{% block head %}
+<script src="{% static 'core/vis.js/vis.js' %}"></script>
+<link href="{% static 'core/vis.js/vis-timeline-graph2d.min.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
 {% block content %}
 <center><h2>{{ user.name }}</h2></center>
 
