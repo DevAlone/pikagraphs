@@ -24,7 +24,7 @@ class CommunitiesModule(Module):
                     self._processCommunity(community, client)
 
     def _processCommunity(self, json_data, client):
-        community_url_name = json_data['link_name']
+        community_url_name = json_data['link_name'].lower()
 
         try:
             community = Community.objects.get(urlName=community_url_name)
