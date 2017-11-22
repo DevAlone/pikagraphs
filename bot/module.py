@@ -2,7 +2,7 @@ import sys
 import asyncio
 import logging
 
-from .pikabot_graphs import settings
+from django.conf import settings
 
 
 class Module:
