@@ -11,3 +11,4 @@ db.sqlite3*
 bot.log
 start_bot.sh
 logs
+logs/*

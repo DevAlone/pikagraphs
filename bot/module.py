@@ -2,6 +2,9 @@ import sys
 import asyncio
 import logging
 
+from .pikabot_graphs import settings
+
+
 class Module:
     _logger = None
     processPeriod = 1
@@ -14,14 +17,16 @@ class Module:
     def __init__(self, module_name):
         self._logger = logging.getLogger('pikabot_graphs/{}'.format(module_name))
         self._logger.setLevel(logging.DEBUG)
-        debug_file_handler = logging.FileHandler('logs/{}.debug.log'.format(module_name))
-        debug_file_handler.setLevel(logging.DEBUG)
+        if settings.DEBUG:
+            debug_file_handler = logging.FileHandler('logs/{}.debug.log'.format(module_name))
+            debug_file_handler.setLevel(logging.DEBUG)
         error_file_handler = logging.FileHandler('logs/{}.error.log'.format(module_name))
         error_file_handler.setLevel(logging.ERROR)
         info_file_handler = logging.FileHandler('logs/{}.log'.format(module_name))
         info_file_handler.setLevel(logging.INFO)
 
-        self._logger.addHandler(debug_file_handler)
+        if settings.DEBUG:
+            self._logger.addHandler(debug_file_handler)
         self._logger.addHandler(error_file_handler)
         self._logger.addHandler(info_file_handler)
 
