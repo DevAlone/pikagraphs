@@ -3,15 +3,6 @@
 {% load static %}
 {% block title %}Пользователи{% endblock %}
 {% block head %}
-
-<script>
-    usernames = [
-        {% for user in users %}{name: "{{ user.name }}", rating: {{ user.rating }}}, {% endfor %}
-    ];
-</script>
-{% endblock %}
-
-{% block content %}
 <script>
 var l4reverSignupTimestamp = 1274536587;
 function _l4rverEasterEggTimer() {
@@ -28,56 +19,21 @@ function executeL4reverEasterEgg() {
     setTimeout(_executeL4reverEasterEgg, 30 * 1000);
 }
 
-var userSearchOptions = {
-  shouldSort: true,
-  threshold: 0.6,
-  location: 0,
-  distance: 100,
-  maxPatternLength: 32,
-  minMatchCharLength: 1,
-  keys: [
-    "name",
-  ]
-};
-var usersSearch = new Fuse(usernames, userSearchOptions);
-
-function processSearchTextboxInput(currElement)
-{
-    console.log(currElement.value);
-    users = usersSearch.search(currElement.value);
-    searchResultBox.textContent = "";
-    for(var i = 0; i < 5 && i < users.length; ++i) {
-        userEl = document.createElement('div');
-        usernameEl = document.createElement('span');
-        usernameEl.textContent = users[i].name;
-        ratingEl = document.createElement('span');
-        ratingEl.setAttribute('class', 'rating');
-        ratingEl.textContent = users[i].rating;
-
-        userEl.appendChild(usernameEl);
-        userEl.appendChild(ratingEl);
-        userEl.username = users[i].name;
-        userEl.onclick = function() { renderUserPage(this.username); };
-        searchResultBox.appendChild(userEl);
-    }
-}
-
 function renderUserPage(username)
 {
-    showLoadingAnimation(userPage);
-    searchResultBox.textContent = "";
-    searchTextbox.value = "";
+    showPopup('<h1 id="loading_element">Загрузка...</h1>');
+
     getUserInfo(username, function (response) {
         if (response.error !== undefined) {
             console.log(JSON.stringify(response));
-            showError(userPage, 'Что-то пошло не так, возможно у вас закончились талоны на интернет');
+            showPopup('Что-то пошло не так, возможно у вас закончились талоны на интернет');
             return;
         }
-        user = response;
+        var user = response;
         getUserGraphs(username, function(response) {
             if (response.error !== undefined) {
                 console.log(JSON.stringify(response));
-                showError(userPage, 'Что-то пошло не так, возможно у вас закончились талоны на интернет');
+                showPopup('Что-то пошло не так, возможно у вас закончились талоны на интернет');
                 return;
             }
             graphs = response;
@@ -92,8 +48,6 @@ function _renderUserPage(user, ratingEntries,
             commentsEntries, postsEntries, hotPostsEntries, minusesEntries, plusesEntries, subscribersEntries)
 {
     username = user.username;
-
-    userPage.textContent = "";
 
     var l4reverEasterEgg = {}
 
@@ -281,6 +235,12 @@ function _renderUserPage(user, ratingEntries,
                 }
             ],
         },
+        {
+            tag: 'div',
+            className: 'userInfoBlock',
+            style: user.info.length > 0 ? '': 'display: none',
+            content: user.info,
+        },
         userInfoDom,
         ratingGraphDom,
         commentsGraphDom,
@@ -290,8 +250,10 @@ function _renderUserPage(user, ratingEntries,
         minusesGraphDom,
         subscribersGraphDom,
     ];
-    generateDOM(dom, userPage);
 
+    var resultElement = document.createElement('div');
+    generateDOM(dom, resultElement);
+    showPopup(resultElement);
 
     function renderGraph(graph_id, data) {
         for(var i = 0; i < data.length; ++i) {
@@ -365,28 +327,114 @@ function _renderUserPage(user, ratingEntries,
     renderGraph('chartdiv_subscribersGraphDom', subscribersEntries);
 }
 
-function showAllUsers()
-{
-    html = "<table class='popup_table'>";
-    for(var i = 0; i < usernames.length; ++i) {
-        html += "<tr>";
-        html += "<td>" + usernames[i].name + "</td>";
-        html += "<td>" + usernames[i].rating + "</td>";
-        html += "<td><a href='https://pikabu.ru/profile/" + usernames[i].name + "' target='_blank'>Смотреть на пикабу</a></td>";
-        html += "</tr>";
+var userIsTyping = false;
+var searchTextBoxPreviousVal = "";
+function processSearchTextBox() {
+    if (searchTextBoxPreviousVal != searchTextbox.value && !userIsTyping) {
+        resetUsersTape();
+        searchTextBoxPreviousVal = searchTextbox.value;
     }
-    html += "</table>";
-    showPopup(html);
+    userIsTyping = false;
+    setTimeout(processSearchTextBox, 500);
 }
-</script>
 
-<input id="searchTextbox" placeholder="введи ник пикабушника" type="text" oninput="processSearchTextboxInput(this)">
+var limit = 25;
+var offset = 0;
+var hasMore = true;
+
+function clearUsersTape() {
+    usersTape.innerHTML = "";
+    offset = 0;
+    hasMore = true;
+}
+
+function resetUsersTape() {
+    clearUsersTape();
+
+    $("#usersTape")
+        .accordion({
+            header: "> div > h3",
+            active: false,
+            collapsible: true
+        })
+        .sortable({
+            axis: "y",
+            handle: "h3",
+            stop: function( event, ui ) {
+            // IE doesn't register the blur when sorting
+            // so trigger focusout handlers to remove .ui-state-focus
+            ui.item.children( "h3" ).triggerHandler( "focusout" );
+
+            // Refresh accordion to handle new order
+            $( this ).accordion( "refresh" );
+        }
+    });
+
+
+    loadMoreUsers();
+}
+
+function addUserToTape(user) {
+    var html = '<div class="group"><h3 class="userTapeItemHeader">';
+    html += '<img class="userTapeItemImage" src="' + user.avatarUrl + '" width="25px">';
+    html += '<span class="userTapeItemUsername">' + user.username + '</span> - ' + user.rating;
+    html += '</h3>';
+    html += '<div class="userTapeItemDiv">';
+    if (user.info) {
+        html += '<p>';
+        html += user.info.length > 0 ? user.info : "Какой-то ноунейм";
+        html += "</p>";
+    }
+    html += '<a href="#' + user.username + '" onclick="renderUserPage(\'' + user.username + '\');">Открыть красивые графики</a>';
+    html += "</div></div>";
+    $('#usersTape').append(html);
+    $('#usersTape').accordion("refresh");
+}
+
+function loadMoreUsers() {
+    if (hasMore) {
+        getUsers(limit, offset, searchTextbox.value, function(users) {
+            for (var i = 0; i < users.data.length; ++i) {
+                user = users.data[i];
+                addUserToTape(user);
+            }
+            offset += limit;
+            hasMore = users.hasMore;
+            if ($('#usersTape').height() < screen.height)
+                setTimeout(loadMoreUsers, 50);
+        });
+    }
+}
+
+$(window).scroll(function() {
+    if($(window).scrollTop() == $(document).height() - $(window).height()) {
+        loadMoreUsers();
+    }
+});
+
+$(document).ready(function(){
+    searchTextbox.value = "";
+    resetUsersTape();
+    processSearchTextBox();
+    if (window.location.hash.length > 1) {
+        var username = window.location.hash.substring(1);
+        renderUserPage(username);
+    }
+})
+</script>
+{% endblock %}
+
+{% block content %}
+
+<input id="searchTextbox" placeholder="введи ник пикабушника" type="text" oninput="userIsTyping = true;">
 <div id="searchResultBox">
 
 </div>
-<a class="showAllButton" href="#" onclick="showAllUsers()">Посмотреть всех</a>
 
 <div id="userPage">
-    <h1><center>Ну же, введи уже что-нибудь в эту форму.</center></h1>
+    <!--<h1><center>Ну же, введи уже что-нибудь в эту форму.</center></h1>-->
+    <div id="usersTape">
+        Загрузка...
+    </div>
 </div>
 {% endblock %}

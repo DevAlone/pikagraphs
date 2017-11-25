@@ -80,6 +80,10 @@ class UsersModule(Module):
         self._calculate_user_updating_period(user, was_data_changed)
 
         user.rating = user_data['rating']
+        if user_data['avatar']:
+            user.avatarUrl = user_data['avatar']
+        else:
+            user.avatarUrl = "https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png"
         user.commentsCount = user_data['comments_count']
         user.postsCount = user_data['stories_count']
         user.hotPostsCount = user_data['stories_hot_count']

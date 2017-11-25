@@ -3,7 +3,6 @@ function createElement(tagName, text, attributes, events)
     var element = document.createElement(tagName);
     element.textContent = text;
 
-    console.log(attributes);
     attributes.keys.forEach(function(k){
         element[k] = attributes.values[k];
     });

@@ -5,23 +5,36 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, UserHotPo
 from communities_app.models import Community, CommunityCountersEntry
 
 
+def users(request):
+    limit = int(request.GET.get('limit', 10))
+    if limit < 1 or limit > 100:
+        limit = 10
+
+    offset = int(request.GET.get('offset', 0))
+    if offset < 0:
+        offset = 0
+
+    search_text = request.GET.get('search', "").lower()
+    print('search' + search_text)
+
+    users = User.objects.all().order_by('-rating')
+
+    if search_text:
+        users = users.filter(name__contains=search_text)
+
+    users = users[offset : offset + limit]
+
+    return JsonResponse({
+        'hasMore': bool(users),
+        'data': [serialize_user(user) for user in users],
+    })
+
+
 def user_info(request, username):
     username = username.lower()
     user = get_object_or_404(User, name=username)
 
-    return JsonResponse({
-        'username': user.name,
-        'rating': user.rating,
-        'commentsCount': user.commentsCount,
-        'postsCount': user.postsCount,
-        'hotPostsCount': user.hotPostsCount,
-        'plusesCount': user.plusesCount,
-        'minusesCount': user.minusesCount,
-        'subscribersCount': user.subscribersCount,
-        'lastUpdateTimestamp': user.lastUpdateTimestamp,
-        'isRatingBan': user.isRatingBan,
-        'updatingPeriod': user.updatingPeriod,
-    })
+    return JsonResponse(serialize_user(user))
 
 
 def community_info(request, urlName):
@@ -89,3 +102,21 @@ def community_graphs(request, urlName):
                 'storiesCount': item.storiesCount,
             } for item in CommunityCountersEntry.objects.filter(community=community)]
     })
+
+
+def serialize_user(user : User):
+    return {
+        'username': user.name,
+        'avatarUrl': user.avatarUrl,
+        'info': user.info,
+        'rating': user.rating,
+        'commentsCount': user.commentsCount,
+        'postsCount': user.postsCount,
+        'hotPostsCount': user.hotPostsCount,
+        'plusesCount': user.plusesCount,
+        'minusesCount': user.minusesCount,
+        'subscribersCount': user.subscribersCount,
+        'lastUpdateTimestamp': user.lastUpdateTimestamp,
+        'isRatingBan': user.isRatingBan,
+        'updatingPeriod': user.updatingPeriod,
+    }

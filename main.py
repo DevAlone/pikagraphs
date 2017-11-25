@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     modules = [
         UsersModule(),
-        CommunitiesModule()
+        CommunitiesModule(),
     ]
 
     while True:

@@ -142,7 +142,8 @@ h1 {
     height: 100%;
     top: 0;
     left: 10%;
-    background: rgb(255, 255, 255);
+    /*background: rgb(255, 255, 255);*/
+    background: url('img/white_pattern.png');
     z-index: 1000;
     padding: 10px 20px;
     overflow:auto;
@@ -230,6 +231,13 @@ h1 {
 
 }
 
+.userInfoBlock {
+    background: #fff;
+    border: 1px solid #aaa;
+    padding: 10px;
+    margin: 10px 0;
+}
+
 .username_h1 {
 
 }
@@ -244,6 +252,45 @@ h1 {
 .community_name_h1 a:hover {
     color: blue;
     cursor: pointer;
+}
+
+.userTapeItemHeader {
+    /*background: url('img/blue_pattern.gif');*/
+    /*background-color: #fff;*/
+    border-radius: 5px;
+    transition: 1s;
+}
+
+.userTapeItemHeader:hover {
+
+}
+.userTapeItemHeader:after {
+    content : "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: url('img/blue_pattern.gif');
+    width: 100%;
+    height: 100%;
+    opacity : 0;
+    z-index: -1;
+    transition: 0.25s;
+}
+.userTapeItemHeader:hover:after {
+    opacity: 1;
+}
+
+.userTapeItemDiv {
+    /*background: white;*/
+}
+
+.userTapeItemImage {
+    margin: 0 10px;
+}
+
+.userTapeItemUsername {
+
 }
 
 /* mobile */

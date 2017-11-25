@@ -1,3 +1,12 @@
+function getUsers(limit, offset, searchText, responseHandler)
+{
+    ajaxGet("/api/users/?limit=" + limit + "&offset=" + offset + "&search=" + searchText, function(result) {
+        responseHandler(JSON.parse(result));
+    }, function(status) {
+        responseHandler({ error: status });
+    });
+}
+
 function getUserInfo(username, responseHandler)
 {
     ajaxGet("/api/user_info/" + username + "/", function(result) {

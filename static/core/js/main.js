@@ -1,6 +1,11 @@
 function showPopup(html)
 {
-    popup_content.innerHTML = html;
+    popup_content.innerHTML = "";
+    if (typeof html == "string") {
+        popup_content.innerHTML = html;
+    } else {
+        popup_content.appendChild(html);
+    }
     popup.setAttribute('style','display: block');
     document.body.style.overflow = "hidden"
 }
@@ -20,7 +25,7 @@ function _showLoadingAnimation(elem)
 
 function showLoadingAnimation(elem)
 {
-    elem.innerHTML = '<h1 id="loading_element">Загрузка...</div>';
+    elem.innerHTML = '<h1 id="loading_element">Загрузка...</h1>';
 
     _showLoadingAnimation(elem);
 }

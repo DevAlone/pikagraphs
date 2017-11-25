@@ -3,6 +3,8 @@ from django.db import models
 
 class User(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    info = models.CharField(max_length=1024, default="")
+    avatarUrl = models.URLField(default="https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png")
     rating = models.IntegerField(default=0)
     commentsCount = models.IntegerField(default=0)
     postsCount = models.IntegerField(default=0)
