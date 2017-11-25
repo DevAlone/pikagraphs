@@ -16,10 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
-# from django.contrib import admin
+from django.contrib import admin
 
 urlpatterns = [
-    #    url(r'^admin/', admin.site.urls),
+    url(r'^very_secret_admin_page_nobody_knows_this_address/', admin.site.urls),
     url(r'^', include('core.urls')),
     url(r'^communities/', include('communities_app.urls')),
     url(r'^', include('fakeadmin.urls')),

@@ -376,6 +376,18 @@ function resetUsersTape() {
     loadMoreUsers();
 }
 
+function editUserInfo(username) {
+    var info = prompt("Коротко о " + username + ": ");
+    editUserInfoField(username, info, function(resp) {
+        if (resp.status == 'ok') {
+            $('#userTapeItemInfo_' + username).text(resp.info);
+        } else {
+            alert("Ошибка!!!");
+            console.log(resp);
+        }
+    });
+}
+
 function addUserToTape(user) {
     var html = '<div class="group"><h3 class="userTapeItemHeader">';
     html += '<img class="userTapeItemImage" src="' + user.avatarUrl + '" width="25px">';
@@ -386,13 +398,17 @@ function addUserToTape(user) {
 
     html += '</h3>';
     html += '<div class="userTapeItemDiv">';
-    if (user.info) {
-        html += '<p>';
-        html += user.info.length > 0 ? user.info : "Какой-то ноунейм";
-        html += "</p>";
-    }
+
+    html += '<p id="userTapeItemInfo_' + user.username + '">';
+    html += user.info.length > 0 ? user.info : "Какой-то ноунейм";
+    html += "</p>";
+
     html += '<p><a href="#' + user.username + '" onclick="renderUserPage(\'' + user.username + '\');">Открыть красивые графики</a></p>';
     html += '<p><a title="Посмотреть на пикабу" href="https://pikabu.ru/profile/' + user.username + '" target="_blank">Посмотреть на пикабу</a></p>';
+{% if perms.core.edit_info_field %}
+    html += '<p><button onclick="editUserInfo(\'' + user.username + '\')">Редактировать</button></p>';
+{% endif %}
+
     html += "</div></div>";
     $('#usersTape').append(html);
     $('#usersTape').accordion("refresh");
@@ -450,8 +466,10 @@ $(document).ready(function(){
     searchTextbox.value = "";
     resetUsersTape();
     processSearchTextBox();
-
 })
+
+
+
 </script>
 {% endblock %}
 

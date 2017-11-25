@@ -8,6 +8,9 @@ urlpatterns = [
 
     url(r'^user_info/(?P<username>[a-zA-Z0-9\._]{1,20})/$', views.user_info, name='user_info'),
 
+    url(r'^edit_user_info_field/(?P<username>[a-zA-Z0-9\._]{1,20})/$', views.edit_user_info_field,
+        name="edit_user_info_field"),
+
     url(r'^community_info/(?P<urlName>[a-zA-Z0-9\._]{1,20})/$', views.community_info, name='community_info'),
 
     url(r'^user_graph/(?P<username>[a-zA-Z0-9\._]{1,20})/(?P<type>[a-zA-Z0-9\._]{1,20})/$', views.user_graph,

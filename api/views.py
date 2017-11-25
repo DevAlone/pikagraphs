@@ -1,8 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
+from django.contrib.auth.decorators import permission_required
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, UserHotPostsCountEntry, UserMinusesCountEntry, \
     UserPlusesCountEntry, UserPostsCountEntry, UserSubscribersCountEntry
 from communities_app.models import Community, CommunityCountersEntry
+
+import json
 
 
 def users(request):
@@ -44,6 +47,28 @@ def user_info(request, username):
     user = get_object_or_404(User, name=username)
 
     return JsonResponse(serialize_user(user))
+
+
+def edit_user_info_field(request, username):
+    if not request.user.is_authenticated() or not request.user.has_perm('core.edit_info_field'):
+        return JsonResponse({
+            'error': "You don't have permissions to do that",
+        })
+
+    if request.method == 'POST' and request.is_ajax():
+        data = request.body.decode('utf8')
+        user = get_object_or_404(User, name=username)
+        user.info = data
+        user.save()
+
+        return JsonResponse({
+            'status': 'ok',
+            'info': user.info,
+        })
+
+    return JsonResponse({
+        'error': 'Something went wrong',
+    })
 
 
 def community_info(request, urlName):

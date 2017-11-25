@@ -21,6 +21,11 @@ class User(models.Model):
 
     __repr__ = __str__
 
+    class Meta:
+        permissions = (
+            ("edit_info_field", "Can edit info field"),
+        )
+
 
 class UserRatingEntry(models.Model):
     timestamp = models.BigIntegerField()
