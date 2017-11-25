@@ -15,9 +15,17 @@ def users(request):
         offset = 0
 
     search_text = request.GET.get('search', "").lower()
-    print('search' + search_text)
+    sort_by_field = request.GET.get('sort_by', "")
 
-    users = User.objects.all().order_by('-rating')
+    if sort_by_field not in [
+        'rating',
+        'subscribersCount',
+    ]:
+        sort_by_field = 'rating'
+
+    reverse_sort = request.GET.get('reverse_sort', "true").lower()
+
+    users = User.objects.all().order_by(('-' if reverse_sort == "true" else '') + sort_by_field)
 
     if search_text:
         users = users.filter(name__contains=search_text)
@@ -27,6 +35,7 @@ def users(request):
     return JsonResponse({
         'hasMore': bool(users),
         'data': [serialize_user(user) for user in users],
+        'sortedByField': sort_by_field,
     })
 
 

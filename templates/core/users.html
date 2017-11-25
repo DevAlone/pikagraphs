@@ -340,6 +340,8 @@ function processSearchTextBox() {
 
 var limit = 25;
 var offset = 0;
+var sortBy = "";
+var reverseSort = true;
 var hasMore = true;
 
 function clearUsersTape() {
@@ -377,7 +379,11 @@ function resetUsersTape() {
 function addUserToTape(user) {
     var html = '<div class="group"><h3 class="userTapeItemHeader">';
     html += '<img class="userTapeItemImage" src="' + user.avatarUrl + '" width="25px">';
-    html += '<span class="userTapeItemUsername">' + user.username + '</span> - ' + user.rating;
+    html += '<span class="userTapeItemUsername">' + user.username + '</span> ';
+
+    var sortByFieldValue = user[sortBy];
+    html += '<span class="userTapeItem' + sortByFieldValue + '">' + sortByFieldValue + '</span>';
+
     html += '</h3>';
     html += '<div class="userTapeItemDiv">';
     if (user.info) {
@@ -393,7 +399,8 @@ function addUserToTape(user) {
 
 function loadMoreUsers() {
     if (hasMore) {
-        getUsers(limit, offset, searchTextbox.value, function(users) {
+        getUsers(limit, offset, searchTextbox.value, sortBy, reverseSort, function(users) {
+            sortBy = users.sortedByField;
             for (var i = 0; i < users.data.length; ++i) {
                 user = users.data[i];
                 addUserToTape(user);
@@ -412,14 +419,37 @@ $(window).scroll(function() {
     }
 });
 
+function initSortLinks() {
+    sortByRatingLink.href = "?sort_by=rating&reverse_sort=" + (
+        sortBy == "rating" ? !reverseSort : reverseSort
+    );
+    if (sortBy == "rating")
+        sortByRatingLink.classList.add('active');
+
+    sortBySubscribersCountLink.href = "?sort_by=subscribersCount&reverse_sort=" + (
+        sortBy == "subscribersCount" ? !reverseSort : reverseSort
+    );
+    if (sortBy == "subscribersCount")
+        sortBySubscribersCountLink.classList.add('active');
+}
+
 $(document).ready(function(){
-    searchTextbox.value = "";
-    resetUsersTape();
-    processSearchTextBox();
+    var currentUrl = new URL(window.location.href);
+    sortBy = currentUrl.searchParams.get("sort_by");
+    if (!sortBy || sortBy.length < 1)
+        sortBy = "rating";
+
+    reverseSort = currentUrl.searchParams.get("reverse_sort") != "false";
+    initSortLinks();
+
     if (window.location.hash.length > 1) {
         var username = window.location.hash.substring(1);
         renderUserPage(username);
     }
+    searchTextbox.value = "";
+    resetUsersTape();
+    processSearchTextBox();
+
 })
 </script>
 {% endblock %}
@@ -427,8 +457,10 @@ $(document).ready(function(){
 {% block content %}
 
 <input id="searchTextbox" placeholder="введи ник пикабушника" type="text" oninput="userIsTyping = true;">
-<div id="searchResultBox">
-
+<div class="userSortBox">
+    <span>Сортировать по: </span>
+    <a id="sortByRatingLink" href="?sort_by=rating">рейтингу</a>
+    <a id="sortBySubscribersCountLink" href="?sort_by=subscribersCount">подписчикам</a>
 </div>
 
 <div id="userPage">

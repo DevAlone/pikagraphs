@@ -1,6 +1,8 @@
-function getUsers(limit, offset, searchText, responseHandler)
+function getUsers(limit, offset, searchText, sortBy, reverseSort, responseHandler)
 {
-    ajaxGet("/api/users/?limit=" + limit + "&offset=" + offset + "&search=" + searchText, function(result) {
+    var url = "/api/users/?limit=" + limit + "&offset=" + offset + "&search=" + searchText + "&sort_by=" + sortBy;
+    url += "&reverse_sort=" + reverseSort;
+    ajaxGet(url, function(result) {
         responseHandler(JSON.parse(result));
     }, function(status) {
         responseHandler({ error: status });

@@ -293,6 +293,16 @@ h1 {
 
 }
 
+.userSortBox {
+    margin: 10px 5px;
+}
+.userSortBox a {
+    text-decoration: none;
+}
+.userSortBox .active {
+    border-bottom: 1px solid #009;
+}
+
 /* mobile */
 
 @media only screen and (max-width: 900px) {
