@@ -391,7 +391,8 @@ function addUserToTape(user) {
         html += user.info.length > 0 ? user.info : "Какой-то ноунейм";
         html += "</p>";
     }
-    html += '<a href="#' + user.username + '" onclick="renderUserPage(\'' + user.username + '\');">Открыть красивые графики</a>';
+    html += '<p><a href="#' + user.username + '" onclick="renderUserPage(\'' + user.username + '\');">Открыть красивые графики</a></p>';
+    html += '<p><a title="Посмотреть на пикабу" href="https://pikabu.ru/profile/' + user.username + '" target="_blank">Посмотреть на пикабу</a></p>';
     html += "</div></div>";
     $('#usersTape').append(html);
     $('#usersTape').accordion("refresh");
