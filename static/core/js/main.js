@@ -12,7 +12,8 @@ function showPopup(html)
 function hidePopup()
 {
     popup.setAttribute('style','display: none');
-    document.body.style.overflow = "auto"
+    document.body.style.overflow = "auto";
+    window.location.hash = "#";
 }
 
 function _showLoadingAnimation(elem)
