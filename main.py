@@ -9,6 +9,14 @@ from bot.pikabu_new_year_18_game_module import PikabuNewYear18GameModule
 
 import asyncio
 
+
+async def pikabu_new_year_18_game_module_executor():
+    # pretty bad solution
+    module = PikabuNewYear18GameModule()
+    while True:
+        await module.process()
+        await asyncio.sleep(module.processPeriod)
+
 if __name__ == "__main__":
     precise_time.init()
     loop = asyncio.get_event_loop()
@@ -16,8 +24,9 @@ if __name__ == "__main__":
     modules = [
         UsersModule(),
         CommunitiesModule(),
-        PikabuNewYear18GameModule(),
     ]
+
+    loop.create_task(pikabu_new_year_18_game_module_executor())
 
     while True:
         tasks = []
