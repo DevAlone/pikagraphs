@@ -20,7 +20,10 @@ class PikabuNewYear18GameModule(Module):
         self._logger.debug("pikabu_new_year_18_game_module is processing...")
         TOP_URL = "https://pikabu.ru/page/newyear2018/api/controller.php?action=get_top"
         async with aiohttp.ClientSession() as session:
-            async with session.get(TOP_URL) as response:
+            async with session.get("http://d3d.info:55555/get/best/http/proxy/") as resp:
+                proxy_url = await resp.text()
+
+            async with session.get(TOP_URL, proxy=proxy_url) as response:
                 json_response = json.loads(await response.text())
                 data = json_response["data"]
                 scoreboard = ScoreBoardEntry(parse_timestamp=int(time.time()))
