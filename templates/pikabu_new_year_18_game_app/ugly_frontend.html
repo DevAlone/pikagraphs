@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+{% block title %}Новогодняя игра 2018{% endblock %}
+{% block head %}
+<style>
+    #pikabuNewYear18GameApp table {
+        width: 100%;
+    }
+    #pikabuNewYear18GameApp tr {
+
+    }
+    #pikabuNewYear18GameApp tr td{
+        height: 50px;
+    }
+    #pikabuNewYear18GameApp tr img {
+        height: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="pikabuNewYear18GameApp">
+    <h1><center>Happy new year!</center></h1>
+    {% for score_board in score_boards %}
+    <h3 id="parseTimestamp_{{ score_board.pk }}">{{ score_board.parse_timestamp }}</h3>
+    <script>
+        parseTimestamp_{{ score_board.pk }}.textContent = new Date({{ score_board.parse_timestamp }} * 1000);
+    </script>
+    <table>
+        <thead>
+        <tr>
+            <td>username</td>
+            <td>avatar_url</td>
+            <td>score</td>
+            <td>date</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for score_entry in score_board.scoreentry_set.all %}
+        <tr>
+            <td>{{ score_entry.username }}</td>
+            <td><img src="{{ score_entry.avatar_url }}"></td>
+            <td>{{ score_entry.score }}</td>
+            <td>{{ score_entry.date }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}
+</div>
+{% endblock %}

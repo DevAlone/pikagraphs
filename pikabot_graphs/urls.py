@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^very_secret_admin_page_nobody_knows_this_address/', admin.site.urls),
     url(r'^', include('core.urls')),
     url(r'^communities/', include('communities_app.urls')),
+    url(r'^pikabu_new_year_18_game_app/', include('pikabu_new_year_18_game_app.urls')),
     url(r'^', include('fakeadmin.urls')),
     url(r'^api/', include('api.urls')),
 ]
