@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'pikabu_new_year_18_game_app.apps.PikabuNewYear18GameAppConfig',
     'communities_app.apps.CommunitiesAppConfig',
     'fakeadmin.apps.FakeadminConfig',
     'core.apps.CoreConfig',

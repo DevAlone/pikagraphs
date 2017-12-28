@@ -40,20 +40,13 @@ class Module:
             await coroutine
         except KeyboardInterrupt as ex:
             raise ex
-        except Exception as ex:
+        except BaseException as ex:
             type, value, traceback = sys.exc_info()
             exception_string = """Error during processing module: {}
             Traceback: {}
             Some other information: {}
             """.format(repr(ex), traceback, str(type) + str(value))
             self._logger.error(exception_string)
-            await asyncio.sleep(1)
-        except:
-            type, value, traceback = sys.exc_info()
-            exception_string = """Error during processing module
-            Traceback: {}
-            Some other information: {}
-            """.format(traceback, str(type) + str(value))
-            self._logger.error(exception_string)
+            self._logger.exception(ex)
             await asyncio.sleep(1)
 

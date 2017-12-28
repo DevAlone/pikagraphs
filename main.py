@@ -5,6 +5,7 @@ import bot.init_django_models
 from bot import precise_time
 from bot.users_module import UsersModule
 from bot.communities_module import CommunitiesModule
+from bot.pikabu_new_year_18_game_module import PikabuNewYear18GameModule
 
 import asyncio
 
@@ -15,15 +16,16 @@ if __name__ == "__main__":
     modules = [
         UsersModule(),
         CommunitiesModule(),
+        PikabuNewYear18GameModule(),
     ]
 
     while True:
         tasks = []
         for module in modules:
             if module.lastProcessTimestamp + module.processPeriod < precise_time.getTimestamp():
-                tasks.append(asyncio.ensure_future(module.process()))
+                tasks.append(module.process())
                 module.lastProcessTimestamp = precise_time.getTimestamp()
-        if len(tasks) > 0:
+        if tasks:
             loop.run_until_complete(asyncio.wait(tasks))
         else:
             loop.run_until_complete(asyncio.sleep(1))

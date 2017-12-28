@@ -1,3 +1,4 @@
+env/
 migrations/
 .idea/
 pikabot_graphs/settings.py
