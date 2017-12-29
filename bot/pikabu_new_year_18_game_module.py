@@ -23,8 +23,8 @@ class PikabuNewYear18GameModule(Module):
             async with session.get("http://d3d.info:55555/get/best/http/proxy/") as resp:
                 proxy_url = await resp.text()
 
-            # async with session.get(TOP_URL, proxy=proxy_url, timeout=10) as response:
-            async with session.get(TOP_URL, timeout=30) as response:
+            async with session.get(TOP_URL, proxy=proxy_url, timeout=10) as response:
+            # async with session.get(TOP_URL, timeout=30) as response:
                 json_response = json.loads(await response.text())
                 data = json_response["data"]
                 scoreboard = ScoreBoardEntry(parse_timestamp=int(time.time()))
