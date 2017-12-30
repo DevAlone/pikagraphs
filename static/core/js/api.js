@@ -95,6 +95,17 @@ function getCommunityGraphs(urlName, responseHandler)
     });
 }
 
+function getScoreItems(fromTimestamp, toTimestamp, responseHandler)
+{
+    var fromTimestamp = parseInt(fromTimestamp / 1000, 10);
+    var toTimestamp = parseInt(toTimestamp / 1000, 10);
+
+    var url = "/pikabu_new_year_18_game_app/get_score_items/" + fromTimestamp + "/" + toTimestamp + "/";
+    ajaxGet(url, responseHandler, function(status) {
+        responseHandler({ error: status });
+    });
+}
+
 function ajaxGet(url, successHandler, errorHandler)
 {
     $.get(url, successHandler).fail(errorHandler);

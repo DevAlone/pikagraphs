@@ -1,0 +1,60 @@
+{% extends "pikabu_new_year_18_game_app/index.html" %}
+
+{% load static %}
+{% block title %}Новогодняя игра 2018{% endblock %}
+{% block head %}
+<style>
+#chartdiv {
+  width: 100%;
+  height: 450px;
+}
+#scoreboards {
+    display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+    overflow: auto;
+}
+#scoreboards > div {
+    display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+    border: 1px solid #999;
+    margin: 5px;
+}
+.scoreItem {
+    width: 100%;
+    display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+}
+.scoreItem > * {
+    margin: 2px 5px;
+}
+.scoreItem .avatar {
+    width: 25px;
+}
+#scoreboards > div {
+    border: none;
+    margin: 0;
+}
+.scoreItem > * {
+    margin: 0;
+}
+.scoreItem .username {
+    display: none;
+}
+.scoreItem .score {
+    display: none;
+}
+
+</style>
+{% endblock %}

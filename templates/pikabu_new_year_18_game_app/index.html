@@ -1,0 +1,113 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+{% block title %}Новогодняя игра 2018{% endblock %}
+{% block head %}
+<style>
+#chartdiv {
+  width: 100%;
+  height: 450px;
+}
+#scoreboards {
+    display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+    overflow: auto;
+}
+#scoreboards > div {
+    display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+    border: 1px solid #999;
+    margin: 5px;
+}
+.scoreItem {
+    width: 100%;
+    display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+}
+.scoreItem > * {
+    margin: 2px 5px;
+}
+.scoreItem .avatar {
+    width: 25px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="pikabuNewYear18GameApp">
+    <h1><center>Happy new year!</center></h1>
+
+    <div class="buttons">
+        <button onclick="renderItemsMonthAgo()">Месяц</button>
+        <button onclick="renderItemsWeekAgo()">Неделя</button>
+        <button onclick="renderItemsDayAgo()">День</button>
+    </div>
+
+    <div id="scoreboards">
+
+    </div>
+
+    <script>
+        function renderItems(fromTimestamp, toTimestamp) {
+            scoreboards.textContent = "Загружаем...";
+            getScoreItems(fromTimestamp, toTimestamp, function(data) {
+                scoreboards.textContent = "";
+                for (var i = 0; i < data.scoreboards.length; ++i) {
+                    var scoreboard = data.scoreboards[i];
+
+                    var scoreboardElement = document.createElement('div');
+
+                    for (var j = 0; j < scoreboard.items.length; ++j) {
+                        var scoreItem = scoreboard.items[j];
+
+                        generateDOM([
+                            {
+                                className: 'scoreItem',
+                                content: [
+                                    {
+                                        tag: 'img',
+                                        className: 'avatar',
+                                        src: scoreItem.avatar_url,
+                                    },
+                                    {
+                                        className: 'username',
+                                        content: scoreItem.username,
+                                    },
+                                    {
+                                        className: 'score',
+                                        content: scoreItem.score,
+                                    },
+                                ]
+                            }], scoreboardElement);
+                    }
+
+                    scoreboards.appendChild(scoreboardElement);
+                }
+            });
+        }
+        function renderItemsMonthAgo() {
+            renderItems(Date.now() - 30 * 24 * 3600 * 1000, Date.now());
+        }
+        function renderItemsWeekAgo() {
+            renderItems(Date.now() - 7 * 24 * 3600 * 1000, Date.now());
+        }
+        function renderItemsDayAgo() {
+            renderItems(Date.now() - 24 * 3600 * 1000, Date.now());
+        }
+
+        renderItemsDayAgo();
+    </script>
+</div>
+{% endblock %}
