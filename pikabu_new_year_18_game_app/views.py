@@ -1,9 +1,26 @@
 import datetime
+import time
 
 from django.shortcuts import render
 from django.http import JsonResponse
 
 from .models import ScoreEntry, ScoreBoardEntry
+
+
+def memoization(seconds):
+    def decorator(function):
+        setattr(function, "_last_processing_time", 0)
+        setattr(function, "_last_return_obj", None)
+        def wrapper(*args, **kwargs):
+            if function._last_return_obj is None or function._last_processing_time + seconds < time.time():
+                function._last_return_obj = function(*args, **kwargs)
+                function._last_processing_time = time.time()
+
+            return function._last_return_obj
+
+        return wrapper
+
+    return decorator
 
 
 def index(request):
@@ -18,6 +35,7 @@ def avatars_only(request):
     })
 
 
+@memoization(60)
 def top(request):
     # entries_by_score = ScoreEntry.objects.order_by("-score").distinct("username", "score")
     entries_by_score = []
@@ -31,7 +49,9 @@ def top(request):
     })
 
 
+@memoization(60)
 def top_by_time_in_scoreboard(request):
+    time.sleep(5)
     def score_items_has_user(score_items: list, username: str):
         for item in score_items:
             if item.username == username:
