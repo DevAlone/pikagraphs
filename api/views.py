@@ -23,6 +23,7 @@ def users(request):
     if sort_by_field not in [
         'rating',
         'subscribersCount',
+        'commentsCount',
     ]:
         sort_by_field = 'rating'
 

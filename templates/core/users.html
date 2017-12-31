@@ -400,7 +400,7 @@ function addUserToTape(user) {
     html += '<div class="userTapeItemDiv">';
 
     html += '<p id="userTapeItemInfo_' + user.username + '">';
-    html += user.info.length > 0 ? user.info : "Какой-то ноунейм";
+    html += user.info.length > 0 ? user.info : "";
     html += "</p>";
 
     html += '<p><a href="#' + user.username + '" onclick="renderUserPage(\'' + user.username + '\');">Открыть красивые графики</a></p>';
@@ -448,6 +448,12 @@ function initSortLinks() {
     );
     if (sortBy == "subscribersCount")
         sortBySubscribersCountLink.classList.add('active');
+
+    sortByCommentsCountLink.href = "?sort_by=commentsCount&reverse_sort=" + (
+        sortBy == "commentsCount" ? !reverseSort : reverseSort
+    );
+    if (sortBy == "commentsCount")
+        sortByCommentsCountLink.classList.add('active');
 }
 
 $(document).ready(function(){
@@ -480,6 +486,7 @@ $(document).ready(function(){
     <span>Сортировать по: </span>
     <a id="sortByRatingLink" href="?sort_by=rating">рейтингу</a>
     <a id="sortBySubscribersCountLink" href="?sort_by=subscribersCount">подписчикам</a>
+    <a id="sortByCommentsCountLink" href="?sort_by=commentsCount">количеству комментариев</a>
 </div>
 
 <div id="userPage">
