@@ -16,6 +16,19 @@ def avatars_only(request):
     })
 
 
+def top(request):
+    # entries_by_score = ScoreEntry.objects.order_by("-score").distinct("username", "score")
+    entries_by_score = []
+    for entry in ScoreEntry.objects.order_by("-score"):
+        if not entries_by_score or not (
+                entries_by_score[-1].username == entry.username and entries_by_score[-1].score == entry.score):
+            entries_by_score.append(entry)
+
+    return render(request, "pikabu_new_year_18_game_app/top.html", {
+        "entries_by_score": entries_by_score,
+    })
+
+
 def ugly_frontend(request):
     return render(request, "pikabu_new_year_18_game_app/ugly_frontend.html", {
         'score_boards': list(ScoreBoardEntry.objects.order_by("-parse_timestamp"))
@@ -23,7 +36,23 @@ def ugly_frontend(request):
 
 
 def get_score_items(request, from_timestamp, to_timestamp):
+    def areScoreboardsEqual(first, second):
+        if len(first["items"]) != len(second["items"]):
+            return False
+
+        for i in range(len(first["items"])):
+            first_item = first["items"][i]
+            second_item = second["items"][i]
+            if first_item["username"] != second_item["username"] or \
+                    first_item["avatar_url"] != second_item["avatar_url"] or \
+                    first_item["score"] != second_item["score"]:
+                return False
+
+        return True
+
     scoreboards = []
+
+    previousScoreboard = None
 
     for score_board_entry in ScoreBoardEntry.objects.filter(parse_timestamp__gte=from_timestamp).filter(
             parse_timestamp__lte=to_timestamp).order_by('-parse_timestamp'):
@@ -37,8 +66,12 @@ def get_score_items(request, from_timestamp, to_timestamp):
         ]
         scoreboard = {
             "items": items,
+            "parse_timestamp": score_board_entry.parse_timestamp,
         }
-        scoreboards.append(scoreboard)
+        if previousScoreboard is None or not areScoreboardsEqual(previousScoreboard, scoreboard):
+            scoreboards.append(scoreboard)
+
+        previousScoreboard = scoreboard
 
     return JsonResponse({
         'scoreboards': scoreboards,
