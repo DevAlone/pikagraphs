@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render
 from django.http import JsonResponse
 
@@ -25,7 +27,58 @@ def top(request):
             entries_by_score.append(entry)
 
     return render(request, "pikabu_new_year_18_game_app/top.html", {
-        "entries_by_score": entries_by_score,
+        "entries": entries_by_score,
+    })
+
+
+def top_by_time_in_scoreboard(request):
+    def score_items_has_user(score_items: list, username: str):
+        for item in score_items:
+            if item.username == username:
+                return True
+
+        return False
+
+    users = {}
+
+    previous_score_items = None
+
+    for scoreboard in ScoreBoardEntry.objects.order_by("parse_timestamp"):
+        score_items = scoreboard.scoreentry_set.all()
+        for score_item in score_items:
+            if score_item.username not in users:
+                users[score_item.username] = {
+                    "avatar_url": score_item.avatar_url,
+                    "maximum_range": 60,
+                    "first_timestamp": scoreboard.parse_timestamp,
+                    "last_timestamp": scoreboard.parse_timestamp,
+                }
+            elif score_items_has_user(previous_score_items, score_item.username):
+                users[score_item.username]["last_timestamp"] = scoreboard.parse_timestamp
+                range = \
+                    users[score_item.username]["last_timestamp"] - users[score_item.username]["first_timestamp"] + 60
+                if range > users[score_item.username]["maximum_range"]:
+                    users[score_item.username]["maximum_range"] = range
+                    users[score_item.username]["avatar_url"] = score_item.avatar_url
+            else:
+                users[score_item.username]["last_timestamp"] = scoreboard.parse_timestamp
+                users[score_item.username]["first_timestamp"] = scoreboard.parse_timestamp
+
+        previous_score_items = score_items
+
+    entries = []
+
+    for key, value in users.items():
+        entries.append({
+            "username": key,
+            "avatar_url": value["avatar_url"],
+            "maximum_time": datetime.timedelta(seconds=value["maximum_range"]),
+        })
+
+    entries.sort(key=lambda x: -x["maximum_time"])
+
+    return render(request, "pikabu_new_year_18_game_app/top_by_time_in_scoreboard.html", {
+        "entries": entries,
     })
 
 

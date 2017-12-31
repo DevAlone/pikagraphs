@@ -31,8 +31,7 @@ table tr:hover {
         <tr>
             <td>Аватар</td>
             <td>Имя пользователя</td>
-            <td>Счёт</td>
-            <td>Дата</td>
+            <td>Время в топе</td>
         </tr>
         </thead>
         <tbody>
@@ -40,8 +39,7 @@ table tr:hover {
         <tr>
             <td><img class="avatar" src="{{ entry.avatar_url }}"></td>
             <td><span>{{ entry.username }}</span></td>
-            <td><span>{{ entry.score }}</span></td>
-            <td><span>{{ entry.date }}</span></td>
+            <td><span>{{ entry.maximum_time }}</span></td>
         </tr>
         {% endfor %}
         </tbody>
