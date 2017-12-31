@@ -49,9 +49,8 @@ def top(request):
     })
 
 
-@memoization(60)
+@memoization(5 * 60)
 def top_by_time_in_scoreboard(request):
-    time.sleep(5)
     def score_items_has_user(score_items: list, username: str):
         for item in score_items:
             if item.username == username:
