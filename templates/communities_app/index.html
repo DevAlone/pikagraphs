@@ -130,7 +130,8 @@ function _renderCommunityPage(community, graphEntries)
 
         return dom;
     }
-    var graphDom = makeGraphDom('graphDom', 'Красивый график');
+    var graphSubscribersDom = makeGraphDom('graphSubscribers', 'Подписчиков');
+    var graphStoriesDom = makeGraphDom('graphStories', 'Постов');
 
     var dom = [
         {
@@ -147,11 +148,12 @@ function _renderCommunityPage(community, graphEntries)
             ],
         },
         communityInfoDom,
-        graphDom
+        graphSubscribersDom,
+        graphStoriesDom
     ];
     generateDOM(dom, communityPage);
 
-    function renderGraph(graph_id, data) {
+    function renderGraph(graph_id, data, dataField) {
         console.log(JSON.stringify(data))
         for(var i = 0; i < data.length; ++i) {
             data[i].date = data[i].timestamp * 1000;
@@ -173,13 +175,7 @@ function _renderCommunityPage(community, graphEntries)
                 "axisThickness": 2,
                 "axisAlpha": 1,
                 "position": "left"
-            }, {
-                "id":"v2",
-                "axisColor": "#FCD202",
-                "axisThickness": 2,
-                "axisAlpha": 1,
-                "position": "right"
-            },
+            }
             ],
             "mouseWheelZoomEnabled": false,
             "graphs": [{
@@ -189,21 +185,8 @@ function _renderCommunityPage(community, graphEntries)
                 "bulletBorderAlpha": 1,
                 "bulletColor": "#FFFFFF",
                 "hideBulletsCount": 50,
-                "title": "Подписчиков",
-                "valueField": "subscribersCount",
-                "useLineColorForBulletBorder": true,
-                "balloon":{
-                    "drop":true
-                }
-            },{
-                "id": "v2",
-                "balloonText": "[[value]]",
-                "bullet": "round",
-                "bulletBorderAlpha": 1,
-                "bulletColor": "#FFFFFF",
-                "hideBulletsCount": 50,
-                "title": "Постов",
-                "valueField": "storiesCount",
+                "title": dataField == "subscribersCount" ? "Подписчиков" : "Постов",
+                "valueField": dataField,
                 "useLineColorForBulletBorder": true,
                 "balloon":{
                     "drop":true
@@ -239,7 +222,8 @@ function _renderCommunityPage(community, graphEntries)
             chart.zoomToIndexes(data.length - 40, data.length - 1);
         }
     }
-    renderGraph('chartdiv_graphDom', graphEntries.items);
+    renderGraph('chartdiv_graphSubscribers', graphEntries.items, 'subscribersCount');
+    renderGraph('chartdiv_graphStories', graphEntries.items, 'storiesCount');
 }
 
 
