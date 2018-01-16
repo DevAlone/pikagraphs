@@ -20,7 +20,7 @@ class UsersModule(Module):
             with open('usernames') as f:
                 tasks = []
                 for line in f:
-                    if (len(line.strip()) > 0):
+                    if len(line.strip()) > 0:
                         username = line.strip().lower()
 
                         try:
