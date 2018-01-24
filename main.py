@@ -10,12 +10,12 @@ from bot.pikabu_new_year_18_game_module import PikabuNewYear18GameModule
 import asyncio
 
 
-async def pikabu_new_year_18_game_module_executor():
-    # pretty bad solution
-    module = PikabuNewYear18GameModule()
-    while True:
-        await module.process()
-        await asyncio.sleep(module.processPeriod)
+# async def pikabu_new_year_18_game_module_executor():
+#     # pretty bad solution
+#     module = PikabuNewYear18GameModule()
+#     while True:
+#         await module.process()
+#         await asyncio.sleep(module.processPeriod)
 
 if __name__ == "__main__":
     precise_time.init()
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         CommunitiesModule(),
     ]
 
-    loop.create_task(pikabu_new_year_18_game_module_executor())
+    # loop.create_task(pikabu_new_year_18_game_module_executor())
 
     while True:
         tasks = []
