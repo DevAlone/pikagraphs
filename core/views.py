@@ -1,3 +1,6 @@
+from pikabot_graphs import settings
+
+import os
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
@@ -87,10 +90,38 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         API endpoint that allows users to be viewed or edited.
         """
     model = User
-    queryset = User.objects.all()  # .order_by('-date_joined')
+    queryset = User.objects.all().order_by('-rating')
     serializer_class = UserSerializer
 
 # class UserViewSet(generics.ListCreateAPIView):
 #     queryset = User.objects.all()
 #     serializer_class = UserSerializer
 
+
+def angular_debug_url(request):
+    allowed_routes = {
+        '/',
+        '/inline.bundle.js',
+        '/polyfills.bundle.js',
+        '/styles.bundle.js',
+        '/vendor.bundle.js',
+        '/main.bundle.js'
+    }
+    routes = {
+        '/': '/index.html'
+    }
+
+    if request.path in allowed_routes:
+        route = routes[request.path] if request.path in routes else request.path
+        route = route[1:]
+
+        file_path = os.path.join(settings.ANGULAR_ROOT, route)
+        try:
+            with open(file_path, 'r') as file:
+                return HttpResponse(file.read())
+        except:
+            pass
+
+    request.path = '/'
+    return angular_debug_url(request)
+    # return HttpResponse("Not found1", status=404)

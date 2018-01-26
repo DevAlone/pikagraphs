@@ -6,7 +6,10 @@
     filter box
 </div>
 <div class="users">
-    <a *ngFor="let user of users$ | async" routerLink="/user/{{ user.name }}">
+    <!-- <a *ngFor="let user of users$ | async" routerLink="/user/{{ user.name }}">
+        {{ user.name }}
+    </a> -->
+    <a *ngFor="let user of users" routerLink="/user/{{ user.name }}">
         {{ user.name }}
     </a>
 </div>

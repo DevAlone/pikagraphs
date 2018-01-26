@@ -60,7 +60,10 @@ ROOT_URLCONF = 'pikabot_graphs.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'frontend/dist')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,6 +131,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+ANGULAR_STATIC_URL = '/assets/'
+ANGULAR_STATIC_ROOT = os.path.join(BASE_DIR, 'frontend/dist/assets')
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 ANGULAR_ROOT = os.path.join(BASE_DIR, 'frontend/dist')
 
@@ -156,6 +161,6 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE': 10,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }

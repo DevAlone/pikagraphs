@@ -13,6 +13,7 @@ import { User } from '../user';
 })
 export class UsersComponent implements OnInit {
     users$: Observable<any>;
+    users: User[];
     private searchTerms = new Subject<string>();
 
     constructor(private userService: UserService) { }
@@ -31,5 +32,11 @@ export class UsersComponent implements OnInit {
             // switch to new search observable each time the term changes
             switchMap((term: string) => this.userService.searchUsers(term)),
         );
+        this.users$.subscribe(result => {
+            if (!result.count)
+                return;
+
+            this.users = result.results;  // this.users.concat(result.results);
+        })
     }
 }
