@@ -1,0 +1,12 @@
+<div>
+    search box
+    <input #searchBox id="search-box" (keyup)="search(searchBox.value)" />
+</div>
+<div>
+    filter box
+</div>
+<div class="users">
+    <a *ngFor="let user of users$ | async" routerLink="/user/{{ user.name }}">
+        {{ user.name }}
+    </a>
+</div>

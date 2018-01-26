@@ -1,0 +1,29 @@
+.menu {
+    height: 100%;
+    background: url('/assets/img/blue_pattern.gif');
+    color: #fff;
+}
+
+.menu .item > a {
+    width: 100%;
+    min-height: 50px;
+
+    display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: center;
+	align-content: center;
+
+    text-decoration: none;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.1);
+    padding-left: 10px;
+}
+.menu .item > a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.site_name > a {
+    justify-content: center !important;
+}

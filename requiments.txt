@@ -2,3 +2,4 @@ aiohttp
 django
 psycopg2
 ntplib
+djangorestframework

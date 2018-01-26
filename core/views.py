@@ -1,6 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
+from rest_framework import generics
+from rest_framework import viewsets
+from core.serializers import UserSerializer
+
 from core.models import User, UserRatingEntry, UserCommentsCountEntry
 from core.models import UserPostsCountEntry, UserHotPostsCountEntry
 from core.models import UserPlusesCountEntry, UserMinusesCountEntry
@@ -74,3 +78,19 @@ def secret_page_for_l4rever(request):
 
 def OK(request):
     return HttpResponse("OK")
+
+# REST
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+        API endpoint that allows users to be viewed or edited.
+        """
+    model = User
+    queryset = User.objects.all()  # .order_by('-date_joined')
+    serializer_class = UserSerializer
+
+# class UserViewSet(generics.ListCreateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+

@@ -24,9 +24,11 @@ urlpatterns = [
     url(r'^communities/', include('communities_app.urls')),
     url(r'^pikabu_new_year_18_game_app/', include('pikabu_new_year_18_game_app.urls')),
     url(r'^', include('fakeadmin.urls')),
-    url(r'^api/', include('api.urls')),
+    url(r'^api/', include('api.urls'))
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,
                           document_root=settings.STATIC_ROOT)
+    urlpatterns += static('angular/',
+                          document_root=settings.ANGULAR_ROOT)
