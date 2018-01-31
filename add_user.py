@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     user, was_created = User.objects.get_or_create(username=username)
     if not user.is_updated:
-        if not was_created:
+        if was_created:
             print('creating {}...'.format(user.username))
 
         print('setting is_updated field to True...')
