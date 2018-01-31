@@ -103,7 +103,7 @@ class UserViewSet(SearchViewSet):
         'hot_posts_count',
         'pluses_count',
         'minuses_count',
-        'last_update_timestamp',
+        'next_updating_timestamp',
         'updating_period',
     ]
     filter_by_fields = ['username', 'info']

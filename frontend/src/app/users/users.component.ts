@@ -18,7 +18,7 @@ declare var usersComponent: any;
 export class UsersComponent implements OnInit {
     users$: Observable<any>;
     users: User[] = [];
-    
+
     private page: number = 1;
 
     public sortByFields: any[] = [
@@ -30,7 +30,7 @@ export class UsersComponent implements OnInit {
         { fieldName: 'pluses_count', humanReadableName: 'Количеству плюсов' },
         { fieldName: 'minuses_count', humanReadableName: 'Количеству минусов' },
         { fieldName: 'last_update_timestamp', humanReadableName: 'Времени последнего обновления' },
-        { fieldName: 'updating_period', humanReadableName: 'Периоду обновления' },
+        { fieldName: 'next_updating_timestamp', humanReadableName: 'Периоду обновления' },
         { fieldName: 'name', humanReadableName: 'Никнейму' },
     ];
 
@@ -43,7 +43,7 @@ export class UsersComponent implements OnInit {
         private userService: UserService,
         private messageService: MessageService
     ) {
-        
+
     }
 
     searchParametersChanged(searchParameters: any): void {
@@ -53,10 +53,10 @@ export class UsersComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        
+
     }
 
-    
+
     loadMore() {
         this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
             for (var user of result.results) {
