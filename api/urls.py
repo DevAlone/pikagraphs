@@ -4,19 +4,14 @@ from . import views
 app_name = 'api'
 
 urlpatterns = [
-    url(r'^users/$', views.users, name='users'),
+    url(r'^users/?$', views.UserViewSet.as_view({'get': 'list'})),
+    url(r'^user/(?P<name>[a-zA-Z0-9\._]{1,20})/?$', views.UserView.as_view()),
+    url(r'^graph/user/(?P<username>[a-zA-Z0-9\._]{1,20})/(?P<graph_name>[a-zA-Z0-9\._]{1,20})/?$', views.get_user_graph),
 
-    url(r'^user_info/(?P<username>[a-zA-Z0-9\._]{1,20})/$', views.user_info, name='user_info'),
-
-    url(r'^edit_user_info_field/(?P<username>[a-zA-Z0-9\._]{1,20})/$', views.edit_user_info_field,
-        name="edit_user_info_field"),
-
-    url(r'^community_info/(?P<urlName>[a-zA-Z0-9\._]{1,20})/$', views.community_info, name='community_info'),
-
-    url(r'^user_graph/(?P<username>[a-zA-Z0-9\._]{1,20})/(?P<type>[a-zA-Z0-9\._]{1,20})/$', views.user_graph,
-        name='user_graph'),
-
-    url(r'^user_graphs/(?P<username>[a-zA-Z0-9\._]{1,20})/$', views.user_graphs, name='user_graphs'),
-
-    url(r'^community_graphs/(?P<urlName>[a-zA-Z0-9\._]{1,20})/$', views.community_graphs, name='community_graphs'),
+    url(r'^communities/?', views.CommunityViewSet.as_view({'get': 'list'})),
+    url(r'^community/(?P<url_name>[a-zA-Z0-9\._]{1,20})/?$', views.CommunityView.as_view()),
+    url(r'^graph/community/(?P<url_name>[a-zA-Z0-9\._]{1,20})/(?P<graph_name>[a-zA-Z0-9\._]{1,20})/?$',
+        views.get_community_graph),
+    url(r'^new_year_2018_game/scoreboards/?$', views.ScoreBoardViewSet.as_view({'get': 'list'})),
+    url(r'^new_year_2018_game/top/?$', views.TopViewSet.as_view({'get': 'list'})),
 ]

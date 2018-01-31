@@ -1,15 +1,28 @@
-<div>
-    search box
-    <input #searchBox id="search-box" (keyup)="search(searchBox.value)" />
-</div>
-<div>
-    filter box
-</div>
-<div class="users">
-    <!-- <a *ngFor="let user of users$ | async" routerLink="/user/{{ user.name }}">
-        {{ user.name }}
-    </a> -->
-    <a *ngFor="let user of users" routerLink="/user/{{ user.name }}">
-        {{ user.name }}
-    </a>
+<div id="usersComponent" class="usersComponent">
+    <app-search-box [parent]="this" [callback]="'searchParametersChanged'" [sortByFields]="sortByFields"></app-search-box>
+    
+    <div id="usersBox" class="users itemList"
+            infiniteScroll
+            [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="50"
+            (scrolled)="onScroll()"
+            [scrollWindow]="false">
+        <a class="user niceLink item"
+                *ngFor="let user of users"
+                routerLink="/user/{{ user.name }}">
+            <span>
+                <img class="avatar" src="{{ user.avatar_url }}">
+                <span>{{ user.name }}</span>
+                <a href="https://pikabu.ru/profile/{{ user.name }}" target="_blank"
+                        rel="nofollow noopener"
+                        (click)="$event.stopPropagation();">
+                    <img src="https://s.pikabu.ru/favicon.ico" title="Показать на пикабу">
+                </a>
+            </span>
+            <span class="right">
+                Рейтинг <span class="value">{{ user.rating }}</span>
+                Подписчиков <span class="value">{{ user.subscribers_count }}</span>
+            </span>
+        </a>
+    </div>
 </div>

@@ -1,3 +1,28 @@
-<p>
-  communities works!
-</p>
+<div id="communitiesComponent" class="communitiesComponent">
+    <app-search-box [parent]="this" [callback]="'searchParametersChanged'" [sortByFields]="sortByFields"></app-search-box>
+    
+    <div id="communitiesBox" class="communities itemList"
+            infiniteScroll
+            [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="50"
+            (scrolled)="onScroll()"
+            [scrollWindow]="false">
+        <a class="community niceLink item"
+                *ngFor="let community of communities"
+                routerLink="/community/{{ community.url_name }}">
+            <span>
+                <img class="avatar" src="{{ community.avatar_url }}">
+                <span>{{ community.name }}</span>
+                <a href="https://pikabu.ru/community/{{ community.url_name }}" target="_blank"
+                        rel="nofollow noopener"
+                        (click)="$event.stopPropagation();">
+                    <img src="https://s.pikabu.ru/favicon.ico" title="Показать на пикабу">
+                </a>
+            </span>
+            <span class="right">
+                Подписчиков <span class="value">{{ community.subscribers_count }}</span>
+                Постов <span class="value">{{ community.stories_count }}</span>
+            </span>
+        </a>
+    </div>
+</div>

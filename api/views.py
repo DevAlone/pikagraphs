@@ -1,110 +1,120 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
-from django.contrib.auth.decorators import permission_required
-from core.models import User, UserRatingEntry, UserCommentsCountEntry, UserHotPostsCountEntry, UserMinusesCountEntry, \
-    UserPlusesCountEntry, UserPostsCountEntry, UserSubscribersCountEntry
+from pikabot_graphs import settings
+
+import os
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from django.db.models import Q
+
+from rest_framework import generics, viewsets
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from core.serializers import UserSerializer, CommunitySerializer, ScoreBoardEntrySerializer, ScoreEntrySerializer
+
+from core.models import User, UserRatingEntry, UserCommentsCountEntry
+from core.models import UserPostsCountEntry, UserHotPostsCountEntry
+from core.models import UserPlusesCountEntry, UserMinusesCountEntry
+from core.models import UserSubscribersCountEntry
+
 from communities_app.models import Community, CommunityCountersEntry
 
-import json
+from pikabu_new_year_18_game_app.models import ScoreBoardEntry, ScoreEntry
 
 
-def users(request):
-    limit = int(request.GET.get('limit', 10))
-    if limit < 1 or limit > 100:
-        limit = 10
+def angular_debug_url(request):
+    # DON'T USE IN PRODUCTION!!!
 
-    offset = int(request.GET.get('offset', 0))
-    if offset < 0:
-        offset = 0
+    allowed_routes = {
+        '/',
+        '/inline.bundle.js',
+        '/polyfills.bundle.js',
+        '/styles.bundle.js',
+        '/vendor.bundle.js',
+        '/main.bundle.js'
+    }
+    routes = {
+        '/': '/index.html'
+    }
 
-    search_text = request.GET.get('search', "").lower()
-    sort_by_field = request.GET.get('sort_by', "")
+    if request.path not in allowed_routes:
+        request.path = '/'
 
-    if sort_by_field not in [
+    route = routes[request.path] if request.path in routes else request.path
+    route = route[1:]
+
+    file_path = os.path.join(settings.ANGULAR_ROOT, route)
+    try:
+        with open(file_path, 'r') as file:
+            return HttpResponse(file.read())
+    except:
+        pass
+
+    request.path = '/'
+    return angular_debug_url(request)
+
+
+class SearchViewSet(viewsets.ReadOnlyModelViewSet):
+    model = None
+    sort_by_fields = []
+    filter_by_fields = []
+
+    def get_queryset(self):
+        params = self.request.query_params
+
+        search_text = params['search_text'].lower() if 'search_text' in params else ''
+
+        queryset = self.model.objects
+
+        if self.sort_by_fields:
+            sort_by_field = params['sort_by'].lower() if 'sort_by' in params else ''
+
+            if sort_by_field not in self.sort_by_fields:
+                sort_by_field = self.sort_by_fields[0]
+
+            reverse_sort = params['reverse_sort'].lower() if 'reverse_sort' in params else 'false'
+            reverse_sort = reverse_sort == 'true'
+
+            queryset = queryset.order_by(('-' if reverse_sort else '') + sort_by_field)
+
+        if search_text:
+            # filter_object = Q(name__contains=search_text) | Q(url_name=search_text)
+            filter_object = None
+            for filter_field in self.filter_by_fields:
+                if filter_object is None:
+                    filter_object = Q(**{filter_field + '__contains': search_text})
+                else:
+                    filter_object |= Q(**{filter_field + '__contains': search_text})
+
+            if filter_object is not None:
+                queryset = queryset.filter(filter_object)
+
+        return queryset.all()
+
+
+class UserViewSet(SearchViewSet):
+    model = User
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    sort_by_fields = [
         'rating',
-        'subscribersCount',
-        'commentsCount',
-    ]:
-        sort_by_field = 'rating'
-
-    reverse_sort = request.GET.get('reverse_sort', "true").lower()
-
-    users = User.objects.all().order_by(('-' if reverse_sort == "true" else '') + sort_by_field)
-
-    if search_text:
-        users = users.filter(name__contains=search_text)
-
-    users = users[offset : offset + limit]
-
-    return JsonResponse({
-        'hasMore': bool(users),
-        'data': [serialize_user(user) for user in users],
-        'sortedByField': sort_by_field,
-    })
+        'name',
+        'subscribers_count',
+        'comments_count',
+        'posts_count',
+        'hot_posts_count',
+        'pluses_count',
+        'minuses_count',
+        'last_update_timestamp',
+        'updating_period',
+    ]
+    filter_by_fields = ['name', 'info']
 
 
-def user_info(request, username):
-    username = username.lower()
+@api_view(['GET'])
+def get_user_graph(request, username, graph_name):
     user = get_object_or_404(User, name=username)
+    graph_name = graph_name.lower()
 
-    return JsonResponse(serialize_user(user))
-
-
-def edit_user_info_field(request, username):
-    if not request.user.is_authenticated() or not request.user.has_perm('core.edit_info_field'):
-        return JsonResponse({
-            'error': "You don't have permissions to do that",
-        })
-
-    if request.method == 'POST' and request.is_ajax():
-        data = request.body.decode('utf8')
-        user = get_object_or_404(User, name=username)
-        user.info = data
-        user.save()
-
-        return JsonResponse({
-            'status': 'ok',
-            'info': user.info,
-        })
-
-    return JsonResponse({
-        'error': 'Something went wrong',
-    })
-
-
-def community_info(request, urlName):
-    urlName = urlName.lower()
-    community = get_object_or_404(Community, urlName=urlName)
-
-    return JsonResponse({
-        'urlName': community.urlName,
-        'name': community.name,
-        'subscribersCount': community.subscribersCount,
-        'storiesCount': community.storiesCount,
-        'lastUpdateTimestamp': community.lastUpdateTimestamp,
-    })
-
-
-def user_graph(request, username, type):
-    return JsonResponse(_user_graph(username, type))
-
-
-def user_graphs(request, username):
-    return JsonResponse({
-        'ratingEntries': _user_graph(username, 'rating'),
-        'commentsEntries': _user_graph(username, 'comments'),
-        'postsEntries': _user_graph(username, 'posts'),
-        'hotPostsEntries': _user_graph(username, 'hot_posts'),
-        'minusesEntries': _user_graph(username, 'pluses'),
-        'plusesEntries': _user_graph(username, 'minuses'),
-        'subscribersEntries': _user_graph(username, 'subscribers'),
-    })
-
-
-def _user_graph(username, type):
-    username = username.lower()
-    user = get_object_or_404(User, name=username)
-    Type = {
+    classes = {
         'rating': UserRatingEntry,
         'comments': UserCommentsCountEntry,
         'posts': UserPostsCountEntry,
@@ -112,46 +122,87 @@ def _user_graph(username, type):
         'pluses': UserPlusesCountEntry,
         'minuses': UserMinusesCountEntry,
         'subscribers': UserSubscribersCountEntry,
-    }[type]
-
-    data = {
-        'items': [
-            {
-                'timestamp': item.timestamp,
-                'value': item.value
-            } for item in Type.objects.filter(user=user)]
     }
 
-    return data
+    if graph_name not in classes:
+        return HttpResponse(status=404)
 
+    data = classes[graph_name].objects.filter(user=user).order_by('timestamp').all()
 
-def community_graphs(request, urlName):
-    urlName = urlName.lower()
-    community = get_object_or_404(Community, urlName=urlName)
+    data = [
+        {
+            'timestamp': item.timestamp,
+            'value': item.value,
+            # 'user_id',
+        } for item in data
+    ]
 
-    return JsonResponse({
-        'items': [
-            {
-                'timestamp': item.timestamp,
-                'subscribersCount': item.subscribersCount,
-                'storiesCount': item.storiesCount,
-            } for item in CommunityCountersEntry.objects.filter(community=community)]
+    return Response({
+        'results': data
     })
 
 
-def serialize_user(user : User):
-    return {
-        'username': user.name,
-        'avatarUrl': user.avatarUrl,
-        'info': user.info,
-        'rating': user.rating,
-        'commentsCount': user.commentsCount,
-        'postsCount': user.postsCount,
-        'hotPostsCount': user.hotPostsCount,
-        'plusesCount': user.plusesCount,
-        'minusesCount': user.minusesCount,
-        'subscribersCount': user.subscribersCount,
-        'lastUpdateTimestamp': user.lastUpdateTimestamp,
-        'isRatingBan': user.isRatingBan,
-        'updatingPeriod': user.updatingPeriod,
+class UserView(generics.RetrieveAPIView):
+    lookup_field = 'name'
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class CommunityViewSet(SearchViewSet):
+    model = Community
+    queryset = Community.objects.all()
+    serializer_class = CommunitySerializer
+    sort_by_fields = [
+        'subscribers_count',
+        'name',
+        'stories_count',
+        'last_update_timestamp',
+    ]
+    filter_by_fields = ['url_name', 'name', 'description']
+
+
+@api_view(['GET'])
+def get_community_graph(request, url_name, graph_name):
+    community = get_object_or_404(Community, url_name=url_name)
+
+    graph_name = graph_name.lower()
+
+    classes = {
+        'subscribers': CommunityCountersEntry,
+        'stories': CommunityCountersEntry,
     }
+
+    if graph_name not in classes:
+        return HttpResponse(status=404)
+
+    data = classes[graph_name].objects.filter(community=community).order_by('timestamp').all()
+
+    data = [
+        {
+            'timestamp': item.timestamp,
+            'value': item.subscribers_count if graph_name == 'subscribers' else item.stories_count,
+            # 'user_id',
+        } for item in data
+    ]
+
+    return Response({
+        'results': data
+    })
+
+
+class CommunityView(generics.RetrieveAPIView):
+    lookup_field = 'url_name'
+    queryset = Community.objects.all()
+    serializer_class = CommunitySerializer
+
+
+class ScoreBoardViewSet(viewsets.ReadOnlyModelViewSet):
+    model = ScoreBoardEntry
+    queryset = ScoreBoardEntry.objects.all().order_by('-parse_timestamp')
+    serializer_class = ScoreBoardEntrySerializer
+
+
+class TopViewSet(viewsets.ReadOnlyModelViewSet):
+    model = ScoreEntry
+    queryset = ScoreEntry.objects.all().order_by('-score')
+    serializer_class = ScoreEntrySerializer

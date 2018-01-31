@@ -7,7 +7,7 @@ from django.conf import settings
 
 
 class CommunitiesModule(Module):
-    processPeriod = 10 * 60
+    processPeriod = settings.COMMUNITIES_MODULE['UPDATING_PERIOD']
 
     def __init__(self):
         super(CommunitiesModule, self).__init__('communities_module')
@@ -21,20 +21,24 @@ class CommunitiesModule(Module):
                     break
 
                 for community in communities:
-                    self._processCommunity(community, client)
+                    self._process_community(community)
 
-    def _processCommunity(self, json_data, client):
+    def _process_community(self, json_data):
         community_url_name = json_data['link_name'].lower()
 
         try:
-            community = Community.objects.get(urlName=community_url_name)
+            community = Community.objects.get(url_name=community_url_name)
         except Community.DoesNotExist:
             community = Community()
-            community.urlName = community_url_name
+            community.url_name = community_url_name
             community.save()
 
-        # if community.lastUpdateTimestamp + settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] >= precise_time.getTimestamp():
-        #     return
+        community.last_update_timestamp = 0
+        community.save()
+
+        if community.last_update_timestamp + settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] \
+                >= precise_time.getTimestamp():
+            return
 
         self._logger.debug('start processing community {}'.format(community_url_name))
 
@@ -43,24 +47,32 @@ class CommunitiesModule(Module):
         name = json_data['name']
 
         community.name = name
-        community.subscribersCount = subscribers_count
-        community.storiesCount = stories_count
-        community.lastUpdateTimestamp = precise_time.getTimestamp()
+        community.subscribers_count = subscribers_count
+        community.stories_count = stories_count
+        community.description = json_data['description']
+        community.avatar_url = json_data['avatar_url']
+        community.background_image_url = json_data['bg_image_url']
+        community.last_update_timestamp = precise_time.getTimestamp()
         community.save()
-
-        self._saveCountersIfLastIsNotTheSame(CommunityCountersEntry(
-            timestamp=community.lastUpdateTimestamp,
+        CommunityCountersEntry(
+            timestamp=community.last_update_timestamp,
             community=community,
-            subscribersCount=subscribers_count,
-            storiesCount=stories_count
+            subscribers_count=subscribers_count,
+            stories_count=stories_count
+        )
+        self._save_counters_if_last_is_not_the_same(CommunityCountersEntry(
+            timestamp=community.last_update_timestamp,
+            community=community,
+            subscribers_count=subscribers_count,
+            stories_count=stories_count
         ))
 
         self._logger.debug('end processing community {}'.format(community_url_name))
 
-    def _saveCountersIfLastIsNotTheSame(self, model):
-        lastEntry = type(model).objects.filter(community=model.community).last()
+    def _save_counters_if_last_is_not_the_same(self, model):
+        last_entry = type(model).objects.filter(community=model.community).last()
 
-        if lastEntry is None \
-                or int(lastEntry.subscribersCount) != int(model.subscribersCount) \
-                or int(lastEntry.storiesCount) != int(model.storiesCount):
+        if last_entry is None \
+                or int(last_entry.subscribers_count) != int(model.subscribers_count) \
+                or int(last_entry.stories_count) != int(model.stories_count):
             model.save()

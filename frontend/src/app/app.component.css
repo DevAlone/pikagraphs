@@ -12,4 +12,15 @@
   width: calc(100% - 250px);
   height: 100%;
   padding: 10px;
+  box-sizing: border-box;
+  background: url('/assets/img/white_pattern.png');
+  overflow: auto;
+}
+
+#messages {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
 }

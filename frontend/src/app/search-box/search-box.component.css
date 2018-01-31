@@ -1,0 +1,32 @@
+#search-box {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+}
+
+
+.sortByButtons {
+    margin: 5px 0;
+}
+
+.sortByButton {
+    display: inline-block;
+    background: #fff;
+    margin: 3px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.sortByButtons .sortByButton[active="true"] {
+    /*background: red;*/
+    border: 1px solid black;
+}
+
+.sortByButtons .sortByButton[active="true"]::before {
+    content: "↑"
+}
+
+.sortByButtons .sortByButton[active="true"][reverse="true"]::before {
+    content: "↓"
+}

@@ -1,0 +1,36 @@
+<div id="newYear2018GameComponent"
+		infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        (scrolled)="onScrollTop()"
+        [scrollWindow]="false"
+        >
+
+	<div id="scoreboardsContainer"
+		    infiniteScroll
+            [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="50"
+            (scrolled)="onScrollScoreboards()"
+            [scrollWindow]="false"
+            [horizontal]="true">
+		<div class="scoreboard block" *ngFor="let scoreboard of scoreboards">
+			<p>{{ scoreboard.parse_timestamp | date: 'yyyy-MM-dd hh:mm:ss' }}</p>
+			<div class="entry" *ngFor="let entry of scoreboard.score_entries">
+				<img src="{{ entry.avatar_url }}">
+				<span>{{ entry.username }}</span>
+				<span>{{ entry.score }}</span>
+				<span>{{ entry.date }}</span>
+			</div>
+		</div>
+	</div>
+	<h1>Топ</h1>
+	<div id="topContainer"
+	>
+	    <div class="entry topEntry block" *ngFor="let entry of topItems">
+			<img src="{{ entry.avatar_url }}">
+			<span>{{ entry.username }}</span>
+			<span>{{ entry.score }}</span>
+			<span>{{ entry.date }}</span>
+		</div>
+	</div>
+</div>

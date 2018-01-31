@@ -1,0 +1,64 @@
+#newYear2018GameComponent {
+	overflow-y: auto;
+	height: 100%;
+	padding-right: 5px;
+}
+#scoreboardsContainer {
+	overflow-x: auto;
+	overflow-y: hidden;
+
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: baseline;
+	align-content: center;
+
+	padding-bottom: 10px;
+}
+#topContainer {
+
+}
+
+.scoreboard {
+	background: #fff;
+	margin: 0 5px;
+
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: stretch;
+	align-content: center;
+}
+
+.scoreboard > p {
+	text-align: center;
+	padding: 5px;
+	margin: 0;
+}
+
+.entry {
+	min-height: 50px;
+	width: 100%;
+	background: #fff;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: center;
+	align-content: center;
+}
+
+.entry > * {
+	padding: 5px;
+}
+
+.topEntry > span {
+	display: inline-block;
+	min-width: 25%;
+}
+
+img {
+	height: 50px;
+}

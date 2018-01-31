@@ -17,25 +17,26 @@ class Module:
     def __init__(self, module_name):
         self._logger = logging.getLogger('pikabot_graphs/{}'.format(module_name))
         self._logger.setLevel(logging.DEBUG)
-        if settings.DEBUG:
-            debug_file_handler = logging.FileHandler('logs/{}.debug.log'.format(module_name))
-            debug_file_handler.setLevel(logging.DEBUG)
+
         error_file_handler = logging.FileHandler('logs/{}.error.log'.format(module_name))
         error_file_handler.setLevel(logging.ERROR)
         info_file_handler = logging.FileHandler('logs/{}.log'.format(module_name))
         info_file_handler.setLevel(logging.INFO)
 
         if settings.DEBUG:
+            debug_file_handler = logging.FileHandler('logs/{}.debug.log'.format(module_name))
+            debug_file_handler.setLevel(logging.DEBUG)
             self._logger.addHandler(debug_file_handler)
+
         self._logger.addHandler(error_file_handler)
         self._logger.addHandler(info_file_handler)
 
         self._logger.info('{} initialization...'.format(module_name))
 
     async def process(self):
-        await self._callCoroutineWithLoggingException(self._process())
+        await self._call_coroutine_with_logging_exception(self._process())
 
-    async def _callCoroutineWithLoggingException(self, coroutine):
+    async def _call_coroutine_with_logging_exception(self, coroutine):
         try:
             await coroutine
         except KeyboardInterrupt as ex:

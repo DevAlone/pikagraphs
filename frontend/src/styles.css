@@ -1,5 +1,103 @@
 html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+.niceLink {
+    color: inherit;
+    text-decoration: none;
+    transition: 0.25s;
+    cursor: pointer;
+    outline: none;
+}
+
+.niceLink:hover {
+    color: blue;
+}
+
+table {
+    width: 100%;
+}
+
+.graphElement {
+  	width: 100%;
+  	height: 500px;
+}
+
+.itemList {
+    overflow-y: auto;
+}
+
+.itemList .item {
+    /*display: block;*/
+    min-height: 50px;
+    padding-left: 10px;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+}
+
+.itemList .item:hover {
+    background: url('/assets/img/blue_pattern.gif');
+    color: #fff;
+}
+
+.itemList .item img {
+    vertical-align: middle;
+    height: 20px;
+}
+
+.itemList .item > *,
+.itemList .item > * > * {
+    margin: 0 10px;
+}
+
+.itemList .item .right .value {
+    display: inline-block;
+    min-width: 60px;
+}
+
+
+.infoBlock {
+    border: none;
+}
+
+.infoBlock .row {
+    transition: 0.25s;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    align-content: stretch;
+}
+
+.infoBlock .column {
+    display: inline-block;
+    width: 40%;
+    padding: 10px;
+}
+
+.infoBlock .value {
+}
+
+.infoBlock .row:hover {
+    background: url('/assets/img/blue_pattern.gif');
+    color: #fff;
+}
+
+.block {
+    background: url('/assets/img/white_pattern_bright.png');
+    /*background: #fff;*/
+    box-shadow: 1px 1px 3px 0px #aeaeae;
+    margin: 20px 0;
 }

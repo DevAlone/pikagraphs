@@ -10,7 +10,7 @@ class ScoreEntry(models.Model):
     avatar_url = models.CharField(max_length=128)
     score = models.IntegerField()
     date = models.CharField(max_length=64)
-    scoreboard_entry = models.ForeignKey("ScoreBoardEntry", on_delete=models.CASCADE)
+    scoreboard_entry = models.ForeignKey("ScoreBoardEntry", related_name='score_entries', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.username

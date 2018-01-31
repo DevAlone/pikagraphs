@@ -1,0 +1,80 @@
+<div *ngIf="user">
+    <h1>
+        <img class="avatar" src="{{ user.avatar_url }}">
+        <a title="Посмотреть на пикабу"
+                class="niceLink"
+                href="https://pikabu.ru/profile/{{ user.name }}"
+                target="_blank"
+                rel="nofollow noopener">
+            {{ user.name }}
+        </a>
+    </h1>
+    <div class="info block" *ngIf="user.info">
+        {{ user.info }}
+    </div>
+    <div class="infoBlock block">
+        <div class="row">
+            <div class="column key">Рейтинг</div>
+            <div class="column value" *ngIf="!is_rating_ban">{{ user.rating }}</div>
+            <div class="column value hiddenRating" *ngIf="is_rating_ban">{{ user.rating }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Комментариев</div>
+            <div class="column value">{{ user.comments_count }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Постов</div>
+            <div class="column value">{{ user.posts_count }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Горячих из них</div>
+            <div class="column value">{{ user.hot_posts_count }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">плюсов</div>
+            <div class="column value">{{ user.pluses_count }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">минусов</div>
+            <div class="column value">{{ user.minuses_count }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">подписчиков</div>
+            <div class="column value">{{ user.subscribers_count }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Последний раз обновлён</div>
+            <div class="column value">{{ user.last_update_timestamp }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Период обновления</div>
+            <div class="column value">{{ user.updating_period }}</div>
+        </div>
+        <div class="row" *ngIf="user.name == 'l4rever'">
+            <div class="column key">Секунд</div>
+            <div class="column value" #l4reverEasterEggValue></div>
+        </div>
+    </div>
+    <div>
+        <h2>рейтинг</h2>
+        <app-graph graphType="user" graphId="{{ user.name }}/rating"></app-graph>
+
+        <h2>подписчики</h2>
+        <app-graph graphType="user" graphId="{{ user.name }}/subscribers"></app-graph>
+
+        <h2>комментарии</h2>
+        <app-graph graphType="user" graphId="{{ user.name }}/comments"></app-graph>
+
+        <h2>посты</h2>
+        <app-graph graphType="user" graphId="{{ user.name }}/posts"></app-graph>
+
+        <h2>горячие посты</h2>
+        <app-graph graphType="user" graphId="{{ user.name }}/hot_posts"></app-graph>
+
+        <h2>плюсы</h2>
+        <app-graph graphType="user" graphId="{{ user.name }}/pluses"></app-graph>
+
+        <h2>минусы</h2>
+        <app-graph graphType="user" graphId="{{ user.name }}/minuses"></app-graph>
+    </div>
+</div>

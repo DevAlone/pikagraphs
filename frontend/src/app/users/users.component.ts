@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
+
+import { MessageService } from '../message.service';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import { UserService } from '../user.service';
 import { User } from '../user';
+
+declare var usersBox: any;
+declare var usersComponent: any;
 
 @Component({
   selector: 'app-users',
@@ -13,30 +17,70 @@ import { User } from '../user';
 })
 export class UsersComponent implements OnInit {
     users$: Observable<any>;
-    users: User[];
-    private searchTerms = new Subject<string>();
+    users: User[] = [];
+    
+    private page: number = 1;
 
-    constructor(private userService: UserService) { }
+    public sortByFields: any[] = [
+        { fieldName: 'rating', humanReadableName: 'Рейтингу' },
+        { fieldName: 'subscribers_count', humanReadableName: 'Количеству подписчиков' },
+        { fieldName: 'comments_count', humanReadableName: 'Количеству комментариев' },
+        { fieldName: 'posts_count', humanReadableName: 'Количеству постов' },
+        { fieldName: 'hot_posts_count', humanReadableName: 'Количеству горячих постов' },
+        { fieldName: 'pluses_count', humanReadableName: 'Количеству плюсов' },
+        { fieldName: 'minuses_count', humanReadableName: 'Количеству минусов' },
+        { fieldName: 'last_update_timestamp', humanReadableName: 'Времени последнего обновления' },
+        { fieldName: 'updating_period', humanReadableName: 'Периоду обновления' },
+        { fieldName: 'name', humanReadableName: 'Никнейму' },
+    ];
 
-    search(term: string): void {
-        console.log('UsersComponent: ' + term);
-        this.searchTerms.next(term);
+    // private searchText: string = '';
+    // private sortBy: string = '';
+    // private reverseSort: boolean = false;
+    private searchParameters: any = {};
+
+    constructor(
+        private userService: UserService,
+        private messageService: MessageService
+    ) {
+        
+    }
+
+    searchParametersChanged(searchParameters: any): void {
+        this.searchParameters = searchParameters;
+        this.resetTape();
+        this.loadMore();
     }
 
     ngOnInit(): void {
-        this.users$ = this.searchTerms.pipe(
-            // wait 300ms after each keystroke before considering the term
-            debounceTime(300),
-            // ignore new term if same as previous term
-            distinctUntilChanged(),
-            // switch to new search observable each time the term changes
-            switchMap((term: string) => this.userService.searchUsers(term)),
-        );
-        this.users$.subscribe(result => {
-            if (!result.count)
-                return;
+        
+    }
 
-            this.users = result.results;  // this.users.concat(result.results);
-        })
+    
+    loadMore() {
+        this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
+            for (var user of result.results) {
+                this.users.push(user);
+            }
+
+            if (!result.next) {
+                this.messageService.info("Больше ничего нет");
+                return;
+            }
+
+            ++this.page;
+
+            if (usersBox.scrollHeight < usersComponent.scrollHeight + 500)
+                setTimeout(() => this.loadMore(), 100);
+        });
+    }
+
+    resetTape() {
+        this.users = [];
+        this.page = 1;
+    }
+
+    onScroll() {
+        this.loadMore();
     }
 }

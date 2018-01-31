@@ -3,18 +3,18 @@ from django.db import models
 
 class User(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    info = models.CharField(max_length=1024, default="")
-    avatarUrl = models.URLField(default="https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png")
+    info = models.TextField(blank=True, null=True)
+    avatar_url = models.URLField(default="https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png")
     rating = models.IntegerField(default=0)
-    commentsCount = models.IntegerField(default=0)
-    postsCount = models.IntegerField(default=0)
-    hotPostsCount = models.IntegerField(default=0)
-    plusesCount = models.IntegerField(default=0)
-    minusesCount = models.IntegerField(default=0)
-    lastUpdateTimestamp = models.BigIntegerField(default=0, db_index=True)
-    subscribersCount = models.IntegerField(default=0)
-    isRatingBan = models.BooleanField(default=False)
-    updatingPeriod = models.IntegerField(default=1)
+    comments_count = models.IntegerField(default=0)
+    posts_count = models.IntegerField(default=0)
+    hot_posts_count = models.IntegerField(default=0)
+    pluses_count = models.IntegerField(default=0)
+    minuses_count = models.IntegerField(default=0)
+    last_update_timestamp = models.BigIntegerField(default=0, db_index=True)
+    subscribers_count = models.IntegerField(default=0)
+    is_rating_ban = models.BooleanField(default=False)
+    updating_period = models.IntegerField(default=1)
 
     def __str__(self):
         return self.name

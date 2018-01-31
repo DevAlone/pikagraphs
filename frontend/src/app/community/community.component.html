@@ -1,0 +1,43 @@
+<div class="communityComponent" *ngIf="community">
+	<div class="block header">
+		<img class="communityBackground" src="{{ community.background_image_url }}">
+
+		<h1>
+	        <img class="avatar" src="{{ community.avatar_url }}">
+	        <a title="Посмотреть на пикабу"
+	                class="niceLink"
+	                href="https://pikabu.ru/community/{{ community.url_name }}"
+	                target="_blank"
+	                rel="nofollow noopener">
+	            {{ community.name }}
+	        </a>
+	    </h1>
+	</div>
+    
+    <div class="infoBlock block">
+        <div class="row">
+            <div class="column key">Подписчиков</div>
+            <div class="column value">{{ community.subscribers_count }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Постов</div>
+            <div class="column value">{{ community.stories_count }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Время последнего обновления</div>
+            <div class="column value">{{ community.last_update_timestamp }}</div>
+        </div>
+    </div>
+
+    <div class="info block" *ngIf="community.description" [innerHTML]="community.simplified_description">
+
+    </div>
+
+    <div>
+        <h2>Подписчики</h2>
+        <app-graph graphType="community" graphId="{{ community.url_name }}/subscribers"></app-graph>
+
+        <h2>Посты</h2>
+        <app-graph graphType="community" graphId="{{ community.url_name }}/stories"></app-graph>
+    </div>
+</div>

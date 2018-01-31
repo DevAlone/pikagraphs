@@ -1,0 +1,36 @@
+.communityComponent {
+
+}
+.communityComponent .communityBackground {
+	width: 100%;
+}
+
+h1 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	align-content: center;
+
+	padding: 10px;
+	margin: 0;
+}
+
+h1 > a {
+	flex-grow: 1;
+	text-align: center;
+}
+
+.info {
+	padding: 10px;
+}
+
+.info p {
+	padding: 0;
+	margin: 0;
+}
+
+.header {
+	margin-top: 0;
+}

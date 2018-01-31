@@ -2,6 +2,7 @@
     height: 100%;
     background: url('/assets/img/blue_pattern.gif');
     color: #fff;
+    font-size: 16px;
 }
 
 .menu .item > a {
@@ -19,11 +20,17 @@
     color: inherit;
     background: rgba(255, 255, 255, 0.1);
     padding-left: 10px;
+    transition: 0.25s;
 }
 .menu .item > a:hover {
     background: rgba(255, 255, 255, 0.2);
+    padding-left: 20px;
 }
 
 .site_name > a {
     justify-content: center !important;
+}
+
+.site_name > a:hover {
+    padding-left: 10px !important;
 }

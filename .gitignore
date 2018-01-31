@@ -13,3 +13,4 @@ bot.log
 start_bot.sh
 logs
 logs/*
+*~
