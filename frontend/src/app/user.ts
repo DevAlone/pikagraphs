@@ -1,6 +1,6 @@
 export class User
 {
-    name: string;
+    username: string;
     info: string;
     avatar_url: string;
     rating: number;
@@ -13,6 +13,7 @@ export class User
     subscribers_count: number;
     is_rating_ban: number;
     updating_period: number;
+    is_updated: boolean;
 
     public constructor(init?:Partial<any>) {
         Object.assign(this, init);

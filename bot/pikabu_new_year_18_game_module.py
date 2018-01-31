@@ -1,9 +1,5 @@
 from bot.module import Module
-from bot import precise_time
-from bot.api.client import Client
-
 from pikabu_new_year_18_game_app.models import ScoreBoardEntry, ScoreEntry
-from django.conf import settings
 
 import aiohttp
 import json
@@ -18,13 +14,12 @@ class PikabuNewYear18GameModule(Module):
 
     async def _process(self):
         self._logger.debug("pikabu_new_year_18_game_module is processing...")
-        TOP_URL = "https://pikabu.ru/page/newyear2018/api/controller.php?action=get_top"
+        top_url = "https://pikabu.ru/page/newyear2018/api/controller.php?action=get_top"
         async with aiohttp.ClientSession() as session:
             async with session.get("http://d3d.info:55555/get/best/http/proxy/") as resp:
                 proxy_url = await resp.text()
 
-            async with session.get(TOP_URL, proxy=proxy_url, timeout=30) as response:
-            # async with session.get(TOP_URL, timeout=30) as response:
+            async with session.get(top_url, proxy=proxy_url, timeout=30) as response:
                 json_response = json.loads(await response.text())
                 data = json_response["data"]
                 scoreboard = ScoreBoardEntry(parse_timestamp=int(time.time()))

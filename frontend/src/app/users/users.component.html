@@ -9,11 +9,11 @@
             [scrollWindow]="false">
         <a class="user niceLink item"
                 *ngFor="let user of users"
-                routerLink="/user/{{ user.name }}">
+                routerLink="/user/{{ user.username }}">
             <span>
                 <img class="avatar" src="{{ user.avatar_url }}">
-                <span>{{ user.name }}</span>
-                <a href="https://pikabu.ru/profile/{{ user.name }}" target="_blank"
+                <span>{{ user.username }}</span>
+                <a href="https://pikabu.ru/profile/{{ user.username }}" target="_blank"
                         rel="nofollow noopener"
                         (click)="$event.stopPropagation();">
                     <img src="https://s.pikabu.ru/favicon.ico" title="Показать на пикабу">

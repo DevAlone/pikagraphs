@@ -1,9 +1,10 @@
 from bot.module import Module
-from bot import precise_time
 from bot.api.client import Client
 
 from communities_app.models import Community, CommunityCountersEntry
 from django.conf import settings
+
+import time
 
 
 class CommunitiesModule(Module):
@@ -37,7 +38,7 @@ class CommunitiesModule(Module):
         community.save()
 
         if community.last_update_timestamp + settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] \
-                >= precise_time.getTimestamp():
+                >= int(time.time()):
             return
 
         self._logger.debug('start processing community {}'.format(community_url_name))
@@ -52,7 +53,7 @@ class CommunitiesModule(Module):
         community.description = json_data['description']
         community.avatar_url = json_data['avatar_url']
         community.background_image_url = json_data['bg_image_url']
-        community.last_update_timestamp = precise_time.getTimestamp()
+        community.last_update_timestamp = int(time.time())
         community.save()
         CommunityCountersEntry(
             timestamp=community.last_update_timestamp,

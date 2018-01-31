@@ -3,10 +3,10 @@
         <img class="avatar" src="{{ user.avatar_url }}">
         <a title="Посмотреть на пикабу"
                 class="niceLink"
-                href="https://pikabu.ru/profile/{{ user.name }}"
+                href="https://pikabu.ru/profile/{{ user.username }}"
                 target="_blank"
                 rel="nofollow noopener">
-            {{ user.name }}
+            {{ user.username }}
         </a>
     </h1>
     <div class="info block" *ngIf="user.info">
@@ -44,11 +44,15 @@
         </div>
         <div class="row">
             <div class="column key">Последний раз обновлён</div>
-            <div class="column value">{{ user.last_update_timestamp }}</div>
+            <div class="column value">{{ user.last_update_timestamp * 1000 | date: "yyyy-mm-dd hh:mm:ss" }}</div>
         </div>
         <div class="row">
             <div class="column key">Период обновления</div>
             <div class="column value">{{ user.updating_period }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Обновляется</div>
+            <div class="column value">{{ user.is_updated ? 'true': 'false' }}</div>
         </div>
         <div class="row" *ngIf="user.name == 'l4rever'">
             <div class="column key">Секунд</div>
@@ -57,24 +61,24 @@
     </div>
     <div>
         <h2>рейтинг</h2>
-        <app-graph graphType="user" graphId="{{ user.name }}/rating"></app-graph>
+        <app-graph graphType="user" graphId="{{ user.username }}/rating"></app-graph>
 
         <h2>подписчики</h2>
-        <app-graph graphType="user" graphId="{{ user.name }}/subscribers"></app-graph>
+        <app-graph graphType="user" graphId="{{ user.username }}/subscribers"></app-graph>
 
         <h2>комментарии</h2>
-        <app-graph graphType="user" graphId="{{ user.name }}/comments"></app-graph>
+        <app-graph graphType="user" graphId="{{ user.username }}/comments"></app-graph>
 
         <h2>посты</h2>
-        <app-graph graphType="user" graphId="{{ user.name }}/posts"></app-graph>
+        <app-graph graphType="user" graphId="{{ user.username }}/posts"></app-graph>
 
         <h2>горячие посты</h2>
-        <app-graph graphType="user" graphId="{{ user.name }}/hot_posts"></app-graph>
+        <app-graph graphType="user" graphId="{{ user.username }}/hot_posts"></app-graph>
 
         <h2>плюсы</h2>
-        <app-graph graphType="user" graphId="{{ user.name }}/pluses"></app-graph>
+        <app-graph graphType="user" graphId="{{ user.username }}/pluses"></app-graph>
 
         <h2>минусы</h2>
-        <app-graph graphType="user" graphId="{{ user.name }}/minuses"></app-graph>
+        <app-graph graphType="user" graphId="{{ user.username }}/minuses"></app-graph>
     </div>
 </div>

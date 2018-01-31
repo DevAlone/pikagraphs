@@ -7,9 +7,9 @@ from rest_framework import serializers
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('name', 'info', 'avatar_url', 'rating', 'comments_count', 'posts_count', 'hot_posts_count',
+        fields = ('username', 'info', 'avatar_url', 'rating', 'comments_count', 'posts_count', 'hot_posts_count',
                   'pluses_count', 'minuses_count', 'last_update_timestamp', 'subscribers_count', 'is_rating_ban',
-                  'updating_period')
+                  'updating_period', 'is_updated')
 
 
 class CommunitySerializer(serializers.HyperlinkedModelSerializer):

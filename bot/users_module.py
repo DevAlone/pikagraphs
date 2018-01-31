@@ -4,11 +4,11 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserPlusesCountEntry, UserMinusesCountEntry, \
                         UserSubscribersCountEntry
 from pikabot_graphs import settings
-from bot.api.client import Client
+from bot.api.client import Client, PikabuError
 
 
 import asyncio
-from bot import precise_time
+import time
 
 
 class UsersModule(Module):
@@ -17,52 +17,39 @@ class UsersModule(Module):
 
     async def _process(self):
         with Client() as client:
-            with open('usernames') as f:
-                tasks = []
-                for line in f:
-                    if len(line.strip()) > 0:
-                        username = line.strip().lower()
+            tasks = []
 
-                        try:
-                            user = User.objects.get(name=username)
-                        except User.DoesNotExist:
-                            user = User()
-                            user.name = username
-                            user.save()
-
-                        # if it's time to update, put user in queue
-                        if user.last_update_timestamp + \
-                                user.updating_period < precise_time.getTimestamp():
-                            tasks.append(self._call_coroutine_with_logging_exception(self._process_user(username, client)))
-                            if len(tasks) > 10:
-                                await asyncio.wait(tasks)
-                                tasks.clear()
-                            user.last_update_timestamp = precise_time.getTimestamp()
-
-                if len(tasks) > 0:
+            for user in User.objects.filter(is_updated=True).filter(next_updating_timestamp__lte=int(time.time())):
+                tasks.append(self._call_coroutine_with_logging_exception(self._process_user(user, client)))
+                if len(tasks) > 10:
                     await asyncio.wait(tasks)
+                    tasks.clear()
 
-    async def _process_user(self, username, client):
-        self._logger.debug('start processing user {}'.format(username))
+            if len(tasks) > 0:
+                await asyncio.wait(tasks)
+
+    async def _process_user(self, user, client):
+        self._logger.debug('start processing user {}'.format(user.username))
+
+        user.last_update_timestamp = int(time.time())
+        user.save()
 
         try:
-            user = User.objects.get(name=username)
-        except User.DoesNotExist:
-            user = User()
-            user.name = username
+            user_data = await client.get_user_profile(user.username)
+            user_data = user_data['user']
+            user_data['rating'] = int(float(user_data['rating']))
+        except PikabuError as ex:
+            self._calculate_user_updating_period(user, False)
             user.save()
-
-        user_data = await client.get_user_profile(username)
-        user_data = user_data['user']
-        user_data['rating'] = int(float(user_data['rating']))
+            raise ex
 
         was_data_changed = False
         if user.rating != user_data['rating'] or \
-                        user.comments_count != user_data['comments_count'] or \
-                        user.posts_count != user_data['stories_count'] or \
-                        user.hot_posts_count != user_data['stories_hot_count'] or \
-                        user.pluses_count != user_data['pluses_count'] or \
-                        user.minuses_count != user_data['minuses_count']:
+                user.comments_count != user_data['comments_count'] or \
+                user.posts_count != user_data['stories_count'] or \
+                user.hot_posts_count != user_data['stories_hot_count'] or \
+                user.pluses_count != user_data['pluses_count'] or \
+                user.minuses_count != user_data['minuses_count']:
             was_data_changed = True
 
         if 'subscribers_count' in user_data:
@@ -89,7 +76,7 @@ class UsersModule(Module):
         user.hot_posts_count = user_data['stories_hot_count']
         user.pluses_count = user_data['pluses_count']
         user.minuses_count = user_data['minuses_count']
-        user.last_update_timestamp = precise_time.getTimestamp()
+        user.last_update_timestamp = int(time.time())
 
         try:
             user.subscribers_count = user_data['subscribers_count']
@@ -137,10 +124,10 @@ class UsersModule(Module):
             user=user,
             value=user.subscribers_count))
 
-        self._logger.debug('end processing user {}'.format(username))
+        self._logger.debug('end processing user {}'.format(user.username))
 
     def _calculate_user_updating_period(self, user, was_data_changed):
-        delta = abs((precise_time.getTimestamp() - user.last_update_timestamp) / 4)
+        delta = abs((int(time.time()) - user.last_update_timestamp) / 4)
         if delta > settings.USERS_MODULE['MAX_UPDATING_DELTA']:
             delta = settings.USERS_MODULE['MAX_UPDATING_DELTA']
         if was_data_changed:
@@ -156,7 +143,7 @@ class UsersModule(Module):
             user.updating_period = settings.USERS_MODULE['MAX_UPDATING_PERIOD']
 
     def _save_model_if_last_is_not_the_same(self, model):
-        lastEntry = type(model).objects.filter(user=model.user).last()
+        last_entry = type(model).objects.filter(user=model.user).last()
 
-        if lastEntry is None or int(lastEntry.value) != int(model.value):
+        if last_entry is None or int(last_entry.value) != int(model.value):
             model.save()

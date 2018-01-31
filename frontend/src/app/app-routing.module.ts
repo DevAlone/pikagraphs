@@ -8,6 +8,7 @@ import { NewYear2018GameComponent } from './new-year-2018-game/new-year-2018-gam
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+	{ path: '', redirectTo: 'users', pathMatch: 'full' },
     { path: 'users', component: UsersComponent },
     { path: 'communities', component: CommunitiesComponent },
     { path: 'user/:username', component: UserComponent },

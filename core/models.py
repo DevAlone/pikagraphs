@@ -2,7 +2,10 @@ from django.db import models
 
 
 class User(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    # to disable pycharm's attribute checking
+    objects = None
+
+    username = models.CharField(max_length=32, unique=True)
     info = models.TextField(blank=True, null=True)
     avatar_url = models.URLField(default="https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png")
     rating = models.IntegerField(default=0)
@@ -11,13 +14,22 @@ class User(models.Model):
     hot_posts_count = models.IntegerField(default=0)
     pluses_count = models.IntegerField(default=0)
     minuses_count = models.IntegerField(default=0)
-    last_update_timestamp = models.BigIntegerField(default=0, db_index=True)
+    next_updating_timestamp = models.IntegerField(default=0, db_index=True)
     subscribers_count = models.IntegerField(default=0)
     is_rating_ban = models.BooleanField(default=False)
-    updating_period = models.IntegerField(default=1)
+    updating_period = models.IntegerField(default=60)
+    is_updated = models.BooleanField(default=False)
+
+    @property
+    def last_update_timestamp(self):
+        return self.next_updating_timestamp - self.updating_period
+
+    @last_update_timestamp.setter
+    def last_update_timestamp(self, value):
+        self.next_updating_timestamp = value + self.updating_period
 
     def __str__(self):
-        return self.name
+        return self.username
 
     __repr__ = __str__
 

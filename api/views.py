@@ -96,7 +96,7 @@ class UserViewSet(SearchViewSet):
     serializer_class = UserSerializer
     sort_by_fields = [
         'rating',
-        'name',
+        'username',
         'subscribers_count',
         'comments_count',
         'posts_count',
@@ -106,12 +106,12 @@ class UserViewSet(SearchViewSet):
         'last_update_timestamp',
         'updating_period',
     ]
-    filter_by_fields = ['name', 'info']
+    filter_by_fields = ['username', 'info']
 
 
 @api_view(['GET'])
 def get_user_graph(request, username, graph_name):
-    user = get_object_or_404(User, name=username)
+    user = get_object_or_404(User, username=username)
     graph_name = graph_name.lower()
 
     classes = {
@@ -143,7 +143,7 @@ def get_user_graph(request, username, graph_name):
 
 
 class UserView(generics.RetrieveAPIView):
-    lookup_field = 'name'
+    lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
