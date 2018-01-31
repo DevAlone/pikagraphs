@@ -14,19 +14,21 @@ class User(models.Model):
     hot_posts_count = models.IntegerField(default=0)
     pluses_count = models.IntegerField(default=0)
     minuses_count = models.IntegerField(default=0)
-    next_updating_timestamp = models.IntegerField(default=0, db_index=True)
     subscribers_count = models.IntegerField(default=0)
     is_rating_ban = models.BooleanField(default=False)
     updating_period = models.IntegerField(default=60)
     is_updated = models.BooleanField(default=False)
 
-    @property
-    def last_update_timestamp(self):
-        return self.next_updating_timestamp - self.updating_period
+    # next_updating_timestamp = models.IntegerField(default=0, db_index=True)
+    last_update_timestamp = models.IntegerField(default=0, db_index=True)
 
-    @last_update_timestamp.setter
-    def last_update_timestamp(self, value):
-        self.next_updating_timestamp = value + self.updating_period
+    @property
+    def next_update_timestamp(self):
+        return self.last_update_timestamp + self.updating_period
+
+    # @next_update_timestamp.setter
+    # def next_update_timestamp(self, value):
+    #     self.next_updating_timestamp = value + self.updating_period
 
     def __str__(self):
         return self.username

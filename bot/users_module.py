@@ -5,6 +5,7 @@ from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserSubscribersCountEntry
 from pikabot_graphs import settings
 from bot.api.client import Client, PikabuError
+from django.db.models import F
 
 
 import asyncio
@@ -19,7 +20,8 @@ class UsersModule(Module):
         with Client() as client:
             tasks = []
 
-            for user in User.objects.filter(is_updated=True).filter(next_updating_timestamp__lte=int(time.time())):
+            for user in User.objects.filter(is_updated=True)\
+                    .filter(last_update_timestamp__lte=int(time.time()) - F('updating_period')):
                 tasks.append(self._call_coroutine_with_logging_exception(self._process_user(user, client)))
                 if len(tasks) > 10:
                     await asyncio.wait(tasks)

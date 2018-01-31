@@ -64,7 +64,9 @@ class SearchViewSet(viewsets.ReadOnlyModelViewSet):
 
         queryset = self.model.objects
 
+        print('sort1')
         if self.sort_by_fields:
+            print('sort2')
             sort_by_field = params['sort_by'].lower() if 'sort_by' in params else ''
 
             if sort_by_field not in self.sort_by_fields:
@@ -73,6 +75,7 @@ class SearchViewSet(viewsets.ReadOnlyModelViewSet):
             reverse_sort = params['reverse_sort'].lower() if 'reverse_sort' in params else 'false'
             reverse_sort = reverse_sort == 'true'
 
+            print('sort: ' + sort_by_field)
             queryset = queryset.order_by(('-' if reverse_sort else '') + sort_by_field)
 
         if search_text:
@@ -103,7 +106,7 @@ class UserViewSet(SearchViewSet):
         'hot_posts_count',
         'pluses_count',
         'minuses_count',
-        'next_updating_timestamp',
+        'last_update_timestamp',
         'updating_period',
     ]
     filter_by_fields = ['username', 'info']
