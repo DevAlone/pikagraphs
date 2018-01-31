@@ -9,6 +9,7 @@ export class User
     hot_posts_count: number;
     pluses_count: number;
     minuses_count: number;
+    next_updating_timestamp: number;
     last_update_timestamp: number;
     subscribers_count: number;
     is_rating_ban: number;
