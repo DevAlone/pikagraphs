@@ -17,40 +17,40 @@ def index(request):
     })
 
 
-def community(request, urlName):
-    urlName = urlName.lower()
-    community = get_object_or_404(Community, urlName=urlName)
+def community(request, url_name):
+    url_name = url_name.lower()
+    community = get_object_or_404(Community, urlName=url_name)
 
-    countersEntries = \
+    counters_entries = \
         CommunityCountersEntry.objects.filter(community=community).order_by(
             'timestamp')
 
     return render(request, 'communities_app/community.html', {
         'community': community,
-        'counters': countersEntries,
+        'counters': counters_entries,
     })
 
 
-def getMoscowTimestamp(timestamp):
+def get_moscow_timestamp(timestamp):
     return timestamp + 3600 * 3
 
 
 def secret_page_for_lactarius(request):
-    community = get_object_or_404(Community, urlName='leagueofartists')
+    community = get_object_or_404(Community, url_name='leagueofartists')
 
-    countersEntries = \
+    counters_entries = \
         CommunityCountersEntry.objects.filter(community=community).order_by(
             'timestamp')
 
-    resultArray = []
-    lastDay = 0
-    for entry in countersEntries:
-        daysSinceEpoch = (datetime.datetime.utcfromtimestamp(
-            getMoscowTimestamp(entry.timestamp)) -
-            datetime.datetime.utcfromtimestamp(0)
-        ).days
+    result_array = []
+    last_day = 0
+    for entry in counters_entries:
+        days_since_epoch = (datetime.datetime.utcfromtimestamp(
+            get_moscow_timestamp(entry.timestamp)) -
+                          datetime.datetime.utcfromtimestamp(0)
+                          ).days
 
-        if daysSinceEpoch > lastDay:
+        if days_since_epoch > last_day:
             # if lastDay != 0 and daysSinceEpoch - lastDay > 1:
             #     n = daysSinceEpoch - lastDay - 1
             #     for i in range(n):
@@ -62,15 +62,15 @@ def secret_page_for_lactarius(request):
             #        fakeResult.timestamp = time.mktime(dateTime.timetuple())
             #        resultArray.append(fakeResult)
 
-            entry.timestamp = getMoscowTimestamp(entry.timestamp)
-            resultArray.append(entry)
-            lastDay = daysSinceEpoch
+            entry.timestamp = get_moscow_timestamp(entry.timestamp)
+            result_array.append(entry)
+            last_day = days_since_epoch
 
-    for entry in resultArray:
+    for entry in result_array:
         dt = datetime.datetime.utcfromtimestamp(entry.timestamp)
         entry.time = dt.strftime('%d.%m.%Y %H:%M')
 
-    countersEntries = resultArray
+    counters_entries = result_array
     return render(request, 'communities_app/secret_page_for_lactarius.html', {
-        'counters': countersEntries,
+        'counters': counters_entries,
     })

@@ -77,7 +77,7 @@ from core.models import UserSubscribersCountEntry
 
 
 def secret_page_for_l4rever(request):
-    users = User.objects.all().order_by('-subscribersCount')
+    users = User.objects.all().order_by('-subscribers_count')
     return render(request, 'core/secret_page_for_l4rever.html', {
         'users': users,
     })
