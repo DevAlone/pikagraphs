@@ -31,7 +31,7 @@ export class UsersComponent implements OnInit {
         { fieldName: 'minuses_count', humanReadableName: 'Количеству минусов' },
         { fieldName: 'last_update_timestamp', humanReadableName: 'Времени последнего обновления' },
         { fieldName: 'next_updating_timestamp', humanReadableName: 'Периоду обновления' },
-        { fieldName: 'name', humanReadableName: 'Никнейму' },
+        { fieldName: 'username', humanReadableName: 'Никнейму' },
     ];
 
     // private searchText: string = '';
