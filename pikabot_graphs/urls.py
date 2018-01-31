@@ -10,7 +10,7 @@ import api.views
 
 
 urlpatterns = [
-    url(r'^', include('api.urls')),
+    url(r'^api/', include('api.urls')),
     url(r'^secret_page_for_lactarius/$', communities_app.views.secret_page_for_lactarius,
         name='secret_page_for_lactarius'),
     url(r'^secret_page_for_l4rever/$', core.views.secret_page_for_l4rever,
