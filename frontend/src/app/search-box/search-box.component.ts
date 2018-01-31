@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 
 @Component({
   selector: 'app-search-box',
+  host: {'(window:keydown)': 'keyEvent($event)'},
   templateUrl: './search-box.component.html',
   styleUrls: ['./search-box.component.css']
 })
@@ -22,6 +23,11 @@ export class SearchBoxComponent implements OnInit {
 	public searchText: string = "";
 	public sortBy: string = "";
   public reverseSort: boolean = false;
+
+  keyEvent(event) {
+      if (event.keyCode == 82)
+          this.update();
+  }
 
 	constructor(
         private route: ActivatedRoute,
