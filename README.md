@@ -10,3 +10,11 @@ Dependencies:
 
 - django
 - aiohttp
+
+# Build
+
+```bash
+ng build --prod --aot
+```
+
+in frontend directory
