@@ -19,9 +19,9 @@ export class SearchBoxComponent implements OnInit {
 
 	private searchTerms = new Subject<string>();
 
-	private searchText: string = "";
-	private sortBy: string = "";
-    private reverseSort: boolean = false;
+	public searchText: string = "";
+	public sortBy: string = "";
+  public reverseSort: boolean = false;
 
 	constructor(
         private route: ActivatedRoute,
@@ -58,7 +58,7 @@ export class SearchBoxComponent implements OnInit {
     sortByClicked(field: any) {
         var sortBy = field.fieldName;
 
-        if (this.sortBy == sortBy) 
+        if (this.sortBy == sortBy)
             this.reverseSort = !this.reverseSort;
         else
             this.sortBy = sortBy;
