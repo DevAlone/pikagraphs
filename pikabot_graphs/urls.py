@@ -15,6 +15,7 @@ urlpatterns = [
         name='secret_page_for_lactarius'),
     url(r'^secret_page_for_l4rever/$', core.views.secret_page_for_l4rever,
         name='secret_page_for_l4rever'),
+    url(r'^OK/$', core.views.ok),
 
     url(r'^', include('fakeadmin.urls')),
 ]
