@@ -129,28 +129,36 @@ class UsersModule(Module):
         self._logger.debug('end processing user {}'.format(user.username))
 
     def _calculate_user_updating_period(self, user, was_data_changed):
+        if user.username == 'apres':
+            print('was_data_changed: {}'.format(was_data_changed))
+
         delta = abs((int(time.time()) - user.last_update_timestamp) / 4)
         if delta > settings.USERS_MODULE['MAX_UPDATING_DELTA']:
             delta = settings.USERS_MODULE['MAX_UPDATING_DELTA']
         elif delta < settings.USERS_MODULE['MIN_UPDATING_DELTA']:
             delta = settings.USERS_MODULE['MIN_UPDATING_DELTA']
 
+        if user.username == 'apres':
+            print('delta: {}'.format(delta))
+
         if was_data_changed:
             user.updating_period -= delta
         else:
             user.updating_period += delta
 
-        self._logger.error('before: {}'.format(user.updating_period))
+        if user.username == 'apres':
+            self._logger.error('before: {}'.format(user.updating_period))
 
         if user.updating_period < settings.USERS_MODULE['MIN_UPDATING_PERIOD']:
             user.updating_period = settings.USERS_MODULE['MIN_UPDATING_PERIOD']
         elif user.updating_period > settings.USERS_MODULE['MAX_UPDATING_PERIOD']:
             user.updating_period = settings.USERS_MODULE['MAX_UPDATING_PERIOD']
 
-        self._logger.error('after: {}'.format(user.updating_period))
+        if user.username == 'apres':
+            self._logger.error('after: {}'.format(user.updating_period))
 
-        self._logger.error("config: {}".format(settings.USERS_MODULE))
-        self._logger.error("config max: {}".format(settings.USERS_MODULE['MAX_UPDATING_PERIOD']))
+            self._logger.error("config: {}".format(settings.USERS_MODULE))
+            self._logger.error("config max: {}".format(settings.USERS_MODULE['MAX_UPDATING_PERIOD']))
 
     def _save_model_if_last_is_not_the_same(self, model):
         last_entry = type(model).objects.filter(user=model.user).last()
