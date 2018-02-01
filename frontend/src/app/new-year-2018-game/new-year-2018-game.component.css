@@ -63,10 +63,19 @@ img {
 	height: 50px;
 }
 
-.scoreboard > .entry {
-	min-height: 25px !important;
+.scoreboard table {
+
 }
 
-.scoreboard > .entry > * {
+.scoreboard tr {
 	height: 25px !important;
+}
+
+.scoreboard td {
+	height: 25px !important;
+}
+
+.scoreboard td > *{
+	height: 25px !important;
+	white-space: nowrap;
 }
