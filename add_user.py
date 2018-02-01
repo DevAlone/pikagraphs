@@ -19,11 +19,15 @@ if __name__ == '__main__':
         print('bad username')
         exit(2)
 
-    user, was_created = User.objects.get_or_create(username=username)
-    if not user.is_updated:
-        if was_created:
-            print('creating {}...'.format(user.username))
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        print('creating {}...'.format(username))
+        user = User()
+        user.username = username
 
+    if not user.is_updated:
         print('setting is_updated field to True...')
         user.is_updated = True
-        user.save()
+
+    user.save()
