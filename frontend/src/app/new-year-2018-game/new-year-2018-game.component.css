@@ -64,18 +64,29 @@ img {
 }
 
 .scoreboard table {
-
+	display: table;
 }
 
 .scoreboard tr {
-	height: 25px !important;
+	display: table-row;
+	min-height: 5px !important;
+	height: auto !important;
+	max-height: 15px !important;
+	font-size: 15px;
 }
 
 .scoreboard td {
-	height: 25px !important;
+	padding: 0 5px !important;
+	display: table-cell;
+	min-height: 5px !important;
+	height: auto !important;
+	max-height: 15px !important;
+	white-space: nowrap;
 }
 
 .scoreboard td > *{
-	height: 25px !important;
-	white-space: nowrap;
+	min-height: 5px !important;
+	max-height: 15px !important;
+	height: auto; 
+	vertical-align: middle;
 }
