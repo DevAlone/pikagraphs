@@ -25,7 +25,7 @@
         </div>
         <div class="row">
             <div class="column key">Время последнего обновления</div>
-            <div class="column value">{{ community.last_update_timestamp }}</div>
+            <div class="column value">{{ community.last_update_timestamp * 1000 | date: "yyyy-mm-dd hh:mm:ss" }}</div>
         </div>
     </div>
 
