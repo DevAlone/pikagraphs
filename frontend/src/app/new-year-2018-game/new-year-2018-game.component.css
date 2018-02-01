@@ -62,3 +62,11 @@
 img {
 	height: 50px;
 }
+
+.scoreboard > .entry {
+	min-height: 25px !important;
+}
+
+.scoreboard > .entry > * {
+	height: 25px !important;
+}
