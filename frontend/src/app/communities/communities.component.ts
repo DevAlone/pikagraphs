@@ -14,6 +14,7 @@ declare var communitiesComponent: any;
 })
 export class CommunitiesComponent implements OnInit {
     communities: Community[] = [];
+    timers: any[] = [];
 
     page: number = 1;
 
@@ -59,12 +60,16 @@ export class CommunitiesComponent implements OnInit {
             }
 
             if (communitiesBox.scrollHeight < communitiesComponent.scrollHeight + 500)
-                setTimeout(() => this.loadMore(), 100);
+                this.timers.push(setTimeout(() => this.loadMore(), 100));
         });
     }
 
     resetTape() {
         this.communities = [];
+        for (var timer of this.timers)
+            clearTimeout(timer);
+
+        this.timers = [];
         this.page = 1;
     }
 

@@ -18,6 +18,7 @@ declare var usersComponent: any;
 export class UsersComponent implements OnInit {
     users$: Observable<any>;
     users: User[] = [];
+    timers: any[] = [];
 
     private page: number = 1;
 
@@ -73,12 +74,17 @@ export class UsersComponent implements OnInit {
             }
 
             if (usersBox.scrollHeight < usersComponent.scrollHeight + 500)
-                setTimeout(() => this.loadMore(), 100);
+                this.timers.push(setTimeout(() => this.loadMore(), 100));
         });
     }
 
     resetTape() {
         this.users = [];
+        for (var timer of this.timers)
+            clearTimeout(timer);
+
+        this.timers = [];
+
         this.page = 1;
     }
 
