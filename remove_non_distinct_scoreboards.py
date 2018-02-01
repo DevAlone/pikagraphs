@@ -11,9 +11,7 @@ def are_scoreboards_equal(scoreboard1: ScoreBoardEntry, scoreboard2: ScoreBoardE
         return False
 
     for i in range(len(items1)):
-
         item1 = items1[i]
-        print(item1)
         item2 = items2[i]
 
         if item1.username != item2.username or item1.avatar_url != item2.avatar_url or item1.score != item2.score\
