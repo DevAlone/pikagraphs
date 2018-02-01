@@ -23,21 +23,22 @@ def are_scoreboards_equal(scoreboard1: ScoreBoardEntry, scoreboard2: ScoreBoardE
 
 if __name__ == '__main__':
     scoreboards = list(ScoreBoardEntry.objects.order_by('parse_timestamp').all())
+    objects_to_delete = []
 
     previous_score_board = None
 
     items_count = 0
-    deleted_count = 0
 
     for i in range(1, len(scoreboards)):
         previous_score_board = scoreboards[i - 1]
         scoreboard = scoreboards[i]
         items_count += 1
-    
+
         if are_scoreboards_equal(previous_score_board, scoreboard):
-            deleted_count += 1
-            scoreboard.delete()
-        else:
-            previous_score_board = scoreboard
+            objects_to_delete.append(scoreboard)
+
+    print(objects_to_delete)
+
+    deleted_count = 0
 
     print('items: {}\ndeleted: {}'.format(items_count, deleted_count))
