@@ -1,6 +1,6 @@
 from core.models import User
 from communities_app.models import Community
-from pikabu_new_year_18_game_app.models import ScoreBoardEntry, ScoreEntry
+from pikabu_new_year_18_game_app.models import ScoreBoardEntry, ScoreEntry, TopItem
 from rest_framework import serializers
 
 
@@ -31,3 +31,12 @@ class ScoreBoardEntrySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ScoreBoardEntry
         fields = ('parse_timestamp', 'score_entries')
+
+
+class TopItemSerializer(serializers.HyperlinkedModelSerializer):
+    score_entry = ScoreEntrySerializer(many=False, read_only=True)
+
+    class Meta:
+        model = TopItem
+        fields = ('score_entry', )
+

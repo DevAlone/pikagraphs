@@ -32,8 +32,10 @@ export class NewYear2018GameComponent implements OnInit {
                 this.scoreboards.push(scoreboard);
             }
 
-            if (!result.next)
+            if (!result.next) {
+                this.loadMoreScoreboards = () => {};
             	return;
+            }
 
             ++this.scoreboardsPage;
 
@@ -43,14 +45,15 @@ export class NewYear2018GameComponent implements OnInit {
     }
 
     loadMoreTop() {
-    	console.log("load more top");
         this.api.get(ApiConfig.NEW_YEAR_2018_GAME_TOP_URL, {page: this.topPage}).subscribe(result => {
             for (var topItem of result.results) {
                 this.topItems.push(topItem);
             }
 
-            if (!result.next)
+            if (!result.next) {
+                this.loadMoreTop = () => {};
             	return;
+            }
 
             ++this.topPage;
 

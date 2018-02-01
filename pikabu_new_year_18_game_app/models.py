@@ -16,3 +16,10 @@ class ScoreEntry(models.Model):
         return self.username
 
     __repr__ = __str__
+
+    class Meta:
+        ordering = ['score']
+
+
+class TopItem(models.Model):
+    score_entry = models.OneToOneField(ScoreEntry, on_delete=models.CASCADE, primary_key=True)

@@ -52,6 +52,7 @@ export class CommunitiesComponent implements OnInit {
             }
 
             if (!result.next) {
+                this.loadMore = () => {};
                 this.messageService.info("Больше ничего нет");
                 return;
             }

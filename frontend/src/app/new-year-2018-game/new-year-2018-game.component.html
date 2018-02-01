@@ -29,10 +29,10 @@
 	<div id="topContainer"
 	>
 	    <div class="entry topEntry block" *ngFor="let entry of topItems">
-			<img src="{{ entry.avatar_url }}">
-			<span>{{ entry.username }}</span>
-			<span>{{ entry.score }}</span>
-			<span>{{ entry.date }}</span>
+			<img src="{{ entry.score_entry.avatar_url }}">
+			<span>{{ entry.score_entry.username }}</span>
+			<span>{{ entry.score_entry.score }}</span>
+			<span>{{ entry.score_entry.date }}</span>
 		</div>
 	</div>
 </div>

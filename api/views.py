@@ -9,6 +9,7 @@ from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from core.serializers import UserSerializer, CommunitySerializer, ScoreBoardEntrySerializer, ScoreEntrySerializer
+from core.serializers import TopItemSerializer
 
 from core.models import User, UserRatingEntry, UserCommentsCountEntry
 from core.models import UserPostsCountEntry, UserHotPostsCountEntry
@@ -17,7 +18,7 @@ from core.models import UserSubscribersCountEntry
 
 from communities_app.models import Community, CommunityCountersEntry
 
-from pikabu_new_year_18_game_app.models import ScoreBoardEntry, ScoreEntry
+from pikabu_new_year_18_game_app.models import ScoreBoardEntry, ScoreEntry, TopItem
 
 
 def angular_debug_url(request):
@@ -206,6 +207,6 @@ class ScoreBoardViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TopViewSet(viewsets.ReadOnlyModelViewSet):
-    model = ScoreEntry
-    queryset = ScoreEntry.objects.all().order_by('-score')
-    serializer_class = ScoreEntrySerializer
+    model = TopItem
+    queryset = TopItem.objects.order_by('-score_entry__score').all()
+    serializer_class = TopItemSerializer
