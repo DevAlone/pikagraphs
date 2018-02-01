@@ -132,11 +132,12 @@ class UsersModule(Module):
         delta = abs((int(time.time()) - user.last_update_timestamp) / 4)
         if delta > settings.USERS_MODULE['MAX_UPDATING_DELTA']:
             delta = settings.USERS_MODULE['MAX_UPDATING_DELTA']
+        elif delta < settings.USERS_MODULE['MIN_UPDATING_DELTA']:
+            delta = settings.USERS_MODULE['MIN_UPDATING_DELTA']
+
         if was_data_changed:
-            user.updating_period -= settings.USERS_MODULE['MIN_UPDATING_DELTA']  # * 1.5
-            user.updating_period -= delta * 1.5
+            user.updating_period -= delta
         else:
-            user.updating_period += settings.USERS_MODULE['MIN_UPDATING_DELTA']
             user.updating_period += delta
 
         if user.updating_period < settings.USERS_MODULE['MIN_UPDATING_PERIOD']:
