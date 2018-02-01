@@ -35,9 +35,15 @@ if __name__ == '__main__':
         items_count += 1
 
         if are_scoreboards_equal(previous_score_board, scoreboard):
+            with open('tmp.log', 'a') as f:
+                f.write("""
+------
+{}
+equal to
+{}
+------
+                """.format(previous_score_board.score_entries.all(), scoreboard.score_entries.all()))
             objects_to_delete.append(scoreboard)
-
-    print(objects_to_delete)
 
     deleted_count = 0
 
