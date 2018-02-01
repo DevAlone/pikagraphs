@@ -145,6 +145,8 @@ class UsersModule(Module):
         elif user.updating_period > settings.USERS_MODULE['MAX_UPDATING_PERIOD']:
             user.updating_period = settings.USERS_MODULE['MAX_UPDATING_PERIOD']
 
+        self._logger.error("max updating period: ".format(settings.USERS_MODULE['MAX_UPDATING_PERIOD']))
+
     def _save_model_if_last_is_not_the_same(self, model):
         last_entry = type(model).objects.filter(user=model.user).last()
 
