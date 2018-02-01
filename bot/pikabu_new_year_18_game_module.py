@@ -7,7 +7,7 @@ import time
 
 
 class PikabuNewYear18GameModule(Module):
-    processPeriod = 1 * 60
+    processing_period = 1 * 60
 
     def __init__(self):
         super(PikabuNewYear18GameModule, self).__init__('pikabu_new_year_18_game_module')

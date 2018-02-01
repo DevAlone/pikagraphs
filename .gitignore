@@ -14,3 +14,4 @@ start_bot.sh
 logs
 logs/*
 *~
+.parse_all_users_module*

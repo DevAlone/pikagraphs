@@ -33,6 +33,9 @@ export class UsersComponent implements OnInit {
         { fieldName: 'last_update_timestamp', humanReadableName: 'Времени последнего обновления' },
         { fieldName: 'next_updating_timestamp', humanReadableName: 'Периоду обновления' },
         { fieldName: 'username', humanReadableName: 'Никнейму' },
+        { fieldName: 'pikabu_id', humanReadableName: 'ID в базе пикабу' },
+        { fieldName: 'approved', humanReadableName: 'Подтверждён' },
+        { fieldName: 'signup_timestamp', humanReadableName: 'Дате регистрации' },
     ];
 
     // private searchText: string = '';

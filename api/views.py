@@ -109,6 +109,9 @@ class UserViewSet(SearchViewSet):
         'minuses_count',
         'last_update_timestamp',
         'updating_period',
+        'pikabu_id',
+        'approved',
+        'signup_timestamp'
     ]
     filter_by_fields = ['username', 'info']
 

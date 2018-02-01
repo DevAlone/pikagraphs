@@ -43,6 +43,30 @@
             <div class="column value">{{ user.subscribers_count }}</div>
         </div>
         <div class="row">
+            <div class="column key">ID в базе пикабу</div>
+            <div class="column value">{{ user.pikabu_id }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">gender</div>
+            <div class="column value">{{ user.gender }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Подтверждён</div>
+            <div class="column value">{{ user.approved }}</div>
+        </div>
+        <div class="row">
+            <div class="column key">Награды</div>
+            <div class="column value" title="{{ user.awards }}">awards</div>
+        </div>
+        <div class="row">
+            <div class="column key">Сообщества</div>
+            <div class="column value" title="{{ user.communities }}">communities</div>
+        </div>
+        <div class="row">
+            <div class="column key">Дата регистрации</div>
+            <div class="column value">{{ user.signup_timestamp * 1000 | date: "yyyy-MM-dd H:mm:ss" }}</div>
+        </div>
+        <div class="row">
             <div class="column key">Последний раз обновлён</div>
             <div class="column value">{{ user.last_update_timestamp * 1000 | date: "yyyy-MM-dd H:mm:ss" }}</div>
         </div>

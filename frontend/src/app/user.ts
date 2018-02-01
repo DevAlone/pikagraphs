@@ -15,6 +15,13 @@ export class User
     is_rating_ban: number;
     updating_period: number;
     is_updated: boolean;
+    
+    pikabu_id: number;
+    gender: string;
+    approved: string;
+    awards: string;
+    communities: string;
+    signup_timestamp: number;
 
     public constructor(init?:Partial<any>) {
         Object.assign(this, init);

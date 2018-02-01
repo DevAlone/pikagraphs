@@ -4,7 +4,7 @@ from bot.module import Module
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserPostsCountEntry, UserHotPostsCountEntry, \
                         UserPlusesCountEntry, UserMinusesCountEntry, \
-                        UserSubscribersCountEntry
+                        UserSubscribersCountEntry, PikabuUser
 from pikabot_graphs import settings
 from bot.api.client import Client, PikabuError
 from django.db.models import F
@@ -31,6 +31,25 @@ class UsersModule(Module):
 
             if len(tasks) > 0:
                 await asyncio.wait(tasks)
+
+            await self._call_coroutine_with_logging_exception(self.process_pikabu_users(client))
+
+    async def process_pikabu_users(self, client):
+        pikabu_users = PikabuUser.objects.filter(is_processed=False).all()
+
+        for pikabu_user in pikabu_users:
+            try:
+                user = User.objects.get(username=pikabu_user.username)
+            except User.DoesNotExist:
+                user = User()
+                user.username = pikabu_user.username
+
+            # user.pikabu_id = pikabu_user.pikabu_id
+
+            await self._call_coroutine_with_logging_exception(self.process_user(user, client))
+
+            pikabu_user.is_processed = True
+            pikabu_user.save()
 
     async def process_user(self, user, client):
         self._logger.debug('start processing user {}'.format(user.username))
@@ -59,6 +78,9 @@ class UsersModule(Module):
         user_data['pluses_count'] = int(user_data['pluses_count'])
         user_data['minuses_count'] = int(user_data['minuses_count'])
         user_data['subscribers_count'] = int(user_data['subscribers_count'])
+        user_data['signup_date'] = int(user_data['signup_date'])
+        user_data['user_id'] = int(user_data['user_id'])
+
         if type(user_data['is_rating_ban']) is not bool:
             user_data['is_rating_ban'] = user_data['is_rating_ban'].lower().strip() == 'true'
 
@@ -75,6 +97,13 @@ class UsersModule(Module):
         user.hot_posts_count = user_data['stories_hot_count']
         user.pluses_count = user_data['pluses_count']
         user.minuses_count = user_data['minuses_count']
+
+        user.gender = str(user_data['gender'])
+        user.approved = user_data['approved']
+        user.awards = user_data['awards']
+        user.communities = user_data['communities']
+        user.signup_timestamp = user_data['signup_date']
+        user.pikabu_id = user_data['user_id']
 
         try:
             user.subscribers_count = user_data['subscribers_count']

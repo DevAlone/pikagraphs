@@ -7,8 +7,8 @@ from django.conf import settings
 
 class Module:
     _logger = None
-    processPeriod = 1
-    lastProcessTimestamp = 0
+    processing_period = 1
+    last_processing_timestamp = 0
 
     # you should implement this method
     async def _process(self):

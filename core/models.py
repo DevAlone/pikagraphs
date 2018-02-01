@@ -5,9 +5,10 @@ class User(models.Model):
     # to disable pycharm's attribute checking
     objects = None
 
+    pikabu_id = models.BigIntegerField(unique=True, null=True)
+
     username = models.CharField(max_length=32, unique=True)
-    info = models.TextField(blank=True, null=True)
-    avatar_url = models.URLField(default="https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png")
+    avatar_url = models.TextField(default="")
     rating = models.IntegerField(default=0)
     comments_count = models.IntegerField(default=0)
     posts_count = models.IntegerField(default=0)
@@ -16,6 +17,15 @@ class User(models.Model):
     minuses_count = models.IntegerField(default=0)
     subscribers_count = models.IntegerField(default=0)
     is_rating_ban = models.BooleanField(default=False)
+
+    gender = models.CharField(max_length=1, default='-')
+    approved = models.TextField(default="")
+    awards = models.TextField(default="")
+    communities = models.TextField(default="")
+    signup_timestamp = models.IntegerField(default=0)
+
+    info = models.TextField(blank=True, null=True)
+
     updating_period = models.IntegerField(default=60)
     is_updated = models.BooleanField(default=False)
 
@@ -116,3 +126,11 @@ class UserSubscribersCountEntry(models.Model):
         return self.user.name
 
     __repr__ = __str__
+
+
+class PikabuUser(models.Model):
+    objects = None
+
+    pikabu_id = models.BigIntegerField(primary_key=True)
+    username = models.CharField(max_length=32)
+    is_processed = models.BooleanField(default=False)

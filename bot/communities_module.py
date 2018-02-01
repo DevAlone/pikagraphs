@@ -8,7 +8,7 @@ import time
 
 
 class CommunitiesModule(Module):
-    processPeriod = settings.COMMUNITIES_MODULE['UPDATING_PERIOD']
+    processing_period = settings.COMMUNITIES_MODULE['UPDATING_PERIOD']
 
     def __init__(self):
         super(CommunitiesModule, self).__init__('communities_module')
