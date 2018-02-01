@@ -59,17 +59,18 @@ export class UsersComponent implements OnInit {
 
     loadMore() {
         this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
+            ++this.page;
+            if (!result.results)
+                return
+
             for (var user of result.results) {
                 this.users.push(user);
             }
 
             if (!result.next) {
-                this.loadMore = () => {};
                 this.messageService.info("Больше ничего нет");
                 return;
             }
-
-            ++this.page;
 
             if (usersBox.scrollHeight < usersComponent.scrollHeight + 500)
                 setTimeout(() => this.loadMore(), 100);

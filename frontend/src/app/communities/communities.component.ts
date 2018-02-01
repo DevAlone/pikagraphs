@@ -46,13 +46,14 @@ export class CommunitiesComponent implements OnInit {
                 this.searchParams, this.page
         ).subscribe(result => {
             ++this.page;
+            if (!result.results)
+                return
 
             for (var community of result.results) {
                 this.communities.push(community);
             }
 
             if (!result.next) {
-                this.loadMore = () => {};
                 this.messageService.info("Больше ничего нет");
                 return;
             }
