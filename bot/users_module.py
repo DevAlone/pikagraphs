@@ -130,7 +130,7 @@ class UsersModule(Module):
 
     def _calculate_user_updating_period(self, user, was_data_changed):
         if user.username == 'apres':
-            print('was_data_changed: {}'.format(was_data_changed))
+            self._logger.error('was_data_changed: {}'.format(was_data_changed))
 
         delta = abs((int(time.time()) - user.last_update_timestamp) / 4)
         if delta > settings.USERS_MODULE['MAX_UPDATING_DELTA']:
@@ -139,7 +139,7 @@ class UsersModule(Module):
             delta = settings.USERS_MODULE['MIN_UPDATING_DELTA']
 
         if user.username == 'apres':
-            print('delta: {}'.format(delta))
+            self._logger.error('delta: {}'.format(delta))
 
         if was_data_changed:
             user.updating_period -= delta
