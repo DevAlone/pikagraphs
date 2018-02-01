@@ -140,12 +140,17 @@ class UsersModule(Module):
         else:
             user.updating_period += delta
 
+        self._logger.error('before: {}'.format(user.updating_period))
+
         if user.updating_period < settings.USERS_MODULE['MIN_UPDATING_PERIOD']:
             user.updating_period = settings.USERS_MODULE['MIN_UPDATING_PERIOD']
         elif user.updating_period > settings.USERS_MODULE['MAX_UPDATING_PERIOD']:
             user.updating_period = settings.USERS_MODULE['MAX_UPDATING_PERIOD']
 
+        self._logger.error('after: {}'.format(user.updating_period))
+
         self._logger.error("config: {}".format(settings.USERS_MODULE))
+        self._logger.error("config max: {}".format(settings.USERS_MODULE['MAX_UPDATING_PERIOD']))
 
     def _save_model_if_last_is_not_the_same(self, model):
         last_entry = type(model).objects.filter(user=model.user).last()
