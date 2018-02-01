@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     modules = [
         UsersModule(),
-        CommunitiesModule(),
+        # CommunitiesModule(),
     ]
 
     # loop.create_task(pikabu_new_year_18_game_module_executor())
