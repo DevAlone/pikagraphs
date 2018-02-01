@@ -87,9 +87,6 @@ class UsersModule(Module):
 
         was_data_changed = False
 
-        if user.username == 'apres':
-            print('apres caught')
-
         if user.rating != previous_user_state.rating or user.comments_count != previous_user_state.comments_count or \
                 user.posts_count != previous_user_state.posts_count or \
                 user.hot_posts_count != previous_user_state.hot_posts_count or \
@@ -149,36 +146,21 @@ class UsersModule(Module):
         self._logger.debug('end processing user {}'.format(user.username))
 
     def _calculate_user_updating_period(self, user, was_data_changed):
-        if user.username == 'apres':
-            self._logger.error('was_data_changed: {}'.format(was_data_changed))
-
         delta = abs((int(time.time()) - user.last_update_timestamp) / 4)
         if delta > settings.USERS_MODULE['MAX_UPDATING_DELTA']:
             delta = settings.USERS_MODULE['MAX_UPDATING_DELTA']
         elif delta < settings.USERS_MODULE['MIN_UPDATING_DELTA']:
             delta = settings.USERS_MODULE['MIN_UPDATING_DELTA']
 
-        if user.username == 'apres':
-            self._logger.error('delta: {}'.format(delta))
-
         if was_data_changed:
             user.updating_period -= delta
         else:
             user.updating_period += delta
 
-        if user.username == 'apres':
-            self._logger.error('before: {}'.format(user.updating_period))
-
         if user.updating_period < settings.USERS_MODULE['MIN_UPDATING_PERIOD']:
             user.updating_period = settings.USERS_MODULE['MIN_UPDATING_PERIOD']
         elif user.updating_period > settings.USERS_MODULE['MAX_UPDATING_PERIOD']:
             user.updating_period = settings.USERS_MODULE['MAX_UPDATING_PERIOD']
-
-        if user.username == 'apres':
-            self._logger.error('after: {}'.format(user.updating_period))
-
-            self._logger.error("config: {}".format(settings.USERS_MODULE))
-            self._logger.error("config max: {}".format(settings.USERS_MODULE['MAX_UPDATING_PERIOD']))
 
     def _save_model_if_last_is_not_the_same(self, model):
         last_entry = type(model).objects.filter(user=model.user).last()
