@@ -26,12 +26,16 @@ if __name__ == '__main__':
 
     previous_score_board = None
 
+    items_count = 0
+    deleted_count = 0
+
     for scoreboard in scoreboards:
+        items_count += 1
         if previous_score_board is not None:
             if are_scoreboards_equal(previous_score_board, scoreboard):
-                print('deleting...')
+                deleted_count += 1
                 scoreboard.delete()
             else:
-                print('not deleting...')
+                previous_score_board = scoreboard
 
-        previous_score_board = scoreboard
+    print('items: {}\ndeleted: {}'.format(items_count, deleted_count))
