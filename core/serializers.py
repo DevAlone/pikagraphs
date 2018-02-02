@@ -1,4 +1,4 @@
-from core.models import User
+from core.models import User, PikabuUser
 from communities_app.models import Community
 from pikabu_new_year_18_game_app.models import ScoreBoardEntry, ScoreEntry, TopItem
 from rest_framework import serializers
@@ -41,3 +41,8 @@ class TopItemSerializer(serializers.HyperlinkedModelSerializer):
         model = TopItem
         fields = ('score_entry', )
 
+
+class PikabuUserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = PikabuUser
+        fields = ('pikabu_id', 'username', 'is_processed',)

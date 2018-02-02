@@ -1,6 +1,10 @@
 from pikabot_graphs import settings
 
-import os
+from core.models import User, UserRatingEntry, UserCommentsCountEntry, PikabuUser, UserPostsCountEntry
+from core.models import UserHotPostsCountEntry, UserPlusesCountEntry, UserMinusesCountEntry, UserSubscribersCountEntry
+from communities_app.models import Community, CommunityCountersEntry
+from pikabu_new_year_18_game_app.models import ScoreBoardEntry, TopItem
+
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Q
@@ -8,17 +12,13 @@ from django.db.models import Q
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from core.serializers import UserSerializer, CommunitySerializer, ScoreBoardEntrySerializer, ScoreEntrySerializer
+from core.serializers import UserSerializer, CommunitySerializer, ScoreBoardEntrySerializer, PikabuUserSerializer
 from core.serializers import TopItemSerializer
 
-from core.models import User, UserRatingEntry, UserCommentsCountEntry
-from core.models import UserPostsCountEntry, UserHotPostsCountEntry
-from core.models import UserPlusesCountEntry, UserMinusesCountEntry
-from core.models import UserSubscribersCountEntry
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
-from communities_app.models import Community, CommunityCountersEntry
-
-from pikabu_new_year_18_game_app.models import ScoreBoardEntry, ScoreEntry, TopItem
+import os
 
 
 def angular_debug_url(request):
@@ -46,7 +46,7 @@ def angular_debug_url(request):
     try:
         with open(file_path, 'r') as file:
             return HttpResponse(file.read())
-    except:
+    except FileNotFoundError:
         pass
 
     request.path = '/'
@@ -210,3 +210,23 @@ class TopViewSet(viewsets.ReadOnlyModelViewSet):
     model = TopItem
     queryset = TopItem.objects.order_by('-score_entry__score').all()
     serializer_class = TopItemSerializer
+
+
+class PikabuUserFilter(FilterSet):
+    class Meta:
+        model = PikabuUser
+        fields = {
+            'pikabu_id': ('exact', 'lte', 'gte'),
+            'username': ('exact', 'contains', 'icontains'),
+            'is_processed': ('exact', )
+        }
+
+
+class PikabuUserViewSet(viewsets.ReadOnlyModelViewSet):
+    model = PikabuUser
+    queryset = PikabuUser.objects.all()
+    serializer_class = PikabuUserSerializer
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    ordering_fields = ('pikabu_id', 'username')
+    ordering = ('pikabu_id',)
+    filter_class = PikabuUserFilter

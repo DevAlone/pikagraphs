@@ -3,4 +3,5 @@ django
 psycopg2
 ntplib
 djangorestframework
+django-filter
 aiosocks==0.2.5
