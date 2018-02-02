@@ -35,7 +35,9 @@ class ParseAllUsersModule(Module):
         for i in range(last_id, last_id + self.parsing_gap_size):
             await self.add_note(i, client)
 
+        print('get notes')
         notes = await self.get_notes(client)
+        print('after get notes')
         print(notes)
 
         max_user_id = 0
