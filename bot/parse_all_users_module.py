@@ -15,7 +15,7 @@ import time
 
 class ParseAllUsersModule(Module):
     processing_period = 10
-    parsing_gap_size = 50
+    parsing_gap_size = 25
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')
@@ -26,14 +26,14 @@ class ParseAllUsersModule(Module):
 
         with Client(requests_only_over_proxy=False, saved_state=state) as client:
             while True:
-                await self._process_as_user(client)
+                await self._call_coroutine_with_logging_exception(self._process_as_user(client))
                 await asyncio.sleep(0.1)
 
     async def _process_as_user(self, client):
         last_id = self.get_last_id()
 
         for i in range(last_id, last_id + self.parsing_gap_size):
-            await self._call_coroutine_with_logging_exception(self.add_note(i, client))
+            await self.add_note(i, client)
 
         notes = await self.get_notes(client)
 
@@ -43,6 +43,9 @@ class ParseAllUsersModule(Module):
             max_user_id = max(max_user_id, note['user_id'])
 
             await self._call_coroutine_with_logging_exception(self.process_note(note))
+
+        if max_user_id == 0:
+            max_user_id = last_id + self.parsing_gap_size
 
         self.set_last_id(max_user_id)
 
