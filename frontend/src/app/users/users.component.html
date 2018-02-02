@@ -19,6 +19,7 @@
                 </a>
             </span>
             <span class="right">
+                <span class="approved" *ngIf="user.approved"><span class="checkMark">✔</span><!-- <img src="https://cs.pikabu.ru/images/approved.png" style="height:7px"> --> {{ user.approved }}</span>
                 Рейтинг <span class="value">{{ user.rating }}</span>
                 Подписчиков <span class="value">{{ user.subscribers_count }}</span>
             </span>
