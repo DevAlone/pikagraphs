@@ -55,7 +55,7 @@ class UsersModule(Module):
             user = User()
             user.username = pikabu_user.username
 
-        await self._call_coroutine_with_logging_exception(self.process_user(user, client))
+        await self.process_user(user, client)
 
         pikabu_user.is_processed = True
         pikabu_user.save()
