@@ -1,5 +1,9 @@
 <div id="usersComponent" class="usersComponent">
-    <app-search-box [parent]="this" [callback]="'searchParametersChanged'" [sortByFields]="sortByFields"></app-search-box>
+    <app-search-box 
+        #searchBox
+        [parent]="this" 
+        [callback]="'searchParametersChanged'" 
+        [sortByFields]="sortByFields"></app-search-box>
     <div id="usersBox" class="users itemList"
             infiniteScroll
             [infiniteScrollDistance]="2"
@@ -20,8 +24,12 @@
             </span>
             <span class="right">
                 <span class="approved" *ngIf="user.approved"><span class="checkMark">✔</span><!-- <img src="https://cs.pikabu.ru/images/approved.png" style="height:7px"> --> {{ user.approved }}</span>
-                Рейтинг <span class="value">{{ user.rating }}</span>
-                Подписчиков <span class="value">{{ user.subscribers_count }}</span>
+                <!-- Рейтинг <span class="value">{{ user.rating }}</span>
+                Подписчиков <span class="value">{{ user.subscribers_count }}</span> -->
+                {{ searchBox.currentSortByField.humanReadableName.name }}
+                <span class="value">
+                    {{ user[searchBox.currentSortByField.fieldName] }}
+                </span>
             </span>
         </a>
     </div>

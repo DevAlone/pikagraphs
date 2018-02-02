@@ -3,6 +3,10 @@ from . import views
 app_name = 'core'
 
 urlpatterns = [
-    url(r'^secret_page_for_l4rever/$', views.secret_page_for_l4rever,
-        name='secret_page_for_l4rever'),
+    url(r'^users/?$', views.UserViewSet.as_view({'get': 'list'})),
+    url(r'^user/(?P<username>[a-zA-Z0-9\._]{1,20})/?$', views.UserView.as_view()),
+    url(r'^graph/user/(?P<username>[a-zA-Z0-9\._]{1,20})/(?P<graph_name>[a-zA-Z0-9\._]{1,20})/?$',
+        views.get_user_graph),
+
+    url(r'^pikabu_users/?$', views.PikabuUserViewSet.as_view({'get': 'list'})),
 ]

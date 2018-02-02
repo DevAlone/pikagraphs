@@ -3,7 +3,6 @@ from django.db import models
 
 class Community(models.Model):
     objects = None
-    DoesNotExist = None
 
     url_name = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=100, default="")

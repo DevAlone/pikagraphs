@@ -14,6 +14,6 @@
             [attr.active]="sortBy == field.fieldName" 
             [attr.reverse]="sortBy == field.fieldName && reverseSort" 
             (click)="$event.preventDefault(); sortByClicked(field);">
-        {{ field.humanReadableName }}
+        {{ getFieldHumanReadableName(field) }}
     </a>
 </div>

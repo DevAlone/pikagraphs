@@ -23,25 +23,6 @@ export class UsersComponent implements OnInit {
 
     private page: number = 1;
 
-    public sortByFields: any[] = [
-        { fieldName: 'rating', humanReadableName: 'Рейтингу' },
-        { fieldName: 'subscribers_count', humanReadableName: 'Количеству подписчиков' },
-        { fieldName: 'comments_count', humanReadableName: 'Количеству комментариев' },
-        { fieldName: 'posts_count', humanReadableName: 'Количеству постов' },
-        { fieldName: 'hot_posts_count', humanReadableName: 'Количеству горячих постов' },
-        { fieldName: 'pluses_count', humanReadableName: 'Количеству плюсов' },
-        { fieldName: 'minuses_count', humanReadableName: 'Количеству минусов' },
-        { fieldName: 'last_update_timestamp', humanReadableName: 'Времени последнего обновления' },
-        { fieldName: 'next_updating_timestamp', humanReadableName: 'Периоду обновления' },
-        { fieldName: 'username', humanReadableName: 'Никнейму' },
-        { fieldName: 'pikabu_id', humanReadableName: 'ID в базе пикабу' },
-        { fieldName: 'approved', humanReadableName: 'Подтверждён' },
-        { fieldName: 'signup_timestamp', humanReadableName: 'Дате регистрации' },
-    ];
-
-    // private searchText: string = '';
-    // private sortBy: string = '';
-    // private reverseSort: boolean = false;
     private searchParameters: any = {};
 
     constructor(
@@ -60,9 +41,8 @@ export class UsersComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        
-    }
 
+    }
 
     loadMore() {
         this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
@@ -73,11 +53,10 @@ export class UsersComponent implements OnInit {
             this.count = result.count;
 
             for (var user of result.results) {
-                this.users.push(user);
+                this.users.push(new User(user));
             }
 
             if (!result.next) {
-                // this.messageService.info("Больше ничего нет");
                 return;
             }
 
@@ -99,4 +78,98 @@ export class UsersComponent implements OnInit {
     onScroll() {
         this.loadMore();
     }
+
+    public sortByFields: any[] = [
+        {
+            fieldName: 'rating', 
+            humanReadableName: {
+                sortBy: 'рейтингу',
+                name: 'рейтинг',
+            }
+        }, 
+        {
+            fieldName: 'subscribers_count', 
+            humanReadableName: {
+                sortBy: 'Количеству подписчиков',
+                name: 'подписчиков',
+            }
+        },
+        {
+            fieldName: 'comments_count', 
+            humanReadableName: {
+                sortBy: 'Количеству комментариев',
+                name: 'комментариев',
+            }
+        },
+        {
+            fieldName: 'posts_count', 
+            humanReadableName: {
+                sortBy: 'Количеству постов',
+                name: 'постов',
+            }
+        },
+        {
+            fieldName: 'hot_posts_count', 
+            humanReadableName: {
+                sortBy: 'Количеству горячих постов',
+                name: 'горячих постов',
+            }
+        },
+        {
+            fieldName: 'pluses_count', 
+            humanReadableName: {
+                sortBy: 'Количеству плюсов',
+                name: 'плюсов',
+            }
+        },
+        {
+            fieldName: 'minuses_count', 
+            humanReadableName: {
+                sortBy: 'Количеству минусов',
+                name: 'минусов',
+            }
+        },
+        {
+            fieldName: 'last_update_timestamp', 
+            humanReadableName: {
+                sortBy: 'Времени последнего обновления',
+                name: 'Время последнего обновления',
+            }
+        },
+        {
+            fieldName: 'updating_period', 
+            humanReadableName: {
+                sortBy: 'Периоду обновления',
+                name: 'Период обновления',
+            }
+        },
+        {
+            fieldName: 'username', 
+            humanReadableName: {
+                sortBy: 'Никнейму',
+                name: 'Никнейм',
+            }
+        },
+        {
+            fieldName: 'pikabu_id', 
+            humanReadableName: {
+                sortBy: 'ID в базе пикабу',
+                name: 'ID в базе пикабу',
+            }
+        },
+        {
+            fieldName: 'approved', 
+            humanReadableName: {
+                sortBy: 'Подтверждён',
+                name: 'Подтверждён',
+            }
+        },
+        {
+            fieldName: 'signup_timestamp', 
+            humanReadableName: {
+                sortBy: 'Дате регистрации',
+                name: 'Дате регистрации',
+            }
+        },
+    ];
 }

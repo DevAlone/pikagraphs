@@ -5,20 +5,9 @@ import bot.init_django_models
 
 from bot.users_module import UsersModule
 from bot.communities_module import CommunitiesModule
-from bot.pikabu_new_year_18_game_module import PikabuNewYear18GameModule
 from bot.parse_all_users_module import ParseAllUsersModule
-from pikabot_graphs import settings
 
 import asyncio
-import time
-
-# async def pikabu_new_year_18_game_module_executor():
-#     # pretty bad solution
-#     module = PikabuNewYear18GameModule()
-#     while True:
-#         await module.process()
-#         await asyncio.sleep(module.processPeriod)
-
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
@@ -29,13 +18,11 @@ if __name__ == "__main__":
         ParseAllUsersModule()
     ]
 
-    if settings.DEBUG:
-        modules = [
-            UsersModule(),
-            ParseAllUsersModule(),
-        ]
-
-    # loop.create_task(pikabu_new_year_18_game_module_executor())
+    # if settings.DEBUG:
+    #     modules = [
+    #         UsersModule(),
+    #         ParseAllUsersModule(),
+    #     ]
 
     tasks = []
 
@@ -46,4 +33,3 @@ if __name__ == "__main__":
         #     module.lastProcessTimestamp = int(time.time())
 
     loop.run_until_complete(asyncio.wait(tasks))
-

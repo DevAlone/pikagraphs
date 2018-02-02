@@ -4,7 +4,6 @@ from django.db import models
 class User(models.Model):
     # to disable pycharm's attribute checking
     objects = None
-    DoesNotExist = None
 
     pikabu_id = models.BigIntegerField(null=True)
 
@@ -139,7 +138,6 @@ class UserSubscribersCountEntry(models.Model):
 
 class PikabuUser(models.Model):
     objects = None
-    DoesNotExist = None
 
     pikabu_id = models.BigIntegerField(primary_key=True)
     username = models.TextField()

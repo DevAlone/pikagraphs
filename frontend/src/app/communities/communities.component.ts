@@ -19,19 +19,12 @@ export class CommunitiesComponent implements OnInit {
     page: number = 1;
     count: number = 0;
 
-    public sortByFields: any[] = [
-        { fieldName: 'subscribers_count', humanReadableName: 'Количеству подписчиков' },
-        { fieldName: 'stories_count', humanReadableName: 'Количеству постов' },
-        { fieldName: 'last_update_timestamp', humanReadableName: 'Времени последнего обновления' },
-        { fieldName: 'name', humanReadableName: 'Названию' },
-    ];
-
     private searchParams: any = {};
 
     constructor(
         private communitiesService: CommunityService,
         private messageService: MessageService,
-    ) { }
+    ) {}
 
     ngOnInit() {
     }
@@ -54,7 +47,7 @@ export class CommunitiesComponent implements OnInit {
             this.count = result.count;
             
             for (var community of result.results) {
-                this.communities.push(community);
+                this.communities.push(new Community(community));
             }
 
             if (!result.next) {
@@ -79,4 +72,35 @@ export class CommunitiesComponent implements OnInit {
     onScroll() {
         this.loadMore();
     }
+
+    public sortByFields: any[] = [
+        {
+            fieldName: 'subscribers_count',
+            humanReadableName: {
+                sortBy: 'Количеству подписчиков',
+                name: 'подписчиков',
+            }
+        },
+        {
+            fieldName: 'stories_count',
+            humanReadableName: {
+                sortBy: 'Количеству постов',
+                name: 'постов',
+            }
+        },
+        {
+            fieldName: 'last_update_timestamp',
+            humanReadableName: {
+                sortBy: 'Времени последнего обновления',
+                name: 'Время последнего обновления',
+            }
+        },
+        {
+            fieldName: 'name',
+            humanReadableName: {
+                sortBy: 'Названию',
+                name: '',
+            }
+        },
+    ];
 }

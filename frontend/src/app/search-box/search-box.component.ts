@@ -22,12 +22,12 @@ export class SearchBoxComponent implements OnInit {
 
 	public searchText: string = "";
 	public sortBy: string = "";
-  public reverseSort: boolean = false;
+    public reverseSort: boolean = false;
 
-  keyEvent(event) {
-      if (event.keyCode == 82)
-          this.update();
-  }
+    keyEvent(event) {
+        if (event.keyCode == 82)
+            this.update();
+    }
 
 	constructor(
         private route: ActivatedRoute,
@@ -43,6 +43,18 @@ export class SearchBoxComponent implements OnInit {
         
         });
     }
+
+    public get currentSortByField(): any {
+        var ordering: string = this.sortBy;
+        if (ordering.startsWith('-'))
+            ordering = ordering.substr(1);
+
+        if (ordering)
+            return this.sortByFields.find(value => value.fieldName == ordering);
+        else
+            return this.sortByFields[0];
+    }
+
 
 	ngOnInit() {
         if (!this.route.snapshot.queryParams['search_text'] 
@@ -85,9 +97,8 @@ export class SearchBoxComponent implements OnInit {
     update(): void {
         this.updateUrl();
     	this.parent[this.callback]({
-    		search_text: this.searchText,
-    		sort_by: this.sortBy,
-    		reverse_sort: this.reverseSort,
+    		search: this.searchText,
+    		ordering: (this.reverseSort ? '-': '') + this.sortBy,
     	});
     }
 
@@ -99,5 +110,12 @@ export class SearchBoxComponent implements OnInit {
         queryParams['reverse_sort'] = this.reverseSort ? 'true': 'false';
 
         this.router.navigate([], { queryParams: queryParams, replaceUrl: true });
+    }
+
+    getFieldHumanReadableName(field: any): string {
+        if (typeof field.humanReadableName === 'string')
+            return field.humanReadableName;
+        else
+            return field.humanReadableName.sortBy
     }
 }

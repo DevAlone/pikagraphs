@@ -1,5 +1,9 @@
 <div id="communitiesComponent" class="communitiesComponent">
-    <app-search-box [parent]="this" [callback]="'searchParametersChanged'" [sortByFields]="sortByFields"></app-search-box>
+    <app-search-box 
+        #searchBox
+        [parent]="this" 
+        [callback]="'searchParametersChanged'" 
+        [sortByFields]="sortByFields"></app-search-box>
     <div id="communitiesBox" class="communities itemList"
             infiniteScroll
             [infiniteScrollDistance]="2"
@@ -19,8 +23,12 @@
                 </a>
             </span>
             <span class="right">
-                Подписчиков <span class="value">{{ community.subscribers_count }}</span>
-                Постов <span class="value">{{ community.stories_count }}</span>
+                <!-- Подписчиков <span class="value">{{ community.subscribers_count }}</span>
+                Постов <span class="value">{{ community.stories_count }}</span> -->
+                {{ searchBox.currentSortByField.humanReadableName.name }}
+                <span class="value">
+                    {{ community[searchBox.currentSortByField.fieldName] }}
+                </span>
             </span>
         </a>
     </div>
