@@ -19,6 +19,7 @@ export class UsersComponent implements OnInit {
     users$: Observable<any>;
     users: User[] = [];
     timers: any[] = [];
+    count: number = 0;
 
     private page: number = 1;
 
@@ -66,6 +67,8 @@ export class UsersComponent implements OnInit {
             ++this.page;
             if (!result.results)
                 return
+
+            this.count = result.count;
 
             for (var user of result.results) {
                 this.users.push(user);

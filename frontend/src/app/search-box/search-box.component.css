@@ -1,11 +1,23 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+}
+.header .found {
+    white-space: nowrap;
+    margin: 0 10px;
+}
 #search-box {
     box-sizing: border-box;
-    display: block;
-    width: 100%;
+    flex-grow: 1;
 }
 
 
 .sortByButtons {
+    display: block;
     margin: 5px 0;
 }
 
@@ -29,4 +41,7 @@
 
 .sortByButtons .sortByButton[active="true"][reverse="true"]::before {
     content: "↓"
+}
+.sortByButtons > * {
+    display: inline-block;
 }

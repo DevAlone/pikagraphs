@@ -17,6 +17,7 @@ export class CommunitiesComponent implements OnInit {
     timers: any[] = [];
 
     page: number = 1;
+    count: number = 0;
 
     public sortByFields: any[] = [
         { fieldName: 'subscribers_count', humanReadableName: 'Количеству подписчиков' },
@@ -50,6 +51,8 @@ export class CommunitiesComponent implements OnInit {
             if (!result.results)
                 return
 
+            this.count = result.count;
+            
             for (var community of result.results) {
                 this.communities.push(community);
             }

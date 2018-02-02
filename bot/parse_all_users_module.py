@@ -16,7 +16,6 @@ import time
 class ParseAllUsersModule(Module):
     processing_period = 10
     parsing_gap_size = 25
-    parallel_tasks = 10
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')

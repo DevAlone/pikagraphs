@@ -1,14 +1,19 @@
-<input type="text" #searchBox id="search-box" (input)="search(searchBox.value)"
-    [value]="searchText" placeholder="Введи сюда что-нибудь" />
-<div class="sortByButtons">
-    Сортировать по: 
-    <div>
-        <a *ngFor="let field of sortByFields"
-                class="sortByButton niceLink"  
-                [attr.active]="sortBy == field.fieldName" 
-                [attr.reverse]="sortBy == field.fieldName && reverseSort" 
-                (click)="$event.preventDefault(); sortByClicked(field);">
-            {{ field.humanReadableName }}
-        </a>
+<div class="header">
+    <input type="text" #searchBox id="search-box" (input)="search(searchBox.value)"
+        [value]="searchText" placeholder="Введи сюда что-нибудь" />
+    <div class="found">
+            Найдено: {{ parent.count }}
     </div>
+</div>
+
+<div class="sortByButtons">
+    <div>Сортировать по:</div>
+    
+    <a *ngFor="let field of sortByFields"
+            class="sortByButton niceLink"  
+            [attr.active]="sortBy == field.fieldName" 
+            [attr.reverse]="sortBy == field.fieldName && reverseSort" 
+            (click)="$event.preventDefault(); sortByClicked(field);">
+        {{ field.humanReadableName }}
+    </a>
 </div>
