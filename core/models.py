@@ -5,7 +5,7 @@ class User(models.Model):
     # to disable pycharm's attribute checking
     objects = None
 
-    pikabu_id = models.BigIntegerField(unique=True, null=True)
+    pikabu_id = models.BigIntegerField(null=True)
 
     username = models.CharField(max_length=64, unique=True)
     avatar_url = models.TextField(default="")

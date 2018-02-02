@@ -32,7 +32,7 @@ class UsersModule(Module):
             if len(tasks) > 0:
                 await asyncio.wait(tasks)
 
-            # await self.process_pikabu_users(client)
+            await self.process_pikabu_users(client)
 
     async def process_pikabu_users(self, client):
         pikabu_users = PikabuUser.objects.filter(is_processed=False).all()
@@ -41,12 +41,12 @@ class UsersModule(Module):
 
         for pikabu_user in pikabu_users:
             tasks.append(self.process_pikabu_user(pikabu_user, client))
-            if len(tasks) > 100:
-                await asyncio.wait(tasks)
+            if len(tasks) > 1000:
+                await asyncio.gather(*tasks)
                 tasks.clear()
 
         if tasks:
-            await asyncio.wait(tasks)
+            await asyncio.gather(*tasks)
 
     async def process_pikabu_user(self, pikabu_user, client):
         try:
