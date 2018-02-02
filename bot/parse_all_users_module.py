@@ -16,6 +16,7 @@ import time
 class ParseAllUsersModule(Module):
     processing_period = 10
     parsing_gap_size = 25
+    parallel_tasks = 10
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')
@@ -27,13 +28,18 @@ class ParseAllUsersModule(Module):
         with Client(requests_only_over_proxy=False, saved_state=state) as client:
             while True:
                 await self._call_coroutine_with_logging_exception(self._process_as_user(client))
-                await asyncio.sleep(0.1)
+                # await asyncio.sleep(0.1)
 
     async def _process_as_user(self, client):
         last_id = self.get_last_id()
 
+        tasks = []
+
         for i in range(last_id, last_id + self.parsing_gap_size):
-            await self.add_note(i, client)
+            tasks.append(self.add_note(i, client))
+
+        await asyncio.gather(*tasks)
+        tasks.clear()
 
         notes = await self.get_notes(client)
 
@@ -42,7 +48,10 @@ class ParseAllUsersModule(Module):
         for note in notes:
             max_user_id = max(max_user_id, note['user_id'])
 
-            await self._call_coroutine_with_logging_exception(self.process_note(note))
+            tasks.append(self.process_note(note))
+
+        await asyncio.gather(*tasks)
+        tasks.clear()
 
         if max_user_id == 0:
             self._logger.error("max_user_id == 0")
