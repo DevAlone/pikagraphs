@@ -25,7 +25,7 @@ class UsersModule(Module):
             for user in User.objects.filter(is_updated=True)\
                     .filter(last_update_timestamp__lte=int(time.time()) - F('updating_period')):
                 tasks.append(self._call_coroutine_with_logging_exception(self.process_user(user, client)))
-                if len(tasks) > 10:
+                if len(tasks) > 100:
                     await asyncio.wait(tasks)
                     tasks.clear()
 
@@ -37,19 +37,28 @@ class UsersModule(Module):
     async def process_pikabu_users(self, client):
         pikabu_users = PikabuUser.objects.filter(is_processed=False).all()
 
+        tasks = []
+
         for pikabu_user in pikabu_users:
-            try:
-                user = User.objects.get(username=pikabu_user.username)
-            except User.DoesNotExist:
-                user = User()
-                user.username = pikabu_user.username
+            tasks.append(self.process_pikabu_user(pikabu_user, client))
+            if len(tasks) > 100:
+                await asyncio.wait(tasks)
+                tasks.clear()
 
-            # user.pikabu_id = pikabu_user.pikabu_id
+        if tasks:
+            await asyncio.wait(tasks)
 
-            await self._call_coroutine_with_logging_exception(self.process_user(user, client))
+    async def process_pikabu_user(self, pikabu_user, client):
+        try:
+            user = User.objects.get(username=pikabu_user.username)
+        except User.DoesNotExist:
+            user = User()
+            user.username = pikabu_user.username
 
-            pikabu_user.is_processed = True
-            pikabu_user.save()
+        await self._call_coroutine_with_logging_exception(self.process_user(user, client))
+
+        pikabu_user.is_processed = True
+        pikabu_user.save()
 
     async def process_user(self, user, client):
         self._logger.debug('start processing user {}'.format(user.username))
