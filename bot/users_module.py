@@ -1,18 +1,12 @@
 import copy
 
-import sys
-
-from bot.api.pikabu_api.mobile import MobilePikabu
-
 from bot.module import Module
-from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
-                        UserPostsCountEntry, UserHotPostsCountEntry, \
-                        UserPlusesCountEntry, UserMinusesCountEntry, \
-                        UserSubscribersCountEntry, PikabuUser
+from core.models import User, UserRatingEntry, UserCommentsCountEntry, UserPostsCountEntry, UserHotPostsCountEntry
+from core.models import UserPlusesCountEntry, UserMinusesCountEntry, UserSubscribersCountEntry, PikabuUser
 from pikabot_graphs import settings
 from bot.api.client import Client, PikabuError
-from django.db.models import F
 
+from django.db.models import F
 
 import asyncio
 import time
@@ -189,7 +183,8 @@ class UsersModule(Module):
 
         self._logger.debug('end processing user {}'.format(user.username))
 
-    def _calculate_user_updating_period(self, user, was_data_changed):
+    @staticmethod
+    def _calculate_user_updating_period(user, was_data_changed):
         delta = abs((int(time.time()) - user.last_update_timestamp) / 4)
         if delta > settings.USERS_MODULE['MAX_UPDATING_DELTA']:
             delta = settings.USERS_MODULE['MAX_UPDATING_DELTA']
@@ -206,7 +201,8 @@ class UsersModule(Module):
         elif user.updating_period > settings.USERS_MODULE['MAX_UPDATING_PERIOD']:
             user.updating_period = settings.USERS_MODULE['MAX_UPDATING_PERIOD']
 
-    def _save_model_if_last_is_not_the_same(self, model):
+    @staticmethod
+    def _save_model_if_last_is_not_the_same(model):
         last_entry = type(model).objects.filter(user=model.user).last()
 
         if last_entry is None or int(last_entry.value) != int(model.value):

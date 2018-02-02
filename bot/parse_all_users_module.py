@@ -1,20 +1,12 @@
-import json
-
-import asyncio
-import random
-
-import sys
-
-import os
-
 from bot.api.pikabu_api.pikabu import PikabuException
 from bot.module import Module
 from bot.api.pikabu_api.mobile import MobilePikabu as Client
 
-from pikabot_graphs import settings
 from core.models import PikabuUser
 
-import time
+import json
+import asyncio
+import random
 
 
 class ParseAllUsersModule(Module):
@@ -74,7 +66,8 @@ class ParseAllUsersModule(Module):
             self.set_last_id(1)
             return self.get_last_id()
 
-    def set_last_id(self, last_id: int):
+    @staticmethod
+    def set_last_id(last_id: int):
         with open('.parse_all_users_module_last_id', 'w') as file:
             file.write(str(last_id))
 

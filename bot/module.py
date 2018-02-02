@@ -48,12 +48,11 @@ class Module:
         except KeyboardInterrupt as ex:
             raise ex
         except BaseException as ex:
-            type, value, traceback = sys.exc_info()
+            exc_type, value, traceback = sys.exc_info()
             exception_string = """Error during processing module: {}
             Traceback: {}
             Some other information: {}
-            """.format(repr(ex), traceback, str(type) + str(value))
+            """.format(repr(ex), traceback, str(exc_type) + str(value))
             self._logger.error(exception_string)
             self._logger.exception(ex)
             await asyncio.sleep(1)
-

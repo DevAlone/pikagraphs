@@ -2,6 +2,9 @@ from django.db import models
 
 
 class Community(models.Model):
+    objects = None
+    DoesNotExist = None
+
     url_name = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=100, default="")
     description = models.TextField(null=True)
@@ -18,6 +21,8 @@ class Community(models.Model):
 
 
 class CommunityCountersEntry(models.Model):
+    objects = None
+
     timestamp = models.BigIntegerField()
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     subscribers_count = models.IntegerField(default=0)

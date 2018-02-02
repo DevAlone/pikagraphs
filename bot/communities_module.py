@@ -1,8 +1,7 @@
 from bot.module import Module
 from bot.api.client import Client
-
 from communities_app.models import Community, CommunityCountersEntry
-from django.conf import settings
+from pikabot_graphs import settings
 
 import time
 
@@ -70,7 +69,8 @@ class CommunitiesModule(Module):
 
         self._logger.debug('end processing community {}'.format(community_url_name))
 
-    def _save_counters_if_last_is_not_the_same(self, model):
+    @staticmethod
+    def _save_counters_if_last_is_not_the_same(model):
         last_entry = type(model).objects.filter(community=model.community).last()
 
         if last_entry is None \

@@ -115,6 +115,7 @@ class UserViewSet(SearchViewSet):
 
 @api_view(['GET'])
 def get_user_graph(request, username, graph_name):
+
     user = get_object_or_404(User, username=username)
     graph_name = graph_name.lower()
 
