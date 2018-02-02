@@ -29,18 +29,18 @@ if __name__ == "__main__":
         ParseAllUsersModule()
     ]
 
-    if settings.DEBUG:
-        modules = [ParseAllUsersModule()]
+    # if settings.DEBUG:
+    #     modules = [ParseAllUsersModule()]
 
     # loop.create_task(pikabu_new_year_18_game_module_executor())
 
-    while True:
-        tasks = []
-        for module in modules:
-            if module.last_processing_timestamp + module.processing_period < int(time.time()):
-                tasks.append(module.process())
-                module.lastProcessTimestamp = int(time.time())
-        if tasks:
-            loop.run_until_complete(asyncio.wait(tasks))
-        else:
-            loop.run_until_complete(asyncio.sleep(1))
+    tasks = []
+
+    for module in modules:
+        tasks.append(module.process())
+        # if module.last_processing_timestamp + module.processing_period < int(time.time()):
+        #     tasks.append(module.process())
+        #     module.lastProcessTimestamp = int(time.time())
+
+    loop.run_until_complete(asyncio.wait(tasks))
+

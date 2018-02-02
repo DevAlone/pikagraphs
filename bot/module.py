@@ -2,6 +2,7 @@ import sys
 import asyncio
 import logging
 
+import time
 from django.conf import settings
 
 
@@ -34,7 +35,11 @@ class Module:
         self._logger.info('{} initialization...'.format(module_name))
 
     async def process(self):
-        await self._call_coroutine_with_logging_exception(self._process())
+        while True:
+            if self.last_processing_timestamp + self.processing_period < int(time.time()):
+                await self._call_coroutine_with_logging_exception(self._process())
+            else:
+                await asyncio.sleep(1)
 
     async def _call_coroutine_with_logging_exception(self, coroutine):
         try:
