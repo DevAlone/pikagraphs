@@ -53,7 +53,7 @@ class ParseAllUsersModule(Module):
             max_user_id = last_id + self.parsing_gap_size
 
         print('set_last')
-        self.set_last_id(max_user_id)
+        self.set_last_id(max_user_id + 1)
 
     def get_last_id(self):
         try:
