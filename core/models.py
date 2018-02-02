@@ -132,5 +132,5 @@ class PikabuUser(models.Model):
     objects = None
 
     pikabu_id = models.BigIntegerField(primary_key=True)
-    username = models.CharField(max_length=64)
+    username = models.TextField()
     is_processed = models.BooleanField(default=False)
