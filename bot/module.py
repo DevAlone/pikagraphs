@@ -38,6 +38,7 @@ class Module:
         while True:
             if self.last_processing_timestamp + self.processing_period < int(time.time()):
                 await self._call_coroutine_with_logging_exception(self._process())
+                self.last_processing_timestamp = int(time.time())
             else:
                 await asyncio.sleep(1)
 

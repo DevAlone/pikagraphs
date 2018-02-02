@@ -1,5 +1,9 @@
 import copy
 
+import sys
+
+from bot.api.pikabu_api.mobile import MobilePikabu
+
 from bot.module import Module
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, \
                         UserPostsCountEntry, UserHotPostsCountEntry, \
@@ -15,6 +19,8 @@ import time
 
 
 class UsersModule(Module):
+    processing_period = 60
+
     def __init__(self):
         super(UsersModule, self).__init__('users_module')
 
@@ -35,13 +41,13 @@ class UsersModule(Module):
             await self.process_pikabu_users(client)
 
     async def process_pikabu_users(self, client):
-        pikabu_users = PikabuUser.objects.filter(is_processed=False).all()
+        pikabu_users = PikabuUser.objects.filter(is_processed=False)[:10].all()
 
         tasks = []
 
         for pikabu_user in pikabu_users:
             tasks.append(self.process_pikabu_user(pikabu_user, client))
-            if len(tasks) > 1000:
+            if len(tasks) > 10:
                 await asyncio.gather(*tasks)
                 tasks.clear()
 
@@ -77,9 +83,8 @@ class UsersModule(Module):
 
     async def _process_user(self, user, client):
         user_data = await client.get_user_profile(user.username)
-        user_data = user_data['user']
-        user_data['rating'] = int(float(user_data['rating']))
 
+        user_data = user_data['user']
         user_data['rating'] = int(float(user_data['rating']))
         user_data['comments_count'] = int(user_data['comments_count'])
         user_data['stories_count'] = int(user_data['stories_count'])
