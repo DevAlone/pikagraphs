@@ -20,6 +20,7 @@ import time
 class ParseAllUsersModule(Module):
     processing_period = 10
     parsing_gap_size = 100
+    processing_cycles = 10
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')
@@ -29,13 +30,12 @@ class ParseAllUsersModule(Module):
             state = json.loads(file.readline().strip())
 
         with Client(requests_only_over_proxy=False, saved_state=state) as client:
-            while True:
-                try:
+            try:
+                for _ in range(self.processing_cycles):
                     await self._call_coroutine_with_logging_exception(self._process_as_user(client))
-                    # await asyncio.sleep(0.1)
-                except BaseException as ex:
-                    self._logger.exception(ex)
-                    await asyncio.sleep(10)
+            except BaseException as ex:
+                self._logger.exception(ex)
+                await asyncio.sleep(10)
 
     async def _process_as_user(self, client):
         last_id = self.get_last_id()
