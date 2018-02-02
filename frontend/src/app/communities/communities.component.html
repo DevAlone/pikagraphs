@@ -25,9 +25,11 @@
             <span class="right">
                 <!-- Подписчиков <span class="value">{{ community.subscribers_count }}</span>
                 Постов <span class="value">{{ community.stories_count }}</span> -->
-                {{ searchBox.currentSortByField.humanReadableName.name }}
-                <span class="value">
-                    {{ community[searchBox.currentSortByField.fieldName] }}
+                <span *ngIf="searchBox.currentSortByField.fieldName != 'name'">
+                    <span>{{ searchBox.currentSortByField.humanReadableName.name }}</span>
+                    <span class="value">
+                        {{ community[searchBox.currentSortByField.fieldName] }}
+                    </span>
                 </span>
             </span>
         </a>

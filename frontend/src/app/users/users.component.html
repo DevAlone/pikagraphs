@@ -26,9 +26,11 @@
                 <span class="approved" *ngIf="user.approved"><span class="checkMark">✔</span><!-- <img src="https://cs.pikabu.ru/images/approved.png" style="height:7px"> --> {{ user.approved }}</span>
                 <!-- Рейтинг <span class="value">{{ user.rating }}</span>
                 Подписчиков <span class="value">{{ user.subscribers_count }}</span> -->
-                {{ searchBox.currentSortByField.humanReadableName.name }}
-                <span class="value">
-                    {{ user[searchBox.currentSortByField.fieldName] }}
+                <span *ngIf="searchBox.currentSortByField.fieldName != 'username'">
+                    <span>{{ searchBox.currentSortByField.humanReadableName.name }}</span>
+                    <span class="value">
+                        {{ user[searchBox.currentSortByField.fieldName] }}
+                    </span>
                 </span>
             </span>
         </a>

@@ -19,6 +19,7 @@ export class UsersComponent implements OnInit {
     users$: Observable<any>;
     users: User[] = [];
     timers: any[] = [];
+    subscriptions: any[] = [];
     count: number = 0;
 
     private page: number = 1;
@@ -45,24 +46,26 @@ export class UsersComponent implements OnInit {
     }
 
     loadMore() {
-        this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
-            ++this.page;
-            if (!result.results)
-                return
+        this.subscriptions.push(
+            this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
+                ++this.page;
+                if (!result.results)
+                    return
 
-            this.count = result.count;
+                this.count = result.count;
 
-            for (var user of result.results) {
-                this.users.push(new User(user));
-            }
+                for (var user of result.results) {
+                    this.users.push(new User(user));
+                }
 
-            if (!result.next) {
-                return;
-            }
+                if (!result.next) {
+                    return;
+                }
 
-            if (usersBox.scrollHeight < usersComponent.scrollHeight + 500)
-                this.timers.push(setTimeout(() => this.loadMore(), 100));
-        });
+                if (usersBox.scrollHeight < usersComponent.scrollHeight + 500)
+                    this.timers.push(setTimeout(() => this.loadMore(), 100));
+            })
+        );
     }
 
     resetTape() {
@@ -70,7 +73,12 @@ export class UsersComponent implements OnInit {
         for (var timer of this.timers)
             clearTimeout(timer);
 
+        for (var subscription of this.subscriptions)
+            subscription.unsubscribe();
+
+
         this.timers = [];
+        this.subscriptions = [];
 
         this.page = 1;
     }

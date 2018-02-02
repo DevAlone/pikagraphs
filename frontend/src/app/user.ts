@@ -5,7 +5,16 @@ export class User
 {
     username: string;
     info: string;
-    avatar_url: string;
+    _avatar_url: string;
+    get avatar_url(): string {
+        if (!this._avatar_url)
+            return "https://cs.pikabu.ru/images/def_avatar/def_avatar_96.png";
+        
+        return this._avatar_url;
+    }
+    set avatar_url(value: string) {
+        this._avatar_url = value;
+    }
     rating: number;
     comments_count: number;
     posts_count: number;
