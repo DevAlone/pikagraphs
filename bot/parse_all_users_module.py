@@ -3,6 +3,10 @@ import json
 import asyncio
 import random
 
+import sys
+
+import os
+
 from bot.api.pikabu_api.pikabu import PikabuException
 from bot.module import Module
 from bot.api.pikabu_api.mobile import MobilePikabu as Client
@@ -15,7 +19,7 @@ import time
 
 class ParseAllUsersModule(Module):
     processing_period = 10
-    parsing_gap_size = 25
+    parsing_gap_size = 100
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')
@@ -26,8 +30,12 @@ class ParseAllUsersModule(Module):
 
         with Client(requests_only_over_proxy=False, saved_state=state) as client:
             while True:
-                await self._call_coroutine_with_logging_exception(self._process_as_user(client))
-                # await asyncio.sleep(0.1)
+                try:
+                    await self._call_coroutine_with_logging_exception(self._process_as_user(client))
+                    # await asyncio.sleep(0.1)
+                except BaseException as ex:
+                    self._logger.exception(ex)
+                    await asyncio.sleep(10)
 
     async def _process_as_user(self, client):
         last_id = self.get_last_id()
@@ -85,17 +93,29 @@ class ParseAllUsersModule(Module):
 
     async def get_notes(self, client):
         self._logger.debug('getting notes...')
-        response = await client.user_notes_get()
-        notes = response['notes']
-
         result = []
 
-        for note in notes:
-            result.append({
-                'user_name': note['user_name'],
-                'user_id': int(note['user_id'])
-            })
-            await client.user_note_set("", int(note['user_id']))
+        while True:
+            response = await client.user_notes_get()
+            notes = response['notes']
+
+            tasks = []
+
+            if not notes:
+                break
+
+            for note in notes:
+                result.append({
+                    'user_name': note['user_name'],
+                    'user_id': int(note['user_id'])
+                })
+                tasks.append(client.user_note_set("", int(note['user_id'])))
+                if len(tasks) > 10:
+                    await asyncio.gather(*tasks)
+                    tasks.clear()
+
+            if tasks:
+                await asyncio.gather(*tasks)
 
         return result
 

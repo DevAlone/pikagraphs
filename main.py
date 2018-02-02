@@ -29,8 +29,8 @@ if __name__ == "__main__":
         ParseAllUsersModule()
     ]
 
-    # if settings.DEBUG:
-    #     modules = [ParseAllUsersModule()]
+    if settings.DEBUG:
+        modules = [ParseAllUsersModule()]
 
     # loop.create_task(pikabu_new_year_18_game_module_executor())
 
