@@ -32,7 +32,7 @@ class UsersModule(Module):
             if len(tasks) > 0:
                 await asyncio.wait(tasks)
 
-            await self._call_coroutine_with_logging_exception(self.process_pikabu_users(client))
+            # await self.process_pikabu_users(client)
 
     async def process_pikabu_users(self, client):
         pikabu_users = PikabuUser.objects.filter(is_processed=False).all()
