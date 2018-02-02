@@ -55,11 +55,12 @@ class UsersModule(Module):
             await asyncio.gather(*tasks)
 
     async def process_pikabu_user(self, pikabu_user, client):
+        username = pikabu_user.username.lower()
         try:
-            user = User.objects.get(username=pikabu_user.username)
+            user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = User()
-            user.username = pikabu_user.username
+            user.username = username
 
         await self.process_user(user, client)
 
