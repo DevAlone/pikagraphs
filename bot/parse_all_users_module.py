@@ -45,6 +45,7 @@ class ParseAllUsersModule(Module):
             await self._call_coroutine_with_logging_exception(self.process_note(note))
 
         if max_user_id == 0:
+            self._logger.error("max_user_id == 0")
             max_user_id = last_id + self.parsing_gap_size
 
         self.set_last_id(max_user_id)
