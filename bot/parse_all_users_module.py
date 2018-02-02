@@ -36,10 +36,12 @@ class ParseAllUsersModule(Module):
             await self.add_note(i, client)
 
         notes = await self.get_notes(client)
+        print(notes)
 
         max_user_id = 0
 
         for note in notes:
+            print('for')
             max_user_id = max(max_user_id, note['user_id'])
 
             await self._call_coroutine_with_logging_exception(self.process_note(note))
@@ -48,6 +50,7 @@ class ParseAllUsersModule(Module):
             self._logger.error("max_user_id == 0")
             max_user_id = last_id + self.parsing_gap_size
 
+        print('set_last')
         self.set_last_id(max_user_id)
 
     def get_last_id(self):
