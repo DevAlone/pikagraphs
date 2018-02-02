@@ -46,7 +46,9 @@ export class UsersComponent implements OnInit {
 
     constructor(
         private userService: UserService,
-        private messageService: MessageService
+        private messageService: MessageService,
+        private route: ActivatedRoute,
+        private router: Router,
     ) {
 
     }
@@ -58,7 +60,7 @@ export class UsersComponent implements OnInit {
     }
 
     ngOnInit(): void {
-
+        
     }
 
 
@@ -75,7 +77,7 @@ export class UsersComponent implements OnInit {
             }
 
             if (!result.next) {
-                this.messageService.info("Больше ничего нет");
+                // this.messageService.info("Больше ничего нет");
                 return;
             }
 

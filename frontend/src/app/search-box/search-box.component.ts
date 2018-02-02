@@ -39,11 +39,21 @@ export class SearchBoxComponent implements OnInit {
             if (params['sort_by'])
                 this.sortBy = params['sort_by'];
             if (params['reverse_sort'])
-                this.reverseSort = params['reverse_sort'] == "true";
+                this.reverseSort = params['reverse_sort'] == "true";    
+        
         });
     }
 
 	ngOnInit() {
+        if (!this.route.snapshot.queryParams['search_text'] 
+                && !this.route.snapshot.queryParams['sort_by'] 
+                && !this.route.snapshot.queryParams['reverse_sort']) {
+            this.sortBy = this.sortByFields[0].fieldName;
+            this.reverseSort = true;
+            this.updateUrl();
+        }
+
+
 		this.searchTerms.pipe(
             // wait 300ms after each keystroke before considering the term
             debounceTime(300),
