@@ -195,7 +195,7 @@ def push_users_info(request, session):
                     user.username = username
 
                 logger.info('before UsersModule._update_user: {}'.format(time.time()))
-                UsersModule._update_user(user, json_user, logger)
+                UsersModule._update_user(user, json_user, logger, save_graphs=False)
                 logger.info('after UsersModule._update_user: {}'.format(time.time()))
 
                 logger.info('before PikabuUser: {}'.format(time.time()))

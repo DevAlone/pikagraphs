@@ -91,7 +91,7 @@ class UsersModule(Module):
         self._update_user(user, user_data['user'], self._logger)
 
     @staticmethod
-    def _update_user(user, user_data, logger):
+    def _update_user(user, user_data, logger, save_graphs=True):
         user_data['rating'] = int(float(user_data['rating']))
         user_data['comments_count'] = int(user_data['comments_count'])
         user_data['stories_count'] = int(user_data['stories_count'])
@@ -156,46 +156,43 @@ class UsersModule(Module):
 
         user.last_update_timestamp = int(time.time())
 
-        logger.info('before saving user: {}'.format(time.time()))
         user.save()
-        logger.info('after saving user: {}'.format(time.time()))
 
-        logger.info('before saving graphs: {}'.format(time.time()))
-        UsersModule._save_model_if_last_is_not_the_same(UserRatingEntry(
-            timestamp=user.last_update_timestamp,
-            user=user,
-            value=user.rating))
+        if save_graphs:
+            UsersModule._save_model_if_last_is_not_the_same(UserRatingEntry(
+                timestamp=user.last_update_timestamp,
+                user=user,
+                value=user.rating))
 
-        UsersModule._save_model_if_last_is_not_the_same(UserCommentsCountEntry(
-            timestamp=user.last_update_timestamp,
-            user=user,
-            value=user.comments_count))
+            UsersModule._save_model_if_last_is_not_the_same(UserCommentsCountEntry(
+                timestamp=user.last_update_timestamp,
+                user=user,
+                value=user.comments_count))
 
-        UsersModule._save_model_if_last_is_not_the_same(UserPostsCountEntry(
-            timestamp=user.last_update_timestamp,
-            user=user,
-            value=user.posts_count))
+            UsersModule._save_model_if_last_is_not_the_same(UserPostsCountEntry(
+                timestamp=user.last_update_timestamp,
+                user=user,
+                value=user.posts_count))
 
-        UsersModule._save_model_if_last_is_not_the_same(UserHotPostsCountEntry(
-            timestamp=user.last_update_timestamp,
-            user=user,
-            value=user.hot_posts_count))
+            UsersModule._save_model_if_last_is_not_the_same(UserHotPostsCountEntry(
+                timestamp=user.last_update_timestamp,
+                user=user,
+                value=user.hot_posts_count))
 
-        UsersModule._save_model_if_last_is_not_the_same(UserPlusesCountEntry(
-            timestamp=user.last_update_timestamp,
-            user=user,
-            value=user.pluses_count))
+            UsersModule._save_model_if_last_is_not_the_same(UserPlusesCountEntry(
+                timestamp=user.last_update_timestamp,
+                user=user,
+                value=user.pluses_count))
 
-        UsersModule._save_model_if_last_is_not_the_same(UserMinusesCountEntry(
-            timestamp=user.last_update_timestamp,
-            user=user,
-            value=user.minuses_count))
+            UsersModule._save_model_if_last_is_not_the_same(UserMinusesCountEntry(
+                timestamp=user.last_update_timestamp,
+                user=user,
+                value=user.minuses_count))
 
-        UsersModule._save_model_if_last_is_not_the_same(UserSubscribersCountEntry(
-            timestamp=user.last_update_timestamp,
-            user=user,
-            value=user.subscribers_count))
-        logger.info('after saving graphs: {}'.format(time.time()))
+            UsersModule._save_model_if_last_is_not_the_same(UserSubscribersCountEntry(
+                timestamp=user.last_update_timestamp,
+                user=user,
+                value=user.subscribers_count))
 
         logger.debug('end processing user {}'.format(user.username))
 
