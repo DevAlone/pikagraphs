@@ -177,12 +177,9 @@ class PikabuUserViewSet(viewsets.ReadOnlyModelViewSet):
     filter_class = PikabuUserFilter
 
 
-
-
 @csrf_exempt
 def push_users_info(request, session):
     global logger
-    logger.info('{}: request started'.format(time.time()))
 
     if request.method == 'POST' and session in settings.ALLOWED_PUSH_USERS_SESSIONS:
         try:
@@ -193,14 +190,12 @@ def push_users_info(request, session):
 
                 username = json_user['user_name'].strip().lower()
 
-                logger.info('{}: getting or creating user'.format(time.time()))
                 try:
                     user = User.objects.get(username=username)
                 except User.DoesNotExist:
                     user = User()
                     user.username = username
 
-                logger.info('{}: processing user'.format(time.time()))
                 if json_user['avatar']:
                     user.avatar_url = json_user['avatar']
                 else:
@@ -223,24 +218,21 @@ def push_users_info(request, session):
                 try:
                     user.subscribers_count = int(json_user['subscribers_count'])
                 except KeyError:
-                    logger.warning("subscribers_count disappeared")
+                    logger.error("subscribers_count disappeared")
                 try:
                     if type(json_user['is_rating_ban']) is bool:
                         user.is_rating_ban = json_user['is_rating_ban']
                     else:
                         user.is_rating_ban = json_user['is_rating_ban'].lower().strip() == 'true'
                 except KeyError:
-                    logger.warning("is_rating_ban disappeared")
+                    logger.error("is_rating_ban disappeared")
 
                 user.last_update_timestamp = int(time.time())
 
-                logger.info('{}: saving user'.format(time.time()))
                 user.save()
 
-                logger.info('{}: getting pikabu user'.format(time.time()))
                 pikabu_user = PikabuUser.objects.get(username=json_user['user_name'])
                 pikabu_user.is_processed = True
-                logger.info('{}: saving pikabu user'.format(time.time()))
                 pikabu_user.save()
 
             return JsonResponse({
