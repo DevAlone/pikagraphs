@@ -170,7 +170,7 @@ class PikabuUserViewSet(viewsets.ReadOnlyModelViewSet):
 def push_users_info(request, session):
     if request.method == 'POST' and session in settings.ALLOWED_PUSH_USERS_SESSIONS:
         logger = logging.getLogger('pikabot_graphs/{}'.format('push_users_info'))
-        logger.setLevel(logging.ERROR)
+        logger.setLevel(logging.INFO)
 
         error_file_handler = logging.FileHandler('logs/{}.error.log'.format('push_users_info'))
         error_file_handler.setLevel(logging.ERROR)
