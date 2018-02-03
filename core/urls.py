@@ -9,6 +9,4 @@ urlpatterns = [
         views.get_user_graph),
 
     url(r'^pikabu_users/?$', views.PikabuUserViewSet.as_view({'get': 'list'})),
-
-    url(r'^push_users_info/(?P<session>[a-zA-Z0-9_\-]{1,64})/$', views.push_users_info),
 ]
