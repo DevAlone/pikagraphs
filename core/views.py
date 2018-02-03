@@ -2,6 +2,8 @@ import json
 import logging
 import traceback
 
+import time
+
 from bot.users_module import UsersModule
 from pikabot_graphs import settings
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, PikabuUser, UserPostsCountEntry
@@ -173,7 +175,10 @@ def push_users_info(request, session):
         error_file_handler = logging.FileHandler('logs/{}.error.log'.format('push_users_info'))
         error_file_handler.setLevel(logging.ERROR)
 
-        logger.addHandler(error_file_handler)
+        info_file_handler = logging.FileHandler('logs/{}.info.log'.format('push_users_info'))
+        info_file_handler.setLevel(logging.INFO)
+
+        logger.addHandler(info_file_handler)
 
 
         try:
@@ -189,11 +194,15 @@ def push_users_info(request, session):
                     user = User()
                     user.username = username
 
+                logger.info('before UsersModule._update_user: {}'.format(time.time()))
                 UsersModule._update_user(user, json_user, logger)
+                logger.info('after UsersModule._update_user: {}'.format(time.time()))
 
+                logger.info('before PikabuUser: {}'.format(time.time()))
                 pikabu_user = PikabuUser.objects.get(username=json_user['user_name'])
                 pikabu_user.is_processed = True
                 pikabu_user.save()
+                logger.info('after PikabuUser: {}'.format(time.time()))
 
             return JsonResponse({
                 'status': 'ok'
