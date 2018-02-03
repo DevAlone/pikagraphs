@@ -92,6 +92,8 @@ class UsersModule(Module):
 
     @staticmethod
     def _update_user(user, user_data, logger, save_graphs=True):
+        logger.debug('start processing user {}'.format(user.username))
+
         user_data['rating'] = int(float(user_data['rating']))
         user_data['comments_count'] = int(user_data['comments_count'])
         user_data['stories_count'] = int(user_data['stories_count'])

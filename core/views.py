@@ -23,6 +23,17 @@ from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
 import os
 
+logger = logging.getLogger('pikabot_graphs/{}'.format('push_users_info'))
+logger.setLevel(logging.INFO)
+
+error_file_handler = logging.FileHandler('logs/{}.error.log'.format('push_users_info'))
+error_file_handler.setLevel(logging.ERROR)
+
+info_file_handler = logging.FileHandler('logs/{}.info.log'.format('push_users_info'))
+info_file_handler.setLevel(logging.INFO)
+
+logger.addHandler(info_file_handler)
+
 
 def angular_debug_url(request):
     # DON'T USE IN PRODUCTION!!!
@@ -166,21 +177,12 @@ class PikabuUserViewSet(viewsets.ReadOnlyModelViewSet):
     filter_class = PikabuUserFilter
 
 
+
+
 @csrf_exempt
 def push_users_info(request, session):
+    global logger
     if request.method == 'POST' and session in settings.ALLOWED_PUSH_USERS_SESSIONS:
-        logger = logging.getLogger('pikabot_graphs/{}'.format('push_users_info'))
-        logger.setLevel(logging.INFO)
-
-        error_file_handler = logging.FileHandler('logs/{}.error.log'.format('push_users_info'))
-        error_file_handler.setLevel(logging.ERROR)
-
-        info_file_handler = logging.FileHandler('logs/{}.info.log'.format('push_users_info'))
-        info_file_handler.setLevel(logging.INFO)
-
-        logger.addHandler(info_file_handler)
-
-
         try:
             json_body = json.loads(request.body.decode())
 
@@ -194,15 +196,11 @@ def push_users_info(request, session):
                     user = User()
                     user.username = username
 
-                logger.info('before UsersModule._update_user: {}'.format(time.time()))
                 UsersModule._update_user(user, json_user, logger, save_graphs=False)
-                logger.info('after UsersModule._update_user: {}'.format(time.time()))
 
-                logger.info('before PikabuUser: {}'.format(time.time()))
                 pikabu_user = PikabuUser.objects.get(username=json_user['user_name'])
                 pikabu_user.is_processed = True
                 pikabu_user.save()
-                logger.info('after PikabuUser: {}'.format(time.time()))
 
             return JsonResponse({
                 'status': 'ok'
