@@ -17,8 +17,8 @@ import time
 
 
 class UsersModule(Module):
-    # processing_period = 60
-    processing_period = 1
+    processing_period = 90
+    # processing_period = 1
 
     def __init__(self):
         super(UsersModule, self).__init__('users_module')
