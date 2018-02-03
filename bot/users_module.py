@@ -26,60 +26,50 @@ class UsersModule(Module):
 
     async def _process(self):
         await self.proxy_provider.update()
+        
+        with Client(requests_only_over_proxy=False) as client:
 
-        # with Client() as client:
+            tasks = []
 
-        tasks = []
+            for user in User.objects.filter(is_updated=True)\
+                    .filter(last_update_timestamp__lte=int(time.time()) - F('updating_period')):
+                tasks.append(self._call_coroutine_with_logging_exception(self.process_user(user, client)))
+                if len(tasks) > 100:
+                    await asyncio.wait(tasks)
+                    tasks.clear()
 
-        for user in User.objects.filter(is_updated=True)\
-                .filter(last_update_timestamp__lte=int(time.time()) - F('updating_period')):
-            tasks.append(self._call_coroutine_with_logging_exception(self.process_user(user)))
-            if len(tasks) > 100:
+            if len(tasks) > 0:
                 await asyncio.wait(tasks)
-                tasks.clear()
 
-        if len(tasks) > 0:
-            await asyncio.wait(tasks)
-
-        await self.process_pikabu_users()
-
-    async def process_pikabu_users(self):
-        pikabu_users = PikabuUser.objects.filter(is_processed=False)[:10].all()
-
-        tasks = []
-
-        for pikabu_user in pikabu_users:
-            tasks.append(self.process_pikabu_user(pikabu_user))
-            if len(tasks) > 10:
-                await asyncio.gather(*tasks)
-                tasks.clear()
-
-        if tasks:
-            await asyncio.gather(*tasks)
-
-    async def do_it(self):
-        try:
-            with Client(proxy_adapter=self.proxy_provider, timeout=10) as client:
-                resp = await client.user_profile_get('admin')
-                resp = resp['user']['user_id']
-                print(resp)
-        except BaseException as ex:
-            print('error')
-            self._logger.exception(ex)
-
-    async def process_pikabu_user(self, pikabu_user):
-        username = pikabu_user.username.lower()
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            user = User()
-            user.username = username
-
-        with Client(proxy_adapter=self.proxy_provider, timeout=10) as client:
-            await self.process_user(user, client)
-
-        pikabu_user.is_processed = True
-        pikabu_user.save()
+            # await self.process_pikabu_users()
+    #
+    # async def process_pikabu_users(self):
+    #     pikabu_users = PikabuUser.objects.filter(is_processed=False)[:10].all()
+    #
+    #     tasks = []
+    #
+    #     for pikabu_user in pikabu_users:
+    #         tasks.append(self.process_pikabu_user(pikabu_user))
+    #         if len(tasks) > 10:
+    #             await asyncio.gather(*tasks)
+    #             tasks.clear()
+    #
+    #     if tasks:
+    #         await asyncio.gather(*tasks)
+    #
+    # async def process_pikabu_user(self, pikabu_user):
+    #     username = pikabu_user.username.lower()
+    #     try:
+    #         user = User.objects.get(username=username)
+    #     except User.DoesNotExist:
+    #         user = User()
+    #         user.username = username
+    #
+    #     with Client(proxy_adapter=self.proxy_provider, timeout=10) as client:
+    #         await self.process_user(user, client)
+    #
+    #     pikabu_user.is_processed = True
+    #     pikabu_user.save()
 
     async def process_user(self, user, client):
         self._logger.debug('start processing user {}'.format(user.username))
