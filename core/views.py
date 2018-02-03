@@ -191,13 +191,13 @@ def push_users_info(request, session):
 
                 UsersModule._update_user(user, json_user, logger)
 
-            return HttpResponse({
+            return JsonResponse({
                 'status': 'ok'
             })
         except BaseException as ex:
             logger.exception(ex)
 
-            return HttpResponse({
+            return JsonResponse({
                 'status': 'error'
             })
 
