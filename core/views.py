@@ -1,9 +1,15 @@
+import json
+import logging
+import traceback
+
+from bot.users_module import UsersModule
 from pikabot_graphs import settings
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, PikabuUser, UserPostsCountEntry
 from core.models import UserHotPostsCountEntry, UserPlusesCountEntry, UserMinusesCountEntry, UserSubscribersCountEntry
 
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 # from django.db.models import Q
 
 from rest_framework import generics, viewsets
@@ -156,3 +162,50 @@ class PikabuUserViewSet(viewsets.ReadOnlyModelViewSet):
     ordering_fields = ('pikabu_id', 'username')
     ordering = ('pikabu_id',)
     filter_class = PikabuUserFilter
+
+
+@csrf_exempt
+def push_users_info(request, session):
+    if request.method == 'POST' and session in settings.ALLOWED_PUSH_USERS_SESSIONS:
+        logger = logging.getLogger('pikabot_graphs/{}'.format('push_users_info'))
+        logger.setLevel(logging.ERROR)
+
+        error_file_handler = logging.FileHandler('logs/{}.error.log'.format('push_users_info'))
+        error_file_handler.setLevel(logging.ERROR)
+
+        logger.addHandler(error_file_handler)
+
+
+        try:
+            json_body = json.loads(request.body.decode())
+
+            for json_user in json_body['data']:
+                json_user = json_user['user']
+                username = json_user['user_name'].strip().lower()
+
+                try:
+                    user = User.objects.get(username=username)
+                except User.DoesNotExist:
+                    user = User()
+                    user.username = username
+
+                UsersModule._update_user(user, json_user, logger)
+
+            return HttpResponse({
+                'status': 'ok'
+            })
+        except BaseException as ex:
+            logger.exception(ex)
+
+            return HttpResponse({
+                'status': 'error'
+            })
+
+    return HttpResponseForbidden("""
+    <style>
+    img { 
+        width: 100%;
+    }
+    </style>
+    <img src="http://karaul.ru/uploads/posts/2016-05/1462950596_ob005.jpg">
+""")

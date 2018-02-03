@@ -11,8 +11,8 @@ import random
 
 class ParseAllUsersModule(Module):
     processing_period = 10
-    parsing_gap_size = 100
-    processing_cycles = 10
+    parsing_gap_size = 10
+    processing_cycles = 1
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')
@@ -79,8 +79,8 @@ class ParseAllUsersModule(Module):
             await client.user_note_set(note_text, user_id)
         except PikabuException as ex:
             message = str(ex).strip()
-            if message == 'Указанный пользователь не найден' \
-                    or message == 'Добавлять заметку самому себе деструктивно и неразумно':
+            if message == 'Добавлять заметку самому себе деструктивно и неразумно':
+                    # or message == 'Указанный пользователь не найден':
                 self._logger.warning('Пользователь с id "{}" не найден'.format(user_id))
             else:
                 raise ex

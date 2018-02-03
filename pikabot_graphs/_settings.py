@@ -166,3 +166,5 @@ COMMUNITIES_MODULE = {
 }
 
 # / Bot settings
+
+ALLOWED_PUSH_USERS_SESSIONS = []

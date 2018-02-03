@@ -98,8 +98,10 @@ class UsersModule(Module):
 
     async def _process_user(self, user, client):
         user_data = await client.user_profile_get(user.username)
+        self._update_user(user, user_data['user'], self._logger)
 
-        user_data = user_data['user']
+    @staticmethod
+    def _update_user(user, user_data, logger):
         user_data['rating'] = int(float(user_data['rating']))
         user_data['comments_count'] = int(user_data['comments_count'])
         user_data['stories_count'] = int(user_data['stories_count'])
@@ -137,11 +139,11 @@ class UsersModule(Module):
         try:
             user.subscribers_count = user_data['subscribers_count']
         except KeyError:
-            self._logger.warning("subscribers_count disappeared")
+            logger.warning("subscribers_count disappeared")
         try:
             user.is_rating_ban = user_data['is_rating_ban']
         except KeyError:
-            self._logger.warning("is_rating_ban disappeared")
+            logger.warning("is_rating_ban disappeared")
 
         was_data_changed = False
 
@@ -160,48 +162,48 @@ class UsersModule(Module):
             if user.is_rating_ban != previous_user_state.is_rating_ban:
                 was_data_changed = True
 
-        self._calculate_user_updating_period(user, was_data_changed)
+        UsersModule._calculate_user_updating_period(user, was_data_changed)
 
         user.last_update_timestamp = int(time.time())
 
         user.save()
 
-        self._save_model_if_last_is_not_the_same(UserRatingEntry(
+        UsersModule._save_model_if_last_is_not_the_same(UserRatingEntry(
             timestamp=user.last_update_timestamp,
             user=user,
             value=user.rating))
 
-        self._save_model_if_last_is_not_the_same(UserCommentsCountEntry(
+        UsersModule._save_model_if_last_is_not_the_same(UserCommentsCountEntry(
             timestamp=user.last_update_timestamp,
             user=user,
             value=user.comments_count))
 
-        self._save_model_if_last_is_not_the_same(UserPostsCountEntry(
+        UsersModule._save_model_if_last_is_not_the_same(UserPostsCountEntry(
             timestamp=user.last_update_timestamp,
             user=user,
             value=user.posts_count))
 
-        self._save_model_if_last_is_not_the_same(UserHotPostsCountEntry(
+        UsersModule._save_model_if_last_is_not_the_same(UserHotPostsCountEntry(
             timestamp=user.last_update_timestamp,
             user=user,
             value=user.hot_posts_count))
 
-        self._save_model_if_last_is_not_the_same(UserPlusesCountEntry(
+        UsersModule._save_model_if_last_is_not_the_same(UserPlusesCountEntry(
             timestamp=user.last_update_timestamp,
             user=user,
             value=user.pluses_count))
 
-        self._save_model_if_last_is_not_the_same(UserMinusesCountEntry(
+        UsersModule._save_model_if_last_is_not_the_same(UserMinusesCountEntry(
             timestamp=user.last_update_timestamp,
             user=user,
             value=user.minuses_count))
 
-        self._save_model_if_last_is_not_the_same(UserSubscribersCountEntry(
+        UsersModule._save_model_if_last_is_not_the_same(UserSubscribersCountEntry(
             timestamp=user.last_update_timestamp,
             user=user,
             value=user.subscribers_count))
 
-        self._logger.debug('end processing user {}'.format(user.username))
+        logger.debug('end processing user {}'.format(user.username))
 
     @staticmethod
     def _calculate_user_updating_period(user, was_data_changed):
