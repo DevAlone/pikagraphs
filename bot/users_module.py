@@ -1,10 +1,14 @@
 import copy
 
+import os
+
 from bot.module import Module
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, UserPostsCountEntry, UserHotPostsCountEntry
 from core.models import UserPlusesCountEntry, UserMinusesCountEntry, UserSubscribersCountEntry, PikabuUser
 from pikabot_graphs import settings
-from bot.api.client import Client, PikabuError
+# from bot.api.client import Client, PikabuError
+from bot.api.pikabu_api.mobile import MobilePikabu as Client, PikabuException as PikabuError
+from bot.api.pikabu_api.proxy_provider import ProxyManager1
 
 from django.db.models import F
 
@@ -13,34 +17,39 @@ import time
 
 
 class UsersModule(Module):
-    processing_period = 60
+    # processing_period = 60
+    processing_period = 1
 
     def __init__(self):
         super(UsersModule, self).__init__('users_module')
+        self.proxy_provider = ProxyManager1.get_instance()
 
     async def _process(self):
-        with Client() as client:
-            tasks = []
+        await self.proxy_provider.update()
 
-            for user in User.objects.filter(is_updated=True)\
-                    .filter(last_update_timestamp__lte=int(time.time()) - F('updating_period')):
-                tasks.append(self._call_coroutine_with_logging_exception(self.process_user(user, client)))
-                if len(tasks) > 100:
-                    await asyncio.wait(tasks)
-                    tasks.clear()
+        # with Client() as client:
 
-            if len(tasks) > 0:
+        tasks = []
+
+        for user in User.objects.filter(is_updated=True)\
+                .filter(last_update_timestamp__lte=int(time.time()) - F('updating_period')):
+            tasks.append(self._call_coroutine_with_logging_exception(self.process_user(user)))
+            if len(tasks) > 100:
                 await asyncio.wait(tasks)
+                tasks.clear()
 
-            await self.process_pikabu_users(client)
+        if len(tasks) > 0:
+            await asyncio.wait(tasks)
 
-    async def process_pikabu_users(self, client):
+        await self.process_pikabu_users()
+
+    async def process_pikabu_users(self):
         pikabu_users = PikabuUser.objects.filter(is_processed=False)[:10].all()
 
         tasks = []
 
         for pikabu_user in pikabu_users:
-            tasks.append(self.process_pikabu_user(pikabu_user, client))
+            tasks.append(self.process_pikabu_user(pikabu_user))
             if len(tasks) > 10:
                 await asyncio.gather(*tasks)
                 tasks.clear()
@@ -48,7 +57,17 @@ class UsersModule(Module):
         if tasks:
             await asyncio.gather(*tasks)
 
-    async def process_pikabu_user(self, pikabu_user, client):
+    async def do_it(self):
+        try:
+            with Client(proxy_adapter=self.proxy_provider, timeout=10) as client:
+                resp = await client.user_profile_get('admin')
+                resp = resp['user']['user_id']
+                print(resp)
+        except BaseException as ex:
+            print('error')
+            self._logger.exception(ex)
+
+    async def process_pikabu_user(self, pikabu_user):
         username = pikabu_user.username.lower()
         try:
             user = User.objects.get(username=username)
@@ -56,7 +75,8 @@ class UsersModule(Module):
             user = User()
             user.username = username
 
-        await self.process_user(user, client)
+        with Client(proxy_adapter=self.proxy_provider, timeout=10) as client:
+            await self.process_user(user, client)
 
         pikabu_user.is_processed = True
         pikabu_user.save()
@@ -77,7 +97,7 @@ class UsersModule(Module):
             raise ex
 
     async def _process_user(self, user, client):
-        user_data = await client.get_user_profile(user.username)
+        user_data = await client.user_profile_get(user.username)
 
         user_data = user_data['user']
         user_data['rating'] = int(float(user_data['rating']))

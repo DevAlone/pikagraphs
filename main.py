@@ -3,6 +3,7 @@
 
 import bot.init_django_models
 
+from pikabot_graphs import settings
 from bot.users_module import UsersModule
 from bot.communities_module import CommunitiesModule
 from bot.parse_all_users_module import ParseAllUsersModule
@@ -18,11 +19,11 @@ if __name__ == "__main__":
         ParseAllUsersModule()
     ]
 
-    # if settings.DEBUG:
-    #     modules = [
-    #         UsersModule(),
-    #         ParseAllUsersModule(),
-    #     ]
+    if settings.DEBUG:
+        modules = [
+            UsersModule(),
+            # ParseAllUsersModule(),
+        ]
 
     tasks = []
 
