@@ -182,24 +182,65 @@ class PikabuUserViewSet(viewsets.ReadOnlyModelViewSet):
 @csrf_exempt
 def push_users_info(request, session):
     global logger
+    logger.info('{}: request started'.format(time.time()))
+
     if request.method == 'POST' and session in settings.ALLOWED_PUSH_USERS_SESSIONS:
         try:
             json_body = json.loads(request.body.decode())
 
             for json_user in json_body['data']:
                 json_user = json_user['user']
+
                 username = json_user['user_name'].strip().lower()
 
+                logger.info('{}: getting or creating user'.format(time.time()))
                 try:
                     user = User.objects.get(username=username)
                 except User.DoesNotExist:
                     user = User()
                     user.username = username
 
-                UsersModule._update_user(user, json_user, logger, save_graphs=False)
+                logger.info('{}: processing user'.format(time.time()))
+                if json_user['avatar']:
+                    user.avatar_url = json_user['avatar']
+                else:
+                    user.avatar_url = ""
 
+                user.rating = int(float(json_user['rating']))
+                user.comments_count = int(json_user['comments_count'])
+                user.posts_count = int(json_user['stories_count'])
+                user.hot_posts_count = int(json_user['stories_hot_count'])
+                user.pluses_count = int(json_user['pluses_count'])
+                user.minuses_count = int(json_user['minuses_count'])
+
+                user.gender = str(json_user['gender'])
+                user.approved = json_user['approved']
+                user.awards = json_user['awards']
+                user.communities = json_user['communities']
+                user.signup_timestamp = int(json_user['signup_date'])
+                user.pikabu_id = int(json_user['user_id'])
+
+                try:
+                    user.subscribers_count = int(json_user['subscribers_count'])
+                except KeyError:
+                    logger.warning("subscribers_count disappeared")
+                try:
+                    if type(json_user['is_rating_ban']) is bool:
+                        user.is_rating_ban = json_user['is_rating_ban']
+                    else:
+                        user.is_rating_ban = json_user['is_rating_ban'].lower().strip() == 'true'
+                except KeyError:
+                    logger.warning("is_rating_ban disappeared")
+
+                user.last_update_timestamp = int(time.time())
+
+                logger.info('{}: saving user'.format(time.time()))
+                user.save()
+
+                logger.info('{}: getting pikabu user'.format(time.time()))
                 pikabu_user = PikabuUser.objects.get(username=json_user['user_name'])
                 pikabu_user.is_processed = True
+                logger.info('{}: saving pikabu user'.format(time.time()))
                 pikabu_user.save()
 
             return JsonResponse({

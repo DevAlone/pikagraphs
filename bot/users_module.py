@@ -1,4 +1,5 @@
 import copy
+import json
 
 import os
 
@@ -17,7 +18,7 @@ import time
 
 
 class UsersModule(Module):
-    processing_period = 90
+    processing_period = 10
     # processing_period = 1
 
     def __init__(self):
@@ -25,10 +26,7 @@ class UsersModule(Module):
         self.proxy_provider = ProxyManager1.get_instance()
 
     async def _process(self):
-        await self.proxy_provider.update()
-
         with Client(requests_only_over_proxy=False) as client:
-
             tasks = []
 
             for user in User.objects.filter(is_updated=True)\
@@ -42,34 +40,20 @@ class UsersModule(Module):
                 await asyncio.wait(tasks)
 
             # await self.process_pikabu_users()
-    #
+
     # async def process_pikabu_users(self):
-    #     pikabu_users = PikabuUser.objects.filter(is_processed=False)[:10].all()
+    #     with open('.push_users_info_db', 'r') as file:
+    #         for _ in range(10):
+    #             json_data = json.loads(file.readline().strip())
+    #             username = json_data['user_name'].strip().lower()
     #
-    #     tasks = []
+    #             try:
+    #                 user = User.objects.get(username=username)
+    #             except User.DoesNotExist:
+    #                 user = User()
+    #                 user.username = username
     #
-    #     for pikabu_user in pikabu_users:
-    #         tasks.append(self.process_pikabu_user(pikabu_user))
-    #         if len(tasks) > 10:
-    #             await asyncio.gather(*tasks)
-    #             tasks.clear()
-    #
-    #     if tasks:
-    #         await asyncio.gather(*tasks)
-    #
-    # async def process_pikabu_user(self, pikabu_user):
-    #     username = pikabu_user.username.lower()
-    #     try:
-    #         user = User.objects.get(username=username)
-    #     except User.DoesNotExist:
-    #         user = User()
-    #         user.username = username
-    #
-    #     with Client(proxy_adapter=self.proxy_provider, timeout=10) as client:
-    #         await self.process_user(user, client)
-    #
-    #     pikabu_user.is_processed = True
-    #     pikabu_user.save()
+    #             self._update_user(user, json_data, self._logger)
 
     async def process_user(self, user, client):
         self._logger.debug('start processing user {}'.format(user.username))
