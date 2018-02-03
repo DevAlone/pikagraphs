@@ -79,7 +79,8 @@ class ParseAllUsersModule(Module):
             await client.user_note_set(note_text, user_id)
         except PikabuException as ex:
             message = str(ex).strip()
-            if message == 'Указанный пользователь не найден':
+            if message == 'Указанный пользователь не найден' \
+                    or message == 'Добавлять заметку самому себе деструктивно и неразумно':
                 self._logger.warning('Пользователь с id "{}" не найден'.format(user_id))
             else:
                 raise ex
