@@ -26,7 +26,7 @@ class UsersModule(Module):
 
     async def _process(self):
         await self.proxy_provider.update()
-        
+
         with Client(requests_only_over_proxy=False) as client:
 
             tasks = []

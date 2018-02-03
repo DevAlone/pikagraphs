@@ -191,6 +191,10 @@ def push_users_info(request, session):
 
                 UsersModule._update_user(user, json_user, logger)
 
+                pikabu_user = PikabuUser.objects.get(username=json_user['user_name'])
+                pikabu_user.is_processed = True
+                pikabu_user.save()
+
             return JsonResponse({
                 'status': 'ok'
             })
