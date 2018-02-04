@@ -349,12 +349,6 @@ class UsersModule(Module):
                 user.last_update_timestamp, user.subscribers_count, user.pk,
             """
 
-            ret = []
-            async for row in cursor:
-                ret.append(row)
-
-            print('SQL: {}'.format(ret))
-
     @staticmethod
     def _calculate_user_updating_period(user, was_data_changed):
         delta = abs((int(time.time()) - user.last_update_timestamp) / 4)
