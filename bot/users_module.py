@@ -244,6 +244,116 @@ class UsersModule(Module):
         logger.debug('end processing user {}'.format(user.username))
 
     @staticmethod
+    async def _update_user_async(user_data, connection):
+        # import asyncio
+        # import aiopg
+
+        user_data['user_name'] = user_data['user_name'].strip().lower()
+
+        async with connection.cursor() as cursor:
+            user_data['rating'] = int(float(user_data['rating']))
+            user_data['comments_count'] = int(user_data['comments_count'])
+            user_data['stories_count'] = int(user_data['stories_count'])
+            user_data['stories_hot_count'] = int(user_data['stories_hot_count'])
+            user_data['pluses_count'] = int(user_data['pluses_count'])
+            user_data['minuses_count'] = int(user_data['minuses_count'])
+            user_data['subscribers_count'] = int(user_data['subscribers_count'])
+            user_data['signup_date'] = int(user_data['signup_date'])
+            user_data['user_id'] = int(user_data['user_id'])
+
+            if type(user_data['is_rating_ban']) is not bool:
+                user_data['is_rating_ban'] = user_data['is_rating_ban'].lower().strip() == 'true'
+
+            user = User()
+            user.username = user_data['user_name']
+
+            user.rating = user_data['rating']
+            if user_data['avatar']:
+                user.avatar_url = user_data['avatar']
+            else:
+                user.avatar_url = ""
+
+            user.comments_count = user_data['comments_count']
+            user.posts_count = user_data['stories_count']
+            user.hot_posts_count = user_data['stories_hot_count']
+            user.pluses_count = user_data['pluses_count']
+            user.minuses_count = user_data['minuses_count']
+
+            user.gender = str(user_data['gender'])
+            user.approved = user_data['approved']
+            user.awards = user_data['awards']
+            user.communities = user_data['communities']
+            user.signup_timestamp = user_data['signup_date']
+            user.pikabu_id = user_data['user_id']
+
+            try:
+                user.subscribers_count = user_data['subscribers_count']
+            except KeyError:
+                print("subscribers_count disappeared")
+            try:
+                user.is_rating_ban = user_data['is_rating_ban']
+            except KeyError:
+                print("is_rating_ban disappeared")
+
+            user.updating_period = 3600
+
+            user.last_update_timestamp = int(time.time())
+
+            await cursor.execute("""
+                INSERT INTO core_user (username, rating, comments_count, posts_count, hot_posts_count, pluses_count,
+                    minuses_count, subscribers_count, is_rating_ban, updating_period, avatar_url, info, is_updated,
+                    last_update_timestamp, approved, awards, communities, gender, pikabu_id, signup_timestamp) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (username) DO UPDATE 
+                    SET rating = excluded.rating, 
+                        comments_count = excluded.comments_count, 
+                        posts_count = excluded.posts_count, 
+                        hot_posts_count = excluded.hot_posts_count, 
+                        pluses_count = excluded.pluses_count,
+                        minuses_count = excluded.minuses_count, 
+                        subscribers_count = excluded.subscribers_count, 
+                        is_rating_ban = excluded.is_rating_ban, 
+                        updating_period = excluded.updating_period, 
+                        avatar_url = excluded.avatar_url, 
+                        info = excluded.info, 
+                        is_updated = excluded.is_updated,
+                        last_update_timestamp = excluded.last_update_timestamp, 
+                        approved = excluded.approved, 
+                        awards = excluded.awards, 
+                        communities = excluded.communities, 
+                        gender = excluded.gender, 
+                        pikabu_id = excluded.pikabu_id, 
+                        signup_timestamp = excluded.signup_timestamp; 
+      
+                INSERT INTO core_userratingentry (timestamp, value, user_id) VALUES (%s, %s, %s);
+                INSERT INTO core_usercommentscountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
+                INSERT INTO core_userpostscountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
+                INSERT INTO core_userhotpostscountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
+                INSERT INTO core_userplusescountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
+                INSERT INTO core_userminusescountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
+                INSERT INTO core_usersubscriberscountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
+                """, [
+                    user.username, user.rating, user.comments_count, user.posts_count, user.hot_posts_count,
+                    user.pluses_count, user.minuses_count, user.subscribers_count, user.is_rating_ban,
+                    user.updating_period, user.avatar_url, user.info, user.is_updated, user.last_update_timestamp,
+                    user.approved, user.awards, user.communities, user.gender, user.pikabu_id, user.signup_timestamp,
+
+                    user.last_update_timestamp, user.rating, user.pk,
+                    user.last_update_timestamp, user.comments_count, user.pk,
+                    user.last_update_timestamp, user.posts_count, user.pk,
+                    user.last_update_timestamp, user.hot_posts_count, user.pk,
+                    user.last_update_timestamp, user.pluses_count, user.pk,
+                    user.last_update_timestamp, user.minuses_count, user.pk,
+                    user.last_update_timestamp, user.subscribers_count, user.pk,
+                ])
+
+            ret = []
+            async for row in cursor:
+                ret.append(row)
+
+            print('SQL: {}'.format(ret))
+
+    @staticmethod
     def _calculate_user_updating_period(user, was_data_changed):
         delta = abs((int(time.time()) - user.last_update_timestamp) / 4)
         if delta > settings.USERS_MODULE['MAX_UPDATING_DELTA']:

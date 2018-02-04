@@ -5,3 +5,4 @@ ntplib
 djangorestframework
 django-filter
 aiosocks==0.2.5
+aiopg
