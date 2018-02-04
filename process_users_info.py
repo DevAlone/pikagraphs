@@ -55,7 +55,7 @@ async def main():
 
             tasks.append(process_user(json_data, pool))
 
-            if len(tasks) > 100:
+            if len(tasks) > 1000:
                 await asyncio.wait(tasks)
                 tasks.clear()
 
