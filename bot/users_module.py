@@ -260,6 +260,8 @@ class UsersModule(Module):
             user_data['subscribers_count'] = int(user_data['subscribers_count'])
             user_data['signup_date'] = int(user_data['signup_date'])
             user_data['user_id'] = int(user_data['user_id'])
+            user_data['communities'] = json.dumps(user_data['communities'])
+            user_data['awards'] = json.dumps(user_data['awards'])
 
             if type(user_data['is_rating_ban']) is not bool:
                 user_data['is_rating_ban'] = user_data['is_rating_ban'].lower().strip() == 'true'
