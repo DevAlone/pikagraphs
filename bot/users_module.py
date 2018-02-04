@@ -142,12 +142,9 @@ class UsersModule(Module):
 
         user.last_update_timestamp = int(time.time())
 
-        logger.debug('start saving user')
         user.save()
-        logger.debug('stop saving user')
 
         if save_graphs:
-            logger.debug('start saving graphs')
             UsersModule._save_model_if_last_is_not_the_same(UserRatingEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
@@ -182,7 +179,6 @@ class UsersModule(Module):
                 timestamp=user.last_update_timestamp,
                 user=user,
                 value=user.subscribers_count), logger)
-            logger.debug('stop saving graphs')
 
         logger.debug('end processing user {}'.format(user.username))
 
@@ -206,15 +202,8 @@ class UsersModule(Module):
 
     @staticmethod
     def _save_model_if_last_is_not_the_same(model, logger=None):
-        if logger is not None:
-            logger.debug("start getting last counter...")
         last_entry = type(model).objects.filter(user=model.user).last()
-        if logger is not None:
-            logger.debug("stop last counter...")
 
         if last_entry is None or int(last_entry.value) != int(model.value):
-            if logger is not None:
-                logger.debug("start saving last counter...")
             model.save()
-            if logger is not None:
-                logger.debug("stop saving last counter...")
+
