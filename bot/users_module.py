@@ -281,7 +281,7 @@ class UsersModule(Module):
             user.pluses_count = user_data['pluses_count']
             user.minuses_count = user_data['minuses_count']
 
-            user.gender = str(user_data['gender'])
+            user.gender = str(int(user_data['gender']))
             user.approved = user_data['approved']
             user.awards = user_data['awards']
             user.communities = user_data['communities']
