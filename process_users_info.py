@@ -23,12 +23,6 @@ async def process_user(json_data, pool):
                 await cursor.execute("""UPDATE core_pikabuuser SET "is_processed" = true WHERE "pikabu_id" = %s""", [
                     json_data['user_id']
                 ])
-
-                ret = []
-                async for row in cursor:
-                    ret.append(row)
-
-                print('SQL2: {}'.format(ret))
     except BaseException as ex:
         print(type(ex))
         print(ex)
