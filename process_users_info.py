@@ -15,7 +15,7 @@ if __name__ == '__main__':
         exit(1)
 
     logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     log_handler = logging.StreamHandler()
     log_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
 
