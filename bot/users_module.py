@@ -151,37 +151,37 @@ class UsersModule(Module):
             UsersModule._save_model_if_last_is_not_the_same(UserRatingEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
-                value=user.rating))
+                value=user.rating), logger)
 
             UsersModule._save_model_if_last_is_not_the_same(UserCommentsCountEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
-                value=user.comments_count))
+                value=user.comments_count), logger)
 
             UsersModule._save_model_if_last_is_not_the_same(UserPostsCountEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
-                value=user.posts_count))
+                value=user.posts_count), logger)
 
             UsersModule._save_model_if_last_is_not_the_same(UserHotPostsCountEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
-                value=user.hot_posts_count))
+                value=user.hot_posts_count), logger)
 
             UsersModule._save_model_if_last_is_not_the_same(UserPlusesCountEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
-                value=user.pluses_count))
+                value=user.pluses_count), logger)
 
             UsersModule._save_model_if_last_is_not_the_same(UserMinusesCountEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
-                value=user.minuses_count))
+                value=user.minuses_count), logger)
 
             UsersModule._save_model_if_last_is_not_the_same(UserSubscribersCountEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
-                value=user.subscribers_count))
+                value=user.subscribers_count), logger)
             logger.debug('stop saving graphs')
 
         logger.debug('end processing user {}'.format(user.username))
@@ -205,8 +205,16 @@ class UsersModule(Module):
             user.updating_period = settings.USERS_MODULE['MAX_UPDATING_PERIOD']
 
     @staticmethod
-    def _save_model_if_last_is_not_the_same(model):
+    def _save_model_if_last_is_not_the_same(model, logger=None):
+        if logger is not None:
+            logger.debug("start getting last counter...")
         last_entry = type(model).objects.filter(user=model.user).last()
+        if logger is not None:
+            logger.debug("stop last counter...")
 
         if last_entry is None or int(last_entry.value) != int(model.value):
+            if logger is not None:
+                logger.debug("start saving last counter...")
             model.save()
+            if logger is not None:
+                logger.debug("stop saving last counter...")
