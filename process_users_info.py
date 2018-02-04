@@ -1,4 +1,7 @@
 import asyncio
+import traceback
+
+import os
 
 import bot.init_django_models
 
@@ -12,19 +15,25 @@ import aiopg
 
 
 async def process_user(json_data, pool):
-    async with pool.acquire() as connection:
-        await UsersModule._update_user_async(json_data, connection)
+    try:
+        async with pool.acquire() as connection:
+            await UsersModule._update_user_async(json_data, connection)
 
-        async with connection.cursor() as cursor:
-            await cursor.execute("""UPDATE core_pikabuuser SET "is_processed" = true WHERE "pikabu_id" = %s""", [
-                json_data['user_id']
-            ])
+            async with connection.cursor() as cursor:
+                await cursor.execute("""UPDATE core_pikabuuser SET "is_processed" = true WHERE "pikabu_id" = %s""", [
+                    json_data['user_id']
+                ])
 
-            ret = []
-            async for row in cursor:
-                ret.append(row)
+                ret = []
+                async for row in cursor:
+                    ret.append(row)
 
-            print('SQL2: {}'.format(ret))
+                print('SQL2: {}'.format(ret))
+    except BaseException as ex:
+        print(type(ex))
+        print(ex)
+        traceback.print_exc()
+        os._exit(1)
 
 
 async def main():
