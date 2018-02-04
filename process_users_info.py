@@ -57,9 +57,11 @@ async def main():
 
             if len(tasks) > 100:
                 await asyncio.wait(tasks)
+                tasks.clear()
 
     if tasks:
         await asyncio.wait(tasks)
+        tasks.clear()
 
 
 if __name__ == '__main__':
