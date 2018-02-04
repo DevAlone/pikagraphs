@@ -5,6 +5,7 @@ from bot.users_module import UsersModule
 import json
 import sys
 import logging
+from pikabot_graphs import settings
 
 
 if __name__ == '__main__':
@@ -41,6 +42,10 @@ if __name__ == '__main__':
             UsersModule._update_user(user, json_data, logger, check_counters=False)
             user.save()
 
-            pikabu_user = PikabuUser.objects.get(username=json_data['user_name'])
-            pikabu_user.is_processed = True
-            pikabu_user.save()
+            try:
+                pikabu_user = PikabuUser.objects.get(username=json_data['user_name'])
+                pikabu_user.is_processed = True
+                pikabu_user.save()
+            except BaseException as ex:
+                if not settings.DEBUG:
+                    raise ex
