@@ -38,7 +38,7 @@ if __name__ == '__main__':
                 user = User()
                 user.username = username
 
-            UsersModule._update_user(user, json_data, logger)
+            UsersModule._update_user(user, json_data, logger, check_counters=False)
             user.save()
 
             pikabu_user = PikabuUser.objects.get(username=json_data['user_name'])

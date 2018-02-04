@@ -75,7 +75,7 @@ class UsersModule(Module):
         self._update_user(user, user_data['user'], self._logger)
 
     @staticmethod
-    def _update_user(user, user_data, logger, save_graphs=True):
+    def _update_user(user, user_data, logger, save_graphs=True, check_counters=True):
         logger.debug('start processing user {}'.format(user.username))
 
         user_data['rating'] = int(float(user_data['rating']))
@@ -145,40 +145,76 @@ class UsersModule(Module):
         user.save()
 
         if save_graphs:
-            UsersModule._save_model_if_last_is_not_the_same(UserRatingEntry(
-                timestamp=user.last_update_timestamp,
-                user=user,
-                value=user.rating), logger)
+            if check_counters:
+                UsersModule._save_model_if_last_is_not_the_same(UserRatingEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.rating), logger)
 
-            UsersModule._save_model_if_last_is_not_the_same(UserCommentsCountEntry(
-                timestamp=user.last_update_timestamp,
-                user=user,
-                value=user.comments_count), logger)
+                UsersModule._save_model_if_last_is_not_the_same(UserCommentsCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.comments_count), logger)
 
-            UsersModule._save_model_if_last_is_not_the_same(UserPostsCountEntry(
-                timestamp=user.last_update_timestamp,
-                user=user,
-                value=user.posts_count), logger)
+                UsersModule._save_model_if_last_is_not_the_same(UserPostsCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.posts_count), logger)
 
-            UsersModule._save_model_if_last_is_not_the_same(UserHotPostsCountEntry(
-                timestamp=user.last_update_timestamp,
-                user=user,
-                value=user.hot_posts_count), logger)
+                UsersModule._save_model_if_last_is_not_the_same(UserHotPostsCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.hot_posts_count), logger)
 
-            UsersModule._save_model_if_last_is_not_the_same(UserPlusesCountEntry(
-                timestamp=user.last_update_timestamp,
-                user=user,
-                value=user.pluses_count), logger)
+                UsersModule._save_model_if_last_is_not_the_same(UserPlusesCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.pluses_count), logger)
 
-            UsersModule._save_model_if_last_is_not_the_same(UserMinusesCountEntry(
-                timestamp=user.last_update_timestamp,
-                user=user,
-                value=user.minuses_count), logger)
+                UsersModule._save_model_if_last_is_not_the_same(UserMinusesCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.minuses_count), logger)
 
-            UsersModule._save_model_if_last_is_not_the_same(UserSubscribersCountEntry(
-                timestamp=user.last_update_timestamp,
-                user=user,
-                value=user.subscribers_count), logger)
+                UsersModule._save_model_if_last_is_not_the_same(UserSubscribersCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.subscribers_count), logger)
+            else:
+                UserRatingEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.rating).save()
+
+                UserCommentsCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.comments_count).save()
+
+                UserPostsCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.posts_count).save()
+
+                UserHotPostsCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.hot_posts_count).save()
+
+                UserPlusesCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.pluses_count).save()
+
+                UserMinusesCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.minuses_count).save()
+
+                UserSubscribersCountEntry(
+                    timestamp=user.last_update_timestamp,
+                    user=user,
+                    value=user.subscribers_count).save()
 
         logger.debug('end processing user {}'.format(user.username))
 
