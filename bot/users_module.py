@@ -149,7 +149,6 @@ class UsersModule(Module):
         current_timestamp = user.last_update_timestamp
 
         with connection.cursor() as cursor:
-            print("INSERTING ({}, {}, {})".format(current_timestamp, user.rating, user.pk))
             cursor.execute(
                 """
                 INSERT INTO core_userratingentry (timestamp, value, user_id) VALUES (%s, %s, %s);
