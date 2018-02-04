@@ -25,12 +25,15 @@ if __name__ == '__main__':
         for line in file:
             json_data = json.loads(line.strip())
             json_data = json_data['user']
-
             logger.info('start processing {}'.format(json_data['user_name']))
-
             username = json_data['user_name'].strip().lower()
             try:
                 user = User.objects.get(username=username)
+
+                if user.pikabu_id is not None:
+                    logging.info('skip user {}'.format(json_data['user_name']))
+                    continue
+
             except User.DoesNotExist:
                 user = User()
                 user.username = username
