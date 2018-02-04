@@ -12,7 +12,7 @@ import aiopg
 
 
 async def process_user(json_data, connection):
-    await UsersModule._update_user_async(json_data)
+    await UsersModule._update_user_async(json_data, connection)
     async with connection.cursor() as cursor:
         await cursor.execute("""UPDATE core_pikabuuser SET "is_processed" = true WHERE "pikabu_id" = %s""", [
             json_data['user_id']
