@@ -332,7 +332,7 @@ class UsersModule(Module):
                 INSERT INTO core_userplusescountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
                 INSERT INTO core_userminusescountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
                 INSERT INTO core_usersubscriberscountentry (timestamp, value, user_id) VALUES (%s, %s, %s);
-                """, [
+                """, (
                     user.username, user.rating, user.comments_count, user.posts_count, user.hot_posts_count,
                     user.pluses_count, user.minuses_count, user.subscribers_count, user.is_rating_ban,
                     user.updating_period, user.avatar_url, user.info, user.is_updated, user.last_update_timestamp,
@@ -345,7 +345,7 @@ class UsersModule(Module):
                     user.last_update_timestamp, user.pluses_count, user.pk,
                     user.last_update_timestamp, user.minuses_count, user.pk,
                     user.last_update_timestamp, user.subscribers_count, user.pk,
-                ])
+                ))
 
             ret = []
             async for row in cursor:
