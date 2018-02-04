@@ -142,9 +142,12 @@ class UsersModule(Module):
 
         user.last_update_timestamp = int(time.time())
 
+        logger.debug('start saving user')
         user.save()
+        logger.debug('stop saving user')
 
         if save_graphs:
+            logger.debug('start saving graphs')
             UsersModule._save_model_if_last_is_not_the_same(UserRatingEntry(
                 timestamp=user.last_update_timestamp,
                 user=user,
@@ -179,6 +182,7 @@ class UsersModule(Module):
                 timestamp=user.last_update_timestamp,
                 user=user,
                 value=user.subscribers_count))
+            logger.debug('stop saving graphs')
 
         logger.debug('end processing user {}'.format(user.username))
 
