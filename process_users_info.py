@@ -11,18 +11,20 @@ from pikabot_graphs import settings
 import aiopg
 
 
-async def process_user(json_data, connection):
-    await UsersModule._update_user_async(json_data, connection)
-    async with connection.cursor() as cursor:
-        await cursor.execute("""UPDATE core_pikabuuser SET "is_processed" = true WHERE "pikabu_id" = %s""", [
-            json_data['user_id']
-        ])
+async def process_user(json_data, pool):
+    async with pool.acquire() as connection:
+        await UsersModule._update_user_async(json_data, connection)
 
-        ret = []
-        async for row in cursor:
-            ret.append(row)
+        async with connection.cursor() as cursor:
+            await cursor.execute("""UPDATE core_pikabuuser SET "is_processed" = true WHERE "pikabu_id" = %s""", [
+                json_data['user_id']
+            ])
 
-        print('SQL2: {}'.format(ret))
+            ret = []
+            async for row in cursor:
+                ret.append(row)
+
+            print('SQL2: {}'.format(ret))
 
 
 async def main():
@@ -42,20 +44,19 @@ async def main():
         settings.DATABASES["default"]["HOST"],
     ))
 
-    async with pool.acquire() as connection:
-        with open(sys.argv[1], 'r') as file:
-            for line in file:
-                json_data = json.loads(line.strip())
-                json_data = json_data['user']
-                logger.info('start processing {}'.format(json_data['user_name']))
+    with open(sys.argv[1], 'r') as file:
+        for line in file:
+            json_data = json.loads(line.strip())
+            json_data = json_data['user']
+            logger.info('start processing {}'.format(json_data['user_name']))
 
-                tasks.append(process_user(json_data, connection))
+            tasks.append(process_user(json_data, pool))
 
-                if len(tasks) > 100:
-                    await asyncio.wait(tasks)
+            if len(tasks) > 100:
+                await asyncio.wait(tasks)
 
-        if tasks:
-            await asyncio.wait(tasks)
+    if tasks:
+        await asyncio.wait(tasks)
 
 
 if __name__ == '__main__':
