@@ -4,8 +4,8 @@ from django.db import models
 class Community(models.Model):
     objects = None
 
-    url_name = models.CharField(max_length=50, unique=True)
-    name = models.CharField(max_length=100, default="")
+    url_name = models.CharField(max_length=64, unique=True)
+    name = models.TextField(default="")
     description = models.TextField(null=True)
     avatar_url = models.URLField(default="")
     background_image_url = models.URLField(default="")

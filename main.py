@@ -22,7 +22,8 @@ if __name__ == "__main__":
     if settings.DEBUG:
         modules = [
             UsersModule(),
-            # ParseAllUsersModule(),
+            CommunitiesModule(),
+            ParseAllUsersModule(),
         ]
 
     tasks = []

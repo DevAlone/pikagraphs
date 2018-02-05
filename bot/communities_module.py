@@ -1,6 +1,10 @@
+import asyncio
+
+import os
+
+from bot.db import DB
 from bot.module import Module
 from bot.api.client import Client
-from communities_app.models import Community, CommunityCountersEntry
 from pikabot_graphs import settings
 
 import time
@@ -11,9 +15,16 @@ class CommunitiesModule(Module):
 
     def __init__(self):
         super(CommunitiesModule, self).__init__('communities_module')
+        self.db = DB.get_instance()
+        self.pool = None
 
     async def _process(self):
+        if self.pool is None:
+            self.pool = await self.db.get_pool()
+
         with Client() as client:
+            tasks = []
+
             for i in range(1, 10000):
                 res = await client.get_communities(page=i, sort='act', community_type='all')
                 communities = res['list']
@@ -21,59 +32,87 @@ class CommunitiesModule(Module):
                     break
 
                 for community in communities:
-                    self._process_community(community)
+                    tasks.append(self._call_coroutine_with_logging_exception(self._process_community(community)))
+                    if len(tasks) > settings.BOT_CONCURRENT_TASKS:
+                        await asyncio.wait(tasks)
+                        tasks.clear()
 
-    def _process_community(self, json_data):
+            if tasks:
+                await asyncio.wait(tasks)
+                tasks.clear()
+
+    async def _process_community(self, json_data):
         community_url_name = json_data['link_name'].lower()
+        current_timestamp = int(time.time())
 
-        try:
-            community = Community.objects.get(url_name=community_url_name)
-        except Community.DoesNotExist:
-            community = Community()
-            community.url_name = community_url_name
-            community.save()
+        async with self.pool.acquire() as connection:
+            async with connection.transaction():
+                await connection.execute(
+                    '''
+                    INSERT INTO communities_app_community 
+                        (url_name, name, avatar_url, background_image_url, 
+                         subscribers_count, stories_count, last_update_timestamp)
+                    VALUES ($1, '', '', '', 0, 0, 0)
+                    ON CONFLICT (url_name) DO NOTHING;
+                    ''', community_url_name
+                )
 
-        community.last_update_timestamp = 0
-        community.save()
+                community_sql = await connection.fetchrow(
+                    '''
+                    SELECT * FROM communities_app_community 
+                    WHERE url_name = $1
+                    ''', community_url_name)
 
-        if community.last_update_timestamp + settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] \
-                >= int(time.time()):
-            return
+                if community_sql['last_update_timestamp'] + settings.COMMUNITIES_MODULE['UPDATING_PERIOD'] >= \
+                        current_timestamp:
+                    return
 
-        self._logger.debug('start processing community {}'.format(community_url_name))
+                self._logger.debug('start processing community {}'.format(community_url_name))
 
-        subscribers_count = json_data['subscribers']
-        stories_count = json_data['stories']
-        name = json_data['name']
+                subscribers_count = json_data['subscribers']
+                stories_count = json_data['stories']
+                name = json_data['name']
 
-        community.name = name
-        community.subscribers_count = subscribers_count
-        community.stories_count = stories_count
-        community.description = json_data['description']
-        community.avatar_url = json_data['avatar_url']
-        community.background_image_url = json_data['bg_image_url']
-        community.last_update_timestamp = int(time.time())
-        community.save()
-        CommunityCountersEntry(
-            timestamp=community.last_update_timestamp,
-            community=community,
-            subscribers_count=subscribers_count,
-            stories_count=stories_count
-        )
-        self._save_counters_if_last_is_not_the_same(CommunityCountersEntry(
-            timestamp=community.last_update_timestamp,
-            community=community,
-            subscribers_count=subscribers_count,
-            stories_count=stories_count
-        ))
+                await connection.execute(
+                    '''
+                    UPDATE communities_app_community
+                    SET 
+                        name = $1,
+                        subscribers_count = $2, 
+                        stories_count = $3,
+                        description = $4,
+                        avatar_url = $5,
+                        background_image_url = $6,
+                        last_update_timestamp = $7
+                    ''', name, subscribers_count, stories_count, json_data['description'], json_data['avatar_url'],
+                    json_data['bg_image_url'], current_timestamp
+                )
+
+                await connection.execute(
+                    '''
+                    INSERT INTO communities_app_communitycountersentry 
+                        (timestamp, subscribers_count, stories_count, community_id) 
+                    SELECT $1, $2, $3, $4
+                    WHERE NOT EXISTS (
+                        SELECT * FROM communities_app_communitycountersentry 
+                        WHERE subscribers_count = $2 and stories_count = $3 and community_id = $4 ORDER BY -id LIMIT 1
+                    );''', current_timestamp, subscribers_count, stories_count, community_sql['id']
+                )
 
         self._logger.debug('end processing community {}'.format(community_url_name))
-
-    @staticmethod
-    def _save_counters_if_last_is_not_the_same(model):
-        last_entry = type(model).objects.filter(community=model.community).last()
-
-        if last_entry is None \
-                or int(last_entry.subscribers_count) != int(model.subscribers_count) \
-                or int(last_entry.stories_count) != int(model.stories_count):
-            model.save()
+#
+#     insert_community_sql = """
+# INSERT INTO communities_app_community
+#     (url_name, name, description, avatar_url, background_image_url,
+#      subscribers_count, stories_count, last_update_timestamp)
+#
+#     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+#
+# ON CONFLICT (url_name) DO UPDATE
+# SET name = excluded.name,
+#     description = excluded.description,
+#     avatar_url = excluded.avatar_url,
+#     background_image_url = excluded.background_image_url,
+#     subscribers_count = excluded.subscribers_count,
+#     stories_count = excluded.stories_count,
+#     last_update_timestamp = excluded.last_update_timestamp;"""

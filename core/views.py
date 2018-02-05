@@ -1,19 +1,9 @@
-import json
-import logging
-import traceback
-
-import time
-
-from bot.users_module import UsersModule
 from pikabot_graphs import settings
 from core.models import User, UserRatingEntry, UserCommentsCountEntry, PikabuUser, UserPostsCountEntry
 from core.models import UserHotPostsCountEntry, UserPlusesCountEntry, UserMinusesCountEntry, UserSubscribersCountEntry
 
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-# from django.db.models import Q
-
+from django.http import HttpResponse
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -22,17 +12,6 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
 import os
-
-logger = logging.getLogger('pikabot_graphs/{}'.format('push_users_info'))
-logger.setLevel(logging.INFO)
-
-error_file_handler = logging.FileHandler('logs/{}.error.log'.format('push_users_info'))
-error_file_handler.setLevel(logging.ERROR)
-
-info_file_handler = logging.FileHandler('logs/{}.info.log'.format('push_users_info'))
-info_file_handler.setLevel(logging.INFO)
-
-logger.addHandler(info_file_handler)
 
 
 def angular_debug_url(request):

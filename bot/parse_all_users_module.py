@@ -1,4 +1,5 @@
 from bot.api.pikabu_api.pikabu import PikabuException
+from bot.db import DB
 from bot.module import Module
 from bot.api.pikabu_api.mobile import MobilePikabu as Client
 
@@ -16,6 +17,8 @@ class ParseAllUsersModule(Module):
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')
+        self.db = DB.get_instance()
+        self.pool = None
 
     async def _process(self):
         with open('.parse_all_users_module_user_state') as file:
@@ -30,7 +33,7 @@ class ParseAllUsersModule(Module):
                 await asyncio.sleep(10)
 
     async def _process_as_user(self, client):
-        last_id = self.get_last_id()
+        last_id = self.get_last_id() + 1
 
         tasks = []
 
@@ -52,11 +55,12 @@ class ParseAllUsersModule(Module):
         await asyncio.gather(*tasks)
         tasks.clear()
 
-        if max_user_id == 0:
-            self._logger.error("max_user_id == 0")
-            max_user_id = last_id + self.parsing_gap_size
+        # if max_user_id == 0:
+        #     self._logger.error("max_user_id == 0")
+        #     max_user_id = last_id + self.parsing_gap_size
 
-        self.set_last_id(max_user_id + 1)
+        if max_user_id != 0:
+            self.set_last_id(max_user_id )
 
     def get_last_id(self):
         try:
@@ -79,8 +83,8 @@ class ParseAllUsersModule(Module):
             await client.user_note_set(note_text, user_id)
         except PikabuException as ex:
             message = str(ex).strip()
-            if message == 'Добавлять заметку самому себе деструктивно и неразумно':
-                    # or message == 'Указанный пользователь не найден':
+            if message == 'Добавлять заметку самому себе деструктивно и неразумно' \
+                    or message == 'Указанный пользователь не найден':
                 self._logger.warning('Пользователь с id "{}" не найден'.format(user_id))
             else:
                 raise ex
@@ -119,10 +123,13 @@ class ParseAllUsersModule(Module):
         noted_user_id = note['user_id']
         noted_user_name = note['user_name']
 
-        try:
-            user = PikabuUser.objects.get(pikabu_id=noted_user_id)
-        except PikabuUser.DoesNotExist:
-            user = PikabuUser(pikabu_id=noted_user_id)
-
-        user.username = noted_user_name
-        user.save()
+        async with (await self.db.get_pool()).acquire() as connection:
+            await connection.execute('''
+                INSERT INTO core_pikabuuser
+                    (pikabu_id, username, is_processed)
+                VALUES ($1, $2, false)
+                
+                ON CONFLICT (pikabu_id) DO UPDATE
+                SET username = excluded.username;
+                ''', noted_user_id, noted_user_name
+            )

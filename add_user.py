@@ -6,18 +6,12 @@ import bot.init_django_models
 from core.models import User
 
 
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("""USAGE:
-        python3 {} username
-        """.format(sys.argv[0]))
-        exit(1)
-
-    username = sys.argv[1].lower().strip()
+def add_user_by_username(username: str):
+    username = username.lower().strip()
 
     if not re.match(r'^[a-z0-9._]+$', username):
         print('bad username')
-        exit(2)
+        raise Exception()
 
     try:
         user = User.objects.get(username=username)
@@ -31,3 +25,13 @@ if __name__ == '__main__':
         user.is_updated = True
 
     user.save()
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("""USAGE:
+        python3 {} username
+        """.format(sys.argv[0]))
+        exit(1)
+
+    add_user_by_username(sys.argv[1])
