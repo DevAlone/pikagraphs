@@ -7,7 +7,7 @@ class User(models.Model):
 
     pikabu_id = models.BigIntegerField(null=True, db_index=True)
 
-    username = models.CharField(max_length=64, unique=True, db_index=True)
+    username = models.CharField(max_length=64, unique=True)
     avatar_url = models.TextField(default="")
     rating = models.IntegerField(default=0, db_index=True)
     comments_count = models.IntegerField(default=0, db_index=True)
