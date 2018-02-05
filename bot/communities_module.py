@@ -84,8 +84,9 @@ class CommunitiesModule(Module):
                         avatar_url = $5,
                         background_image_url = $6,
                         last_update_timestamp = $7
+                    WHERE id = $8
                     ''', name, subscribers_count, stories_count, json_data['description'], json_data['avatar_url'],
-                    json_data['bg_image_url'], current_timestamp
+                    json_data['bg_image_url'], current_timestamp, community_sql['id']
                 )
 
                 await connection.execute(
