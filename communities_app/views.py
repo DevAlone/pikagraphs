@@ -88,7 +88,7 @@ def get_community_graph(_, url_name, graph_name):
     if graph_name not in classes:
         return HttpResponse(status=404)
 
-    data = classes[graph_name].objects.filter(community=community).order_by('timestamp').all()
+    data = classes[graph_name].objects.filter(community=community).order_by('pk').all()
 
     data = [
         {

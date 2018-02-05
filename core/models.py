@@ -5,28 +5,28 @@ class User(models.Model):
     # to disable pycharm's attribute checking
     objects = None
 
-    pikabu_id = models.BigIntegerField(null=True)
+    pikabu_id = models.BigIntegerField(null=True, db_index=True)
 
-    username = models.CharField(max_length=64, unique=True)
+    username = models.CharField(max_length=64, unique=True, db_index=True)
     avatar_url = models.TextField(default="")
-    rating = models.IntegerField(default=0)
-    comments_count = models.IntegerField(default=0)
-    posts_count = models.IntegerField(default=0)
-    hot_posts_count = models.IntegerField(default=0)
-    pluses_count = models.IntegerField(default=0)
-    minuses_count = models.IntegerField(default=0)
-    subscribers_count = models.IntegerField(default=0)
+    rating = models.IntegerField(default=0, db_index=True)
+    comments_count = models.IntegerField(default=0, db_index=True)
+    posts_count = models.IntegerField(default=0, db_index=True)
+    hot_posts_count = models.IntegerField(default=0, db_index=True)
+    pluses_count = models.IntegerField(default=0, db_index=True)
+    minuses_count = models.IntegerField(default=0, db_index=True)
+    subscribers_count = models.IntegerField(default=0, db_index=True)
     is_rating_ban = models.BooleanField(default=False)
-    gender = models.CharField(max_length=1, default='-')
+    gender = models.CharField(max_length=1, default='-', db_index=True)
     approved = models.TextField(default="")
     awards = models.TextField(default="")
     communities = models.TextField(default="")
-    signup_timestamp = models.IntegerField(default=0)
+    signup_timestamp = models.IntegerField(default=0, db_index=True)
 
     info = models.TextField(blank=True, null=True)
 
-    updating_period = models.IntegerField(default=60)
-    is_updated = models.BooleanField(default=False)
+    updating_period = models.IntegerField(default=60, db_index=True)
+    is_updated = models.BooleanField(default=False, db_index=True)
 
     last_update_timestamp = models.IntegerField(default=0, db_index=True)
 
@@ -140,5 +140,5 @@ class PikabuUser(models.Model):
     objects = None
 
     pikabu_id = models.BigIntegerField(primary_key=True)
-    username = models.TextField()
-    is_processed = models.BooleanField(default=False)
+    username = models.TextField(db_index=True)
+    is_processed = models.BooleanField(default=False, db_index=True)
