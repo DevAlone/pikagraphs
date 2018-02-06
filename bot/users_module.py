@@ -80,7 +80,6 @@ class UsersModule(Module):
         user.gender = sql_user['gender']
         user.approved = sql_user['approved']
         user.awards = sql_user['awards']
-        user.communities = sql_user['communities']
         user.signup_timestamp = sql_user['signup_timestamp']
         user.info = sql_user['info']
         user.updating_period = sql_user['updating_period']
@@ -113,7 +112,6 @@ class UsersModule(Module):
         user.gender = str(user_data['gender'])
         user.approved = str(user_data['approved'])
         user.awards = json.dumps(user_data['awards'])
-        user.communities = json.dumps(user_data['communities'])
         user.signup_timestamp = int(user_data['signup_date'])
         user.pikabu_id = int(user_data['user_id'])
 
@@ -159,7 +157,7 @@ class UsersModule(Module):
                                          user.minuses_count, user.subscribers_count, user.is_rating_ban,
                                          user.updating_period, user.avatar_url, user.info,
                                          user.is_updated, user.last_update_timestamp, user.approved,
-                                         user.awards, user.communities, user.gender, user.pikabu_id,
+                                         user.awards, user.gender, user.pikabu_id,
                                          user.signup_timestamp
                                          )
 
@@ -258,8 +256,8 @@ class UsersModule(Module):
     insert_user_sql = """
 INSERT INTO core_user 
     (username, rating, comments_count, posts_count, hot_posts_count, pluses_count, minuses_count, subscribers_count, 
-    is_rating_ban, updating_period, avatar_url, info, is_updated, last_update_timestamp, approved, awards, 
-    communities, gender, pikabu_id, signup_timestamp) 
+     is_rating_ban, updating_period, avatar_url, info, is_updated, last_update_timestamp, approved, awards, gender, 
+     pikabu_id, signup_timestamp) 
     
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
 
@@ -279,7 +277,6 @@ SET rating = excluded.rating,
     last_update_timestamp = excluded.last_update_timestamp, 
     approved = excluded.approved, 
     awards = excluded.awards, 
-    communities = excluded.communities, 
     gender = excluded.gender, 
     pikabu_id = excluded.pikabu_id, 
     signup_timestamp = excluded.signup_timestamp;"""
