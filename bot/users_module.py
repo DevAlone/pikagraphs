@@ -259,7 +259,7 @@ INSERT INTO core_user
      is_rating_ban, updating_period, avatar_url, info, is_updated, last_update_timestamp, approved, awards, gender, 
      pikabu_id, signup_timestamp) 
     
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 
 ON CONFLICT (username) DO UPDATE 
 SET rating = excluded.rating, 
