@@ -191,35 +191,35 @@ class UsersModule(Module):
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_usercommentscountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.rating, sql_user['id'])
+                    );""", current_timestamp, user.comments_count, sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_userpostscountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userpostscountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.rating, sql_user['id'])
+                    );""", current_timestamp, user.posts_count, sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_userhotpostscountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userhotpostscountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.rating, sql_user['id'])
+                    );""", current_timestamp, user.hot_posts_count, sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_userplusescountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userplusescountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.rating, sql_user['id'])
+                    );""", current_timestamp, user.pluses_count, sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_userminusescountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userminusescountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.rating, sql_user['id'])
+                    );""", current_timestamp, user.minuses_count, sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_usersubscriberscountentry (timestamp, value, user_id) 
@@ -229,7 +229,7 @@ class UsersModule(Module):
                         WHERE value = $2 and user_id = $3 
                         ORDER BY -id 
                         LIMIT 1
-                    );""", current_timestamp, user.rating, sql_user['id'])
+                    );""", current_timestamp, user.subscribers_count, sql_user['id'])
 
         logger.debug('end processing user {}'.format(user.username))
 
