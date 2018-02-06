@@ -10,7 +10,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('username', 'info', 'avatar_url', 'rating', 'comments_count', 'posts_count', 'hot_posts_count',
                   'pluses_count', 'minuses_count', 'last_update_timestamp', 'next_update_timestamp',
                   'subscribers_count', 'is_rating_ban', 'updating_period', 'is_updated', 'pikabu_id', 'gender',
-                  'approved', 'awards', 'communities', 'signup_timestamp', )
+                  'approved', 'awards', 'signup_timestamp', )
 
 
 class CommunitySerializer(serializers.HyperlinkedModelSerializer):
