@@ -91,8 +91,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         'signup_timestamp',
         'pk',
     )
-    ordering = ('pk',)
-    search_fields = ('username', 'info', 'approved', )
+    ordering = ('pk', )
+    search_fields = ('username', )
     # filter_class = UserFilter
 
 
