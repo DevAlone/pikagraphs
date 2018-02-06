@@ -20,7 +20,6 @@ class User(models.Model):
     gender = models.CharField(max_length=1, default='-', db_index=True)
     approved = models.TextField(default="", db_index=True)
     awards = models.TextField(default="")
-    communities = models.TextField(default="")
     signup_timestamp = models.IntegerField(default=0, db_index=True)
 
     info = models.TextField(blank=True, null=True, db_index=True)
