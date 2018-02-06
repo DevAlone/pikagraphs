@@ -20,9 +20,9 @@ export class UsersComponent implements OnInit {
     users: User[] = [];
     timers: any[] = [];
     subscriptions: any[] = [];
-    count: number = 0;
+    count = 0;
 
-    private page: number = 1;
+    private page = 1;
 
     private searchParameters: any = {};
 
@@ -49,12 +49,14 @@ export class UsersComponent implements OnInit {
         this.subscriptions.push(
             this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
                 ++this.page;
-                if (!result.results)
-                    return
+
+                if (!result.results) {
+                  return;
+                }
 
                 this.count = result.count;
 
-                for (var user of result.results) {
+                for (const user of result.results) {
                     this.users.push(new User(user));
                 }
 
@@ -62,19 +64,22 @@ export class UsersComponent implements OnInit {
                     return;
                 }
 
-                if (usersBox.scrollHeight < usersComponent.scrollHeight + 500)
+                if (usersBox.scrollHeight < usersComponent.scrollHeight + 500) {
                     this.timers.push(setTimeout(() => this.loadMore(), 100));
+                }
             })
         );
     }
 
     resetTape() {
         this.users = [];
-        for (var timer of this.timers)
+        for (const timer of this.timers) {
             clearTimeout(timer);
+        }
 
-        for (var subscription of this.subscriptions)
+        for (const subscription of this.subscriptions) {
             subscription.unsubscribe();
+        }
 
 
         this.timers = [];
@@ -89,91 +94,91 @@ export class UsersComponent implements OnInit {
 
     public sortByFields: any[] = [
         {
-            fieldName: 'rating', 
+            fieldName: 'rating',
             humanReadableName: {
                 sortBy: 'рейтингу',
                 name: 'рейтинг',
             }
-        }, 
+        },
         {
-            fieldName: 'subscribers_count', 
+            fieldName: 'subscribers_count',
             humanReadableName: {
                 sortBy: 'Количеству подписчиков',
                 name: 'подписчиков',
             }
         },
         {
-            fieldName: 'comments_count', 
+            fieldName: 'comments_count',
             humanReadableName: {
                 sortBy: 'Количеству комментариев',
                 name: 'комментариев',
             }
         },
         {
-            fieldName: 'posts_count', 
+            fieldName: 'posts_count',
             humanReadableName: {
                 sortBy: 'Количеству постов',
                 name: 'постов',
             }
         },
         {
-            fieldName: 'hot_posts_count', 
+            fieldName: 'hot_posts_count',
             humanReadableName: {
                 sortBy: 'Количеству горячих постов',
                 name: 'горячих постов',
             }
         },
         {
-            fieldName: 'pluses_count', 
+            fieldName: 'pluses_count',
             humanReadableName: {
                 sortBy: 'Количеству плюсов',
                 name: 'плюсов',
             }
         },
         {
-            fieldName: 'minuses_count', 
+            fieldName: 'minuses_count',
             humanReadableName: {
                 sortBy: 'Количеству минусов',
                 name: 'минусов',
             }
         },
         {
-            fieldName: 'last_update_timestamp', 
+            fieldName: 'last_update_timestamp',
             humanReadableName: {
                 sortBy: 'Времени последнего обновления',
                 name: 'Время последнего обновления',
             }
         },
         {
-            fieldName: 'updating_period', 
+            fieldName: 'updating_period',
             humanReadableName: {
                 sortBy: 'Периоду обновления',
                 name: 'Период обновления',
             }
         },
         {
-            fieldName: 'username', 
+            fieldName: 'username',
             humanReadableName: {
                 sortBy: 'Никнейму',
                 name: 'Никнейм',
             }
         },
         {
-            fieldName: 'pikabu_id', 
+            fieldName: 'pikabu_id',
             humanReadableName: {
                 sortBy: 'ID в базе пикабу',
                 name: 'ID в базе пикабу',
             }
         },
         {
-            fieldName: 'approved', 
+            fieldName: 'approved',
             humanReadableName: {
                 sortBy: 'Подтверждён',
                 name: 'Подтверждён',
             }
         },
         {
-            fieldName: 'signup_timestamp', 
+            fieldName: 'signup_timestamp',
             humanReadableName: {
                 sortBy: 'Дате регистрации',
                 name: 'Дате регистрации',

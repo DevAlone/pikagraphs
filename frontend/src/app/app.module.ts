@@ -21,6 +21,7 @@ import { ApiService } from './api.service';
 import { SearchBoxComponent } from './search-box/search-box.component';
 import { CommunityComponent } from './community/community.component';
 import { NewYear2018GameComponent } from './new-year-2018-game/new-year-2018-game.component';
+import { AboutComponent } from './about/about.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { NewYear2018GameComponent } from './new-year-2018-game/new-year-2018-gam
     GraphComponent,
     SearchBoxComponent,
     CommunityComponent,
-    NewYear2018GameComponent
+    NewYear2018GameComponent,
+    AboutComponent
     ],
     imports: [
         BrowserModule,

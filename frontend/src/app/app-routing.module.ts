@@ -6,9 +6,11 @@ import { CommunityComponent } from './community/community.component';
 import { CommunitiesComponent } from './communities/communities.component';
 import { NewYear2018GameComponent } from './new-year-2018-game/new-year-2018-game.component';
 import { RouterModule, Routes } from '@angular/router';
+import {AboutComponent} from './about/about.component';
 
 const routes: Routes = [
-	{ path: '', redirectTo: 'users', pathMatch: 'full' },
+    { path: '', redirectTo: 'users', pathMatch: 'full' },
+    { path: 'about', component: AboutComponent },
     { path: 'users', component: UsersComponent },
     { path: 'communities', component: CommunitiesComponent },
     { path: 'user/:username', component: UserComponent },
