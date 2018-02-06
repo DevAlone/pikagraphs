@@ -18,11 +18,11 @@ class User(models.Model):
     subscribers_count = models.IntegerField(default=0, db_index=True)
     is_rating_ban = models.BooleanField(default=False, db_index=True)
     gender = models.CharField(max_length=1, default='-', db_index=True)
-    approved = models.TextField(default="", db_index=True)
+    approved = models.TextField(default="")
     awards = models.TextField(default="")
     signup_timestamp = models.IntegerField(default=0, db_index=True)
 
-    info = models.TextField(blank=True, null=True, db_index=True)
+    info = models.TextField(blank=True, null=True)
 
     updating_period = models.IntegerField(default=60, db_index=True)
     is_updated = models.BooleanField(default=False, db_index=True)
