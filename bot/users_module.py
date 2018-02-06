@@ -115,6 +115,12 @@ class UsersModule(Module):
         user.signup_timestamp = int(user_data['signup_date'])
         user.pikabu_id = int(user_data['user_id'])
 
+        user.is_updated = False
+        if abs(user.rating) >= settings.USERS_MODULE['PROCESSING_ON_RATING'] \
+                or user.subscribers_count >= settings.USERS_MODULE['PROCESSING_ON_SUBSCRIBERS_COUNT']\
+                or (settings.USERS_MODULE['PROCESSING_ON_APPROVED'] and user.approved is not None and user.approved):
+            user.is_updated = True
+
         try:
             user.subscribers_count = int(user_data['subscribers_count'])
         except KeyError:
