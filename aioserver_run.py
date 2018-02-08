@@ -1,3 +1,4 @@
+from pikabot_graphs import settings
 from restycorn.server import Server
 from restycorn import postgresql
 from restycorn.postgresql_read_only_resource import PostgreSQLReadOnlyResource
@@ -7,9 +8,9 @@ if __name__ == '__main__':
     server.set_base_address('/api')
 
     db = postgresql.get_instance(
-        user='test',
-        password='test',
-        database='test',
+        user=settings.DATABASES['default']['USER'],
+        password=settings.DATABASES['default']['PASSWORD'],
+        database=settings.DATABASES['default']['NAME'],
     )
 
     server.register_resource('users', PostgreSQLReadOnlyResource(
