@@ -20,6 +20,7 @@ if __name__ == '__main__':
                 'updating_period', 'is_updated', 'pikabu_id', 'gender', 'approved', 'awards', 'signup_timestamp',),
         table_name='core_user',
         order_by=(
+            'id',
             'rating',
             'username',
             'subscribers_count',
@@ -33,10 +34,25 @@ if __name__ == '__main__':
             'pikabu_id',
             'approved',
             'signup_timestamp',
-            'id',
         ),
-        search_by=('username', ),
+        search_by=('username',),
     ))
+
+    server.register_resource('communities', PostgreSQLReadOnlyResource(
+        db=db,
+        fields=('id', 'url_name', 'name', 'description', 'avatar_url', 'background_image_url', 'subscribers_count',
+                'stories_count', 'last_update_timestamp'),
+        table_name='communities_app_community',
+        order_by=(
+            'id',
+            'subscribers_count',
+            'name',
+            'stories_count',
+            'last_update_timestamp',
+        ),
+        search_by=('url_name', 'name', 'description', ),
+    ))
+
     server.run()
 # import functools
 #
