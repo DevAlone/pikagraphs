@@ -4,7 +4,7 @@ from restycorn import postgresql
 from restycorn.postgresql_read_only_resource import PostgreSQLReadOnlyResource
 
 if __name__ == '__main__':
-    server = Server('0.0.0.0')
+    server = Server('127.0.0.1')
     server.set_base_address('/api')
 
     db = postgresql.get_instance(
