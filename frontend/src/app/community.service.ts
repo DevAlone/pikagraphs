@@ -11,7 +11,7 @@ import { map, filter, scan } from 'rxjs/operators';
 export class CommunityService {
 	constructor(private api: ApiService) { }
 
-	search(searchParams: any, page: number=1): Observable<any> {
+	search(searchParams: any, page: number=0): Observable<any> {
 		searchParams.page = page;
 
 		return this.api.get(ApiConfig.COMMUNITIES_API_URL, searchParams);

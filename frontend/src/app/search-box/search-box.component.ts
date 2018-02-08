@@ -97,8 +97,8 @@ export class SearchBoxComponent implements OnInit {
     update(): void {
         this.updateUrl();
     	this.parent[this.callback]({
-    		search: this.searchText,
-    		ordering: (this.reverseSort ? '-': '') + this.sortBy,
+    		search_text: this.searchText,
+    		order_by: (this.reverseSort ? '-': '') + this.sortBy,
     	});
     }
 

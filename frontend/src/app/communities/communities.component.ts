@@ -16,7 +16,7 @@ export class CommunitiesComponent implements OnInit {
     communities: Community[] = [];
     timers: any[] = [];
 
-    page: number = 1;
+    page: number = 0;
     count: number = 0;
 
     private searchParams: any = {};
@@ -66,7 +66,7 @@ export class CommunitiesComponent implements OnInit {
             clearTimeout(timer);
 
         this.timers = [];
-        this.page = 1;
+        this.page = 0;
     }
 
     onScroll() {

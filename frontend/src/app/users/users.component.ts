@@ -22,7 +22,7 @@ export class UsersComponent implements OnInit {
     subscriptions: any[] = [];
     count = 0;
 
-    private page = 1;
+    private page = 0;
 
     private searchParameters: any = {};
 
@@ -85,7 +85,7 @@ export class UsersComponent implements OnInit {
         this.timers = [];
         this.subscriptions = [];
 
-        this.page = 1;
+        this.page = 0;
     }
 
     onScroll() {

@@ -14,7 +14,7 @@ class PostgreSQLReadOnlyResource(BaseResource):
         self.order_by_fields = order_by
         self.search_by_fields = search_by
         self.serializer = PostgreSQLSerializer(self.fields)
-        self.page_size = 10
+        self.page_size = 50
 
     async def init_pool(self):
         if self.pool is None:

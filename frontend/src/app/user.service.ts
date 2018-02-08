@@ -15,7 +15,7 @@ export class UserService {
 
     }
 
-    searchUsers(searchParameters: any, page: number=1): Observable<any> {
+    searchUsers(searchParameters: any, page: number=0): Observable<any> {
         searchParameters.page = page;
         if (searchParameters.search.length > 0) {
           searchParameters.username__icontains = searchParameters.search;
