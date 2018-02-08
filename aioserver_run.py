@@ -41,7 +41,7 @@ class UsersController(ParamsController):
             sql_request = 'SELECT * FROM core_user '
 
             if search:
-                sql_request += "WHERE username LIKE '%${}".format(str(len(bindings))) + "::str%' "
+                sql_request += "WHERE username LIKE '%${}".format(str(len(bindings))) + "::text%' "
                 bindings.append(search)
 
             if order_by:
