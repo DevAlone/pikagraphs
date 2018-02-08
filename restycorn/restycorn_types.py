@@ -1,5 +1,6 @@
 class uint(int):
     def __new__(cls, value, *args, **kwargs):
+        value = int(value)
         if value < 0:
             raise ValueError("Value of uint type cannot be negative")
         return super(uint, cls).__new__(cls, value)
@@ -36,3 +37,4 @@ class uint(int):
 
     def __ge__(self, other):
         return self >= other
+
