@@ -37,25 +37,32 @@ class UsersController(ParamsController):
 
     async def get(self, request, page: uint=0, order_by: str="", search: str="") -> dict:
         async with self.db_pool.acquire() as connection:
+            # bindings = []
+            # sql_request = 'SELECT * FROM core_user '
+            #
+            # if search:
+            #     sql_request += "WHERE username LIKE '%${}".format(str(len(bindings))) + "::text%' "
+            #     bindings.append(search)
+            #
+            # if order_by:
+            #     sql_request += ' ORDER BY $' + str(len(bindings) + 1)
+            #     bindings.append(order_by)
+            #
+            # if page:
+            #     sql_request += ' OFFSET $' + str(len(bindings) + 1)
+            #     bindings.append(page * 50)
+            #
+            # sql_request += ' LIMIT 50;'
+
             bindings = []
-            sql_request = 'SELECT * FROM core_user '
+            sql_request = '''
+                SELECT * FROM core_user 
+                WHERE username LIKE '%adm%' 
+                ORDER BY -rating
+                LIMIT 50'''
 
-            if search:
-                sql_request += "WHERE username LIKE '%${}".format(str(len(bindings))) + "::text%' "
-                bindings.append(search)
-
-            if order_by:
-                sql_request += ' ORDER BY $' + str(len(bindings) + 1)
-                bindings.append(order_by)
-
-            if page:
-                sql_request += ' OFFSET $' + str(len(bindings) + 1)
-                bindings.append(page * 50)
-
-            sql_request += ' LIMIT 50;'
-
-            print(sql_request)
-            print(bindings)
+            # print(sql_request)
+            # print(bindings)
 
             user_list = await connection.fetch(sql_request, *bindings)
             user_list = [sql_record_to_dict(sql_user) for sql_user in user_list]
