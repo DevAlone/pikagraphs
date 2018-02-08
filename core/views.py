@@ -92,7 +92,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         'pk',
     )
     ordering = ('pk', )
-    # search_fields = ('username', )
+    search_fields = ('username', )
     # filter_class = UserFilter
 
 
