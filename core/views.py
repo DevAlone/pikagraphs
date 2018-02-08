@@ -65,7 +65,7 @@ class UserFilter(FilterSet):
         model = User
         fields = {
             'pikabu_id': ('exact', 'lte', 'gte'),
-            # 'username': ('exact', 'contains', 'icontains'),
+            'username': ('exact', 'contains', 'icontains'),
             'is_updated': ('exact', )
         }
 
@@ -74,7 +74,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     model = User
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)  # , SearchFilter)
     ordering_fields = (
         'rating',
         'username',
@@ -92,7 +92,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         'pk',
     )
     ordering = ('pk', )
-    search_fields = ('username', )
+    # search_fields = ('username', )
     filter_class = UserFilter
 
 
