@@ -60,9 +60,9 @@ export class UsersComponent implements OnInit {
                     this.users.push(new User(user));
                 }
 
-                if (!result.next) {
+                /*if (!result.next) {
                     return;
-                }
+                }*/
 
                 if (usersBox.scrollHeight < usersComponent.scrollHeight + 500) {
                     this.timers.push(setTimeout(() => this.loadMore(), 100));

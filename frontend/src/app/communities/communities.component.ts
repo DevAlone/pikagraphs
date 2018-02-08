@@ -50,10 +50,10 @@ export class CommunitiesComponent implements OnInit {
                 this.communities.push(new Community(community));
             }
 
-            if (!result.next) {
+            /*if (!result.next) {
                 this.messageService.info("Больше ничего нет");
                 return;
-            }
+            }*/
 
             if (communitiesBox.scrollHeight < communitiesComponent.scrollHeight + 500)
                 this.timers.push(setTimeout(() => this.loadMore(), 100));
