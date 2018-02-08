@@ -1,7 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { isDevMode } from '@angular/core';
+
 
 
 export class ApiConfig {
+	/*public static _API_URL = "/api";
+	public static get API_URL(): string {
+		if (isDevMode())
+			return 'http://localhost:4444' + this._API_URL;
+
+		return this._API_URL;
+	};*/
 	public static API_URL = "/api";
 	public static USER_API_URL = `${ApiConfig.API_URL}/user`;
 	public static USERS_API_URL = `${ApiConfig.API_URL}/users`;

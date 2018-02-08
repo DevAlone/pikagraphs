@@ -41,12 +41,12 @@ export class CommunitiesComponent implements OnInit {
                 this.searchParams, this.page
         ).subscribe(result => {
             ++this.page;
-            if (!result.results)
+            if (!result.data)
                 return
 
             this.count = result.count;
             
-            for (var community of result.results) {
+            for (var community of result.data) {
                 this.communities.push(new Community(community));
             }
 

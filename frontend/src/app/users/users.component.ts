@@ -50,13 +50,13 @@ export class UsersComponent implements OnInit {
             this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
                 ++this.page;
 
-                if (!result.results) {
+                if (!result.data) {
                   return;
                 }
 
                 this.count = result.count;
 
-                for (const user of result.results) {
+                for (const user of result.data) {
                     this.users.push(new User(user));
                 }
 

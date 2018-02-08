@@ -17,10 +17,6 @@ export class UserService {
 
     searchUsers(searchParameters: any, page: number=0): Observable<any> {
         searchParameters.page = page;
-        if (searchParameters.search.length > 0) {
-          searchParameters.username__icontains = searchParameters.search;
-          searchParameters.search = "";
-        }
         return this.api.get(ApiConfig.USERS_API_URL, searchParameters);
     }
     getUserByName(username: string): Observable<any> {

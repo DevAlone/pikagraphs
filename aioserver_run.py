@@ -1,7 +1,7 @@
 from pikabot_graphs import settings
-from restycorn.server import Server
-from restycorn import postgresql
-from restycorn.postgresql_read_only_resource import PostgreSQLReadOnlyResource
+from restycorn.restycorn.server import Server
+from restycorn.restycorn import postgresql
+from restycorn.restycorn.postgresql_read_only_resource import PostgreSQLReadOnlyResource
 
 if __name__ == '__main__':
     server = Server('127.0.0.1')
