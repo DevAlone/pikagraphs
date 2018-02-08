@@ -8,10 +8,6 @@ class PostgreSQLSerializer(BaseSerializer):
 
     def serialize(self, item) -> dict:
         result = {}
-        print('------------------------')
-        print(self.fields)
-        print(item)
-        print('------------------------')
         for key, val in item.items():
             if key in self.fields:
                 result[key] = val
