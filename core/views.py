@@ -74,7 +74,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     model = User
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_backends = (DjangoFilterBackend, OrderingFilter)  # , SearchFilter)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter)
     ordering_fields = (
         'rating',
         'username',
