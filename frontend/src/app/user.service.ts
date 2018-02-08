@@ -12,11 +12,15 @@ export class UserService {
     constructor(
         private api: ApiService,
     ) {
-        
+
     }
 
     searchUsers(searchParameters: any, page: number=1): Observable<any> {
         searchParameters.page = page;
+        if (searchParameters.search.length > 0) {
+          searchParameters.username__icontains = searchParameters.search;
+          searchParameters.search = "";
+        }
         return this.api.get(ApiConfig.USERS_API_URL, searchParameters);
     }
     getUserByName(username: string): Observable<any> {
