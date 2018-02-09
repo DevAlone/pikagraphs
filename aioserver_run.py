@@ -36,6 +36,7 @@ if __name__ == '__main__':
             'signup_timestamp',
         ),
         search_by=('username',),
+        page_size=50,
     ))
 
     server.register_resource('communities', PostgreSQLReadOnlyResource(
@@ -51,6 +52,7 @@ if __name__ == '__main__':
             'last_update_timestamp',
         ),
         search_by=('url_name', 'name', 'description', ),
+        page_size=50,
     ))
 
     server.run()
