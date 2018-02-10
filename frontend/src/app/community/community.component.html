@@ -35,9 +35,9 @@
 
     <div>
         <h2>Подписчики</h2>
-        <app-graph graphType="community" graphId="{{ community.url_name }}/subscribers"></app-graph>
+        <app-graph graphType="community" graphId="subscribers_count?filter=community_id={{ community.id }}"></app-graph>
 
         <h2>Посты</h2>
-        <app-graph graphType="community" graphId="{{ community.url_name }}/stories"></app-graph>
+        <app-graph graphType="community" graphId="stories_count?filter=community_id={{ community.id }}"></app-graph>
     </div>
 </div>

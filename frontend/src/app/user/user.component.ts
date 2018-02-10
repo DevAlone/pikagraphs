@@ -26,13 +26,13 @@ export class UserComponent implements OnInit {
     ngOnInit() {
         this.route.params.subscribe(params => {
             this.userService.getUserByName(params.username)
-                .subscribe(user => this.user = user);
+                .subscribe(response => this.user = response.data);
 
             this._l4rverEasterEggTimer();
         })
     }
 
-    _l4rverEasterEggTimer() {        
+    _l4rverEasterEggTimer() {
         if (this.l4reverEasterEggValue)
             this.l4reverEasterEggValue.nativeElement.textContent = parseInt(
                 (Date.now() / 1000 - l4reverSignupTimestamp).toString()

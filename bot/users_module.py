@@ -239,6 +239,19 @@ class UsersModule(Module):
 
     @staticmethod
     def _calculate_user_updating_period(user: dict, was_data_changed: bool) -> int:
+        def get_with_limiter(period, limiter_value, limiter_max):
+            limiter_value = abs(limiter_value)
+            if limiter_value > limiter_max:
+                limiter_value = limiter_max
+
+            limiter_value = (1 - (limiter_value / limiter_max)) * (
+                    settings.USERS_MODULE['MAX_UPDATING_PERIOD'] - settings.USERS_MODULE['MIN_UPDATING_PERIOD'])
+
+            if period < limiter_value:
+                period = limiter_value
+
+            return period
+
         updating_period = user['updating_period']
 
         delta = abs((int(time.time()) - user['last_update_timestamp']) / 4)
@@ -251,6 +264,14 @@ class UsersModule(Module):
             updating_period -= settings.USERS_MODULE['RESTORE_UPDATING_PERIOD_COEFFICIENT'] * delta
         else:
             updating_period += delta
+
+        # limiting depend on subscribers count or rating
+        period_limiter_by_rating = get_with_limiter(updating_period, user['rating'], 8000000)
+        period_limiter_by_subscrebers_count = get_with_limiter(updating_period, user['subscribers_count'], 50000)
+        period_limiter = max(period_limiter_by_rating, period_limiter_by_subscrebers_count)
+
+        if updating_period < period_limiter:
+            updating_period = period_limiter
 
         if updating_period < settings.USERS_MODULE['MIN_UPDATING_PERIOD']:
             updating_period = settings.USERS_MODULE['MIN_UPDATING_PERIOD']

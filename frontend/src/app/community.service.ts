@@ -16,7 +16,7 @@ export class CommunityService {
 
 		return this.api.get(ApiConfig.COMMUNITIES_API_URL, searchParams);
     }
-    getCommunityByUrlName(urlName: string): Observable<Community> {
+    getCommunityByUrlName(urlName: string): Observable<any> {
     	return this.api.get(`${ApiConfig.COMMUNITY_API_URL}/${urlName}`).pipe(
     		map(result => new Community(result))
     	);

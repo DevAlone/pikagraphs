@@ -2,6 +2,7 @@ import { DateUtils } from './date_utils';
 
 
 export class Community {
+    id: number;
 	url_name: string;
     name: string;
     description: string;

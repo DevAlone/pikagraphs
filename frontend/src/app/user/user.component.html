@@ -3,7 +3,7 @@
         <img class="avatar" src="{{ user.avatar_url }}">
         <a title="Посмотреть на пикабу"
                 class="niceLink"
-                href="https://pikabu.ru/profile/{{ user.username }}"
+                href="https://pikabu.ru/profile?filter=user_id={{ user.id }}"
                 target="_blank"
                 rel="nofollow noopener">
             {{ user.username }}
@@ -85,24 +85,24 @@
     </div>
     <div>
         <h2>рейтинг</h2>
-        <app-graph graphType="user" graphId="{{ user.username }}/rating"></app-graph>
+        <app-graph graphType="user" graphId="rating?filter=user_id={{ user.id }}"></app-graph>
 
         <h2>подписчики</h2>
-        <app-graph graphType="user" graphId="{{ user.username }}/subscribers"></app-graph>
+        <app-graph graphType="user" graphId="subscribers?filter=user_id={{ user.id }}"></app-graph>
 
         <h2>комментарии</h2>
-        <app-graph graphType="user" graphId="{{ user.username }}/comments"></app-graph>
+        <app-graph graphType="user" graphId="comments?filter=user_id={{ user.id }}"></app-graph>
 
         <h2>посты</h2>
-        <app-graph graphType="user" graphId="{{ user.username }}/posts"></app-graph>
+        <app-graph graphType="user" graphId="posts?filter=user_id={{ user.id }}"></app-graph>
 
         <h2>горячие посты</h2>
-        <app-graph graphType="user" graphId="{{ user.username }}/hot_posts"></app-graph>
+        <app-graph graphType="user" graphId="hot_posts?filter=user_id={{ user.id }}"></app-graph>
 
         <h2>плюсы</h2>
-        <app-graph graphType="user" graphId="{{ user.username }}/pluses"></app-graph>
+        <app-graph graphType="user" graphId="pluses?filter=user_id={{ user.id }}"></app-graph>
 
         <h2>минусы</h2>
-        <app-graph graphType="user" graphId="{{ user.username }}/minuses"></app-graph>
+        <app-graph graphType="user" graphId="minuses?filter=user_id={{ user.id }}"></app-graph>
     </div>
 </div>

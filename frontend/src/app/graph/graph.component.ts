@@ -25,8 +25,8 @@ export class GraphComponent implements OnInit {
 	ngOnInit() {
 		var self = this;
 		this.graphService.getGraph(this.graphType, this.graphId).subscribe(result => {
-			if (result.results && result.results.length) {
-				self.data = result.results;
+			if (result.data && result.data.length) {
+				self.data = result.data;
 				self.renderGraph(self.data);
 			}
 		});

@@ -20,7 +20,7 @@ export class CommunityComponent implements OnInit {
     ngOnInit() {
         this.route.params.subscribe(params => {
             this.communityService.getCommunityByUrlName(params.url_name)
-                .subscribe(community => this.community = community);
+                .subscribe(response => this.community = response.data);
         });
     }
 }

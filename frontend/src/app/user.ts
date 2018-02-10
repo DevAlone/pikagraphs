@@ -3,6 +3,7 @@ import { DateUtils } from './date_utils';
 
 export class User
 {
+    id: number;
     username: string;
     info: string;
     _avatar_url: string;
