@@ -1,4 +1,6 @@
 import asyncio
+import logging
+
 import asyncpgsa
 import sqlalchemy
 
@@ -56,7 +58,9 @@ async def main():
         max_size=100,
     )
 
-    server = Server('127.0.0.1')
+    server = Server(
+        '127.0.0.1',
+        access_log_format='%Tfs %a %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"')
     server.set_base_address('/api')
 
     server.register_resource('users', PostgreSQLReadOnlyResource(
@@ -149,6 +153,23 @@ async def main():
         'new_year_2018_game/scoreboards',
         Scoreboards(models.pikabu_new_year_18_game_app_scoreboardentry, models.pikabu_new_year_18_game_app_scoreentry)
     )
+
+    logger = logging.getLogger('aiohttp.access')
+
+    logger.setLevel(logging.DEBUG)
+
+    error_file_handler = logging.FileHandler('logs/{}.error.log'.format('aiohttp.access'))
+    error_file_handler.setLevel(logging.ERROR)
+    info_file_handler = logging.FileHandler('logs/{}.log'.format('aiohttp.access'))
+    info_file_handler.setLevel(logging.INFO)
+
+    logger.addHandler(error_file_handler)
+    logger.addHandler(info_file_handler)
+
+    if settings.DEBUG:
+        debug_file_handler = logging.FileHandler('logs/{}.debug.log'.format('aiohttp.access'))
+        debug_file_handler.setLevel(logging.DEBUG)
+        logger.addHandler(debug_file_handler)
 
     return server
 
