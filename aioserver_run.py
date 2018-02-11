@@ -7,6 +7,7 @@ import sqlalchemy
 import models
 from pikabot_graphs import settings
 from restycorn.restycorn.base_resource import BaseResource
+from restycorn.restycorn.postgresql import db
 from restycorn.restycorn.postgresql_serializer import PostgreSQLSerializer
 from restycorn.restycorn.restycorn_types import uint
 from restycorn.restycorn.server import Server
