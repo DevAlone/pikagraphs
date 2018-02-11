@@ -8,33 +8,32 @@ declare var topContainer: any;
 
 
 @Component({
-	selector: 'app-new-year-2018-game',
-	templateUrl: './new-year-2018-game.component.html',
-	styleUrls: ['./new-year-2018-game.component.css']
+    selector: 'app-new-year-2018-game',
+    templateUrl: './new-year-2018-game.component.html',
+    styleUrls: ['./new-year-2018-game.component.css']
 })
 export class NewYear2018GameComponent implements OnInit {
-	scoreboards: any[] = [];
-	topItems: any[] = [];
-	scoreboardsPage: number = 1;
-	topPage: number = 1;
+    scoreboards: any[] = [];
+    topItems: any[] = [];
+    scoreboardsPage = 0;
+    topPage = 0;
 
-	constructor(private api: ApiService) { }
+    constructor(private api: ApiService) { }
+    ngOnInit() {
+      this.loadMoreScoreboards();
+      this.loadMoreTop();
+    }
 
-	ngOnInit() {
-		this.loadMoreScoreboards();
-		this.loadMoreTop();
-	}
-
-	loadMoreScoreboards() {
+    loadMoreScoreboards() {
         this.api.get(ApiConfig.NEW_YEAR_2018_GAME_SCOREBOARD_URL, {page: this.scoreboardsPage})
         .subscribe(result => {
-            for (var scoreboard of result.results) {
+            for (const scoreboard of result.data) {
                 this.scoreboards.push(scoreboard);
             }
 
-            if (!result.next) {
+            if (!result.data.length) {
                 this.loadMoreScoreboards = () => {};
-            	return;
+                return;
             }
 
             ++this.scoreboardsPage;
@@ -46,26 +45,26 @@ export class NewYear2018GameComponent implements OnInit {
 
     loadMoreTop() {
         this.api.get(ApiConfig.NEW_YEAR_2018_GAME_TOP_URL, {page: this.topPage}).subscribe(result => {
-            for (var topItem of result.results) {
+            for (const topItem of result.data) {
                 this.topItems.push(topItem);
             }
 
-            if (!result.next) {
+            if (!result.data.length) {
                 this.loadMoreTop = () => {};
-            	return;
+                return;
             }
 
             ++this.topPage;
 
             if (newYear2018GameComponent.scrollHeight <= newYear2018GameComponent.clientHeight)
-            	setTimeout(() => this.loadMoreTop(), 100);
+                setTimeout(() => this.loadMoreTop(), 100);
         });
     }
 
     onScrollScoreboards() {
-    	this.loadMoreScoreboards();
+        this.loadMoreScoreboards();
     }
     onScrollTop() {
-    	this.loadMoreTop();
+        this.loadMoreTop();
     }
 }

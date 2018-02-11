@@ -1,10 +1,50 @@
 import asyncio
 import asyncpgsa
+import sqlalchemy
 
 import models
 from pikabot_graphs import settings
+from restycorn.restycorn.base_resource import BaseResource
+from restycorn.restycorn.postgresql_serializer import PostgreSQLSerializer
+from restycorn.restycorn.restycorn_types import uint
 from restycorn.restycorn.server import Server
 from restycorn.restycorn.postgresql_read_only_resource import PostgreSQLReadOnlyResource
+
+
+class Scoreboards(BaseResource):
+    def __init__(self, scoreboardentry_table, scoreentry_table):
+        self.scoreboardentry_table = scoreboardentry_table
+        self.scoreentry_table = scoreentry_table
+
+    async def list(self, page: uint=0) -> list:
+        sql_request = self.scoreboardentry_table.select().order_by(
+            self.scoreboardentry_table.c.parse_timestamp.desc()).limit(50)
+
+        if page:
+            sql_request = sql_request.offset(page * 50)
+
+        items = await asyncpgsa.pg.fetch(sql_request)
+
+        result = [PostgreSQLSerializer(('id', 'parse_timestamp')).serialize(item) for item in items]
+
+        for i in range(len(result)):
+            sql_request = sqlalchemy.select(['*']).select_from(self.scoreentry_table).where(
+                self.scoreentry_table.c.scoreboard_entry_id == result[i]['id']
+            )
+
+            print(str(sql_request))
+            print(str(sql_request.compile().params))
+
+            score_entries = [
+                PostgreSQLSerializer(
+                    ('username', 'avatar_url', 'score', 'date', )
+                ).serialize(item)
+                for item in (await asyncpgsa.pg.fetch(sql_request))
+            ]
+
+            result[i]['score_entries'] = score_entries
+
+        return result
 
 
 async def main():
@@ -13,7 +53,7 @@ async def main():
         password=settings.DATABASES['default']['PASSWORD'],
         database=settings.DATABASES['default']['NAME'],
         min_size=5,
-        max_size=10,
+        max_size=100,
     )
 
     server = Server('127.0.0.1')
@@ -84,21 +124,31 @@ async def main():
     # scoreboards
     # new_year_2018_game/scoreboards
     # new_year_2018_game/scoreboards
-    server.register_resource('new_year_2018_game/scoreboards', PostgreSQLReadOnlyResource(
-        sqlalchemy_table=models.pikabu_new_year_18_game_app_scoreboardentry,
-        fields=('id', 'parse_timestamp',),
-        id_field='id',
-        order_by=('parse_timestamp', 'id',),
-        page_size=50,
-    ))
+    # server.register_resource('new_year_2018_game/scoreboards', PostgreSQLReadOnlyResource(
+    #     sqlalchemy_table=models.pikabu_new_year_18_game_app_scoreboardentry,
+    #     fields=('id', 'parse_timestamp',),
+    #     id_field='id',
+    #     order_by=('parse_timestamp', 'id',),
+    #     page_size=50,
+    # ))
 
     server.register_resource('new_year_2018_game/top_items', PostgreSQLReadOnlyResource(
         sqlalchemy_table=models.pikabu_new_year_18_game_app_topitem,
-        fields=('score_entry_id', ),
+        fields=('username', 'avatar_url', 'score', 'date',),
         id_field='score_entry_id',
-        order_by=('score_entry_id', ),
+        order_by=('score_entry_id',),
         page_size=50,
+        join=(
+            models.pikabu_new_year_18_game_app_scoreentry,
+            models.pikabu_new_year_18_game_app_topitem.c.score_entry_id ==
+            models.pikabu_new_year_18_game_app_scoreentry.c.scoreboard_entry_id
+        )
     ))
+
+    server.register_resource(
+        'new_year_2018_game/scoreboards',
+        Scoreboards(models.pikabu_new_year_18_game_app_scoreboardentry, models.pikabu_new_year_18_game_app_scoreentry)
+    )
 
     return server
 

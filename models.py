@@ -41,6 +41,7 @@ communities_app_community = Table(
     Column('last_update_timestamp', BigInteger),
 )
 
+
 def generate_graph_item_table(table_name):
     return Table(
         table_name, metadata,
@@ -80,4 +81,15 @@ pikabu_new_year_18_game_app_scoreboardentry = Table(
 pikabu_new_year_18_game_app_topitem = Table(
     'pikabu_new_year_18_game_app_topitem', metadata,
     Column('score_entry_id', BigInteger),
+)
+
+
+pikabu_new_year_18_game_app_scoreentry = Table(
+    'pikabu_new_year_18_game_app_scoreentry', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('username', String),
+    Column('avatar_url', String),
+    Column('score', Integer),
+    Column('date', String),
+    Column('scoreboard_entry_id', Integer),
 )
