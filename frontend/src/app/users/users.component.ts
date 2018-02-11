@@ -83,6 +83,7 @@ export class UsersComponent implements OnInit {
 
         for (const subscription of this.subscriptions) {
             subscription.unsubscribe();
+            this.loadingAnimationService.stop();
         }
 
 

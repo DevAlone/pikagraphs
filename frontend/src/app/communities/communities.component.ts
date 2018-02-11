@@ -16,7 +16,7 @@ declare var communitiesComponent: any;
 export class CommunitiesComponent implements OnInit {
     communities: Community[] = [];
     timers: any[] = [];
-
+    subscriptions: any[] = [];
     page = 0;
     count = 0;
 
@@ -40,35 +40,43 @@ export class CommunitiesComponent implements OnInit {
 
     loadMore() {
         this.loadingAnimationService.start();
-        this.communitiesService.search(
-                this.searchParams, this.page
-        ).subscribe(result => {
-            this.loadingAnimationService.stop();
-            ++this.page;
-            if (!result.data.length)
-                return
+        this.subscriptions.push(this.communitiesService.search(
+                    this.searchParams, this.page
+            ).subscribe(result => {
+                this.loadingAnimationService.stop();
+                ++this.page;
+                if (!result.data.length)
+                    return
 
-            this.count = result.count;
+                this.count = result.count;
 
-            for (var community of result.data) {
-                this.communities.push(new Community(community));
-            }
+                for (var community of result.data) {
+                    this.communities.push(new Community(community));
+                }
 
-            /*if (!result.next) {
-                this.messageService.info("Больше ничего нет");
-                return;
-            }*/
+                /*if (!result.next) {
+                    this.messageService.info("Больше ничего нет");
+                    return;
+                }*/
 
-            if (communitiesBox.scrollHeight < communitiesComponent.scrollHeight + 500)
-                this.timers.push(setTimeout(() => this.loadMore(), 100));
-        });
+                if (communitiesBox.scrollHeight < communitiesComponent.scrollHeight + 500)
+                    this.timers.push(setTimeout(() => this.loadMore(), 100));
+            })
+        );
     }
 
     resetTape() {
         this.communities = [];
-        for (var timer of this.timers)
-            clearTimeout(timer);
+        for (const timer of this.timers) {
+          clearTimeout(timer);
+        }
 
+        for (const subscription of this.subscriptions) {
+            subscription.unsubscribe();
+            this.loadingAnimationService.stop();
+        }
+
+        this.subscriptions = [];
         this.timers = [];
         this.page = 0;
     }
