@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Community } from '../community';
 import { CommunityService } from '../community.service';
 import { MessageService } from '../message.service';
+import {LoadingAnimationService} from '../loading-animation.service';
 
 declare var communitiesBox: any;
 declare var communitiesComponent: any;
@@ -16,14 +17,15 @@ export class CommunitiesComponent implements OnInit {
     communities: Community[] = [];
     timers: any[] = [];
 
-    page: number = 0;
-    count: number = 0;
+    page = 0;
+    count = 0;
 
     private searchParams: any = {};
 
     constructor(
         private communitiesService: CommunityService,
         private messageService: MessageService,
+        private loadingAnimationService: LoadingAnimationService,
     ) {}
 
     ngOnInit() {
@@ -37,15 +39,17 @@ export class CommunitiesComponent implements OnInit {
     }
 
     loadMore() {
+        this.loadingAnimationService.start();
         this.communitiesService.search(
                 this.searchParams, this.page
         ).subscribe(result => {
+            this.loadingAnimationService.stop();
             ++this.page;
-            if (!result.data)
+            if (!result.data.length)
                 return
 
             this.count = result.count;
-            
+
             for (var community of result.data) {
                 this.communities.push(new Community(community));
             }

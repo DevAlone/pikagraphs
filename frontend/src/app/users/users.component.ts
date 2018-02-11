@@ -6,6 +6,7 @@ import { MessageService } from '../message.service';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { UserService } from '../user.service';
 import { User } from '../user';
+import { LoadingAnimationService } from '../loading-animation.service';
 
 declare var usersBox: any;
 declare var usersComponent: any;
@@ -31,6 +32,7 @@ export class UsersComponent implements OnInit {
         private messageService: MessageService,
         private route: ActivatedRoute,
         private router: Router,
+        private loadingAnimationService: LoadingAnimationService,
     ) {
 
     }
@@ -46,11 +48,13 @@ export class UsersComponent implements OnInit {
     }
 
     loadMore() {
+        this.loadingAnimationService.start();
         this.subscriptions.push(
             this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
+                this.loadingAnimationService.stop();
                 ++this.page;
 
-                if (!result.data) {
+                if (!result.data.length) {
                   return;
                 }
 

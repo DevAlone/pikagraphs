@@ -8,6 +8,7 @@ import { UsersComponent } from './users/users.component';
 import { CommunitiesComponent } from './communities/communities.component';
 import { UserService } from './user.service';
 import { MessageService } from './message.service';
+
 // import { HttpClient } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -22,6 +23,8 @@ import { SearchBoxComponent } from './search-box/search-box.component';
 import { CommunityComponent } from './community/community.component';
 import { NewYear2018GameComponent } from './new-year-2018-game/new-year-2018-game.component';
 import { AboutComponent } from './about/about.component';
+import { LoadingAnimationComponent } from './loading-animation/loading-animation.component';
+import { LoadingAnimationService } from './loading-animation.service';
 
 
 @NgModule({
@@ -36,7 +39,8 @@ import { AboutComponent } from './about/about.component';
     SearchBoxComponent,
     CommunityComponent,
     NewYear2018GameComponent,
-    AboutComponent
+    AboutComponent,
+    LoadingAnimationComponent
     ],
     imports: [
         BrowserModule,
@@ -49,7 +53,8 @@ import { AboutComponent } from './about/about.component';
         MessageService,
         GraphService,
         CommunityService,
-        ApiService
+        ApiService,
+        LoadingAnimationService
     ],
     bootstrap: [ AppComponent ]
 })

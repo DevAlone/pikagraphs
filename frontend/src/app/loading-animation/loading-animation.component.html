@@ -1,0 +1,13 @@
+<div id="loadingAnimationWrapper" *ngIf="isVisible">
+  <div class="loadingAnimation" [attr.visible]="isVisible">
+    <div class="wrapper">
+      <img src="{{ animationImagePath }}">
+      <div class="loading">
+        <p>loading...</p>
+      </div>
+      <div class="overlay">
+
+      </div>
+    </div>
+  </div>
+</div>

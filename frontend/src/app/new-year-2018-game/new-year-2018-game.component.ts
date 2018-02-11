@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { ApiConfig } from '../api.config';
+import {LoadingAnimationService} from '../loading-animation.service';
 
 declare var newYear2018GameComponent: any;
 declare var scoreboardsContainer: any;
@@ -18,15 +19,20 @@ export class NewYear2018GameComponent implements OnInit {
     scoreboardsPage = 0;
     topPage = 0;
 
-    constructor(private api: ApiService) { }
+    constructor(
+      private api: ApiService,
+      private loadingAnimationService: LoadingAnimationService,
+    ) { }
     ngOnInit() {
       this.loadMoreScoreboards();
       this.loadMoreTop();
     }
 
     loadMoreScoreboards() {
+        this.loadingAnimationService.start();
         this.api.get(ApiConfig.NEW_YEAR_2018_GAME_SCOREBOARD_URL, {page: this.scoreboardsPage})
         .subscribe(result => {
+            this.loadingAnimationService.stop();
             for (const scoreboard of result.data) {
                 this.scoreboards.push(scoreboard);
             }
@@ -44,7 +50,9 @@ export class NewYear2018GameComponent implements OnInit {
     }
 
     loadMoreTop() {
+        this.loadingAnimationService.start();
         this.api.get(ApiConfig.NEW_YEAR_2018_GAME_TOP_URL, {page: this.topPage}).subscribe(result => {
+            this.loadingAnimationService.stop();
             for (const topItem of result.data) {
                 this.topItems.push(topItem);
             }
