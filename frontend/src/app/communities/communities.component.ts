@@ -18,7 +18,7 @@ export class CommunitiesComponent implements OnInit {
     timers: any[] = [];
     subscriptions: any[] = [];
     page = 0;
-    count = 0;
+    count: any = 0;
 
     private searchParams: any = {};
 
@@ -36,11 +36,11 @@ export class CommunitiesComponent implements OnInit {
 
         this.resetTape();
         this.loadMore();
-        this.loadingAnimationService.start();
-        this.subscriptions.push(this.communitiesService.count(this.searchParams, 0).subscribe(result => {
-            this.loadingAnimationService.stop();
+
+        this.count = '-';
+        this.communitiesService.count(this.searchParams, 0).subscribe(result => {
             this.count = result.count;
-        }));
+        });
     }
 
     loadMore() {

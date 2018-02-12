@@ -21,7 +21,7 @@ export class UsersComponent implements OnInit {
     users: User[] = [];
     timers: any[] = [];
     subscriptions: any[] = [];
-    count = 0;
+    count: any = 0;
 
     private page = 0;
 
@@ -42,12 +42,10 @@ export class UsersComponent implements OnInit {
         this.resetTape();
         this.loadMore();
 
-        this.loadingAnimationService.start();
-        this.subscriptions.push(this.userService.count(this.searchParameters, 0).subscribe(result => {
-            this.loadingAnimationService.stop();
-
+        this.count = '-';
+        this.userService.count(this.searchParameters, 0).subscribe(result => {
             this.count = result.count;
-        }));
+        });
     }
 
     ngOnInit(): void {
