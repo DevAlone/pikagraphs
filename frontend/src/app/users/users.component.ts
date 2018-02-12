@@ -43,11 +43,11 @@ export class UsersComponent implements OnInit {
         this.loadMore();
 
         this.loadingAnimationService.start();
-        this.userService.count(this.searchParameters, 0).subscribe(result => {
+        this.subscriptions.push(this.userService.count(this.searchParameters, 0).subscribe(result => {
             this.loadingAnimationService.stop();
 
             this.count = result.count;
-        });
+        }));
     }
 
     ngOnInit(): void {

@@ -37,10 +37,10 @@ export class CommunitiesComponent implements OnInit {
         this.resetTape();
         this.loadMore();
         this.loadingAnimationService.start();
-        this.communitiesService.count(this.searchParams, 0).subscribe(result => {
+        this.subscriptions.push(this.communitiesService.count(this.searchParams, 0).subscribe(result => {
             this.loadingAnimationService.stop();
             this.count = result.count;
-        });
+        }));
     }
 
     loadMore() {
