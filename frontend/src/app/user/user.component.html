@@ -3,7 +3,7 @@
         <img class="avatar" src="{{ user.avatar_url }}">
         <a title="Посмотреть на пикабу"
                 class="niceLink"
-                href="https://pikabu.ru/profile?filter=user_id={{ user.id }}"
+                href="https://pikabu.ru/profile/{{ user.username }}"
                 target="_blank"
                 rel="nofollow noopener">
             {{ user.username }}
@@ -15,8 +15,8 @@
     <div class="infoBlock block">
         <div class="row">
             <div class="column key">Рейтинг</div>
-            <div class="column value" *ngIf="!is_rating_ban">{{ user.rating }}</div>
-            <div class="column value hiddenRating" *ngIf="is_rating_ban">{{ user.rating }}</div>
+            <div class="column value" *ngIf="!user.is_rating_ban">{{ user.rating }}</div>
+            <div class="column value hiddenRating" *ngIf="user.is_rating_ban">{{ user.rating }}</div>
         </div>
         <div class="row">
             <div class="column key">Комментариев</div>
@@ -78,7 +78,7 @@
             <div class="column key">Обновляется</div>
             <div class="column value">{{ user.is_updated ? 'true': 'false' }}</div>
         </div>
-        <div class="row" *ngIf="user.name == 'l4rever'">
+        <div class="row" *ngIf="user.username == 'l4rever'">
             <div class="column key">Секунд</div>
             <div class="column value" #l4reverEasterEggValue></div>
         </div>

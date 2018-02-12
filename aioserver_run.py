@@ -72,11 +72,25 @@ async def main():
         id_field='username',
         order_by=('id', 'rating', 'username', 'subscribers_count', 'comments_count', 'posts_count',
                   'hot_posts_count', 'pluses_count', 'minuses_count', 'last_update_timestamp', 'updating_period',
-                  'pikabu_id', 'approved', 'signup_timestamp', ),
-        search_by=('username', 'info', ),
+                  'pikabu_id', 'approved', 'signup_timestamp',),
+        search_by=('username', 'info',),
         filter_by={
-            'username': ('=', ),
+            'username': ('=',),
             'rating': ('=', '>', '<'),
+        },
+        page_size=50,
+    ))
+
+    server.register_resource('pikabu_users', PostgreSQLReadOnlyResource(
+        sqlalchemy_table=models.core_pikabuuser,
+        fields=('pikabu_id', 'username', 'is_processed' ),
+        id_field='pikabu_id',
+        order_by=('pikabu_id', 'username', ),
+        search_by=('username', ),
+        filter_by={
+            'pikabu_id': ('=', '>', '<'),
+            'username': ('=', ),
+            'is_processed': ('=',),
         },
         page_size=50,
     ))

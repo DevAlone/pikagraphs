@@ -36,6 +36,11 @@ export class CommunitiesComponent implements OnInit {
 
         this.resetTape();
         this.loadMore();
+        this.loadingAnimationService.start();
+        this.communitiesService.count(this.searchParams, 0).subscribe(result => {
+            this.loadingAnimationService.stop();
+            this.count = result.count;
+        });
     }
 
     loadMore() {
@@ -45,12 +50,11 @@ export class CommunitiesComponent implements OnInit {
             ).subscribe(result => {
                 this.loadingAnimationService.stop();
                 ++this.page;
-                if (!result.data.length)
-                    return
+                if (!result.data.length) {
+                    return;
+                }
 
-                this.count = result.count;
-
-                for (var community of result.data) {
+                for (const community of result.data) {
                     this.communities.push(new Community(community));
                 }
 
@@ -59,8 +63,9 @@ export class CommunitiesComponent implements OnInit {
                     return;
                 }*/
 
-                if (communitiesBox.scrollHeight < communitiesComponent.scrollHeight + 500)
+                if (communitiesBox.scrollHeight < communitiesComponent.scrollHeight + 500) {
                     this.timers.push(setTimeout(() => this.loadMore(), 100));
+                }
             })
         );
     }

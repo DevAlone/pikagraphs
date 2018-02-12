@@ -93,3 +93,11 @@ pikabu_new_year_18_game_app_scoreentry = Table(
     Column('date', String),
     Column('scoreboard_entry_id', Integer),
 )
+
+
+core_pikabuuser = Table(
+    'core_pikabuuser', metadata,
+    Column('pikabu_id', Integer, primary_key=True),
+    Column('username', String),
+    Column('is_processed', Boolean),
+)

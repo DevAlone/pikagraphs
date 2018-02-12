@@ -41,6 +41,13 @@ export class UsersComponent implements OnInit {
         this.searchParameters = searchParameters;
         this.resetTape();
         this.loadMore();
+
+        this.loadingAnimationService.start();
+        this.userService.count(this.searchParameters, 0).subscribe(result => {
+            this.loadingAnimationService.stop();
+
+            this.count = result.count;
+        });
     }
 
     ngOnInit(): void {
@@ -50,15 +57,13 @@ export class UsersComponent implements OnInit {
     loadMore() {
         this.loadingAnimationService.start();
         this.subscriptions.push(
-            this.userService.searchUsers(this.searchParameters, this.page).subscribe(result => {
+            this.userService.search(this.searchParameters, this.page).subscribe(result => {
                 this.loadingAnimationService.stop();
                 ++this.page;
 
                 if (!result.data.length) {
                   return;
                 }
-
-                this.count = result.count;
 
                 for (const user of result.data) {
                     this.users.push(new User(user));
