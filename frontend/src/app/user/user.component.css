@@ -18,3 +18,7 @@ h1 {
 .info {
   padding: 5px;
 }
+
+.block {
+  padding: 0 !important;
+}

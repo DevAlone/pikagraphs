@@ -6,15 +6,18 @@ import sqlalchemy
 
 import models
 from pikabot_graphs import settings
-from restycorn.restycorn.base_resource import BaseResource
-from restycorn.restycorn.postgresql import db
+from restycorn.restycorn.exceptions import MethodIsNotAllowedException
 from restycorn.restycorn.postgresql_serializer import PostgreSQLSerializer
+from restycorn.restycorn.read_only_resource import ReadOnlyResource
 from restycorn.restycorn.restycorn_types import uint
 from restycorn.restycorn.server import Server
 from restycorn.restycorn.postgresql_read_only_resource import PostgreSQLReadOnlyResource
 
 
-class Scoreboards(BaseResource):
+class Scoreboards(ReadOnlyResource):
+    def get(self, item_id) -> object:
+        raise MethodIsNotAllowedException()
+
     def __init__(self, scoreboardentry_table, scoreentry_table):
         self.scoreboardentry_table = scoreboardentry_table
         self.scoreentry_table = scoreentry_table
@@ -50,6 +53,28 @@ class Scoreboards(BaseResource):
         return result
 
 
+class Index(ReadOnlyResource):
+    async def list(self) -> list:
+        raise MethodIsNotAllowedException()
+
+    async def get(self, item_id) -> object:
+        if item_id == 'counters':
+            number_of_users = int((await asyncpgsa.pg.fetchrow('''
+                SELECT COUNT(*) FROM core_pikabuuser
+            '''))[0])
+            number_of_updated_users = int((await asyncpgsa.pg.fetchrow('''
+                SELECT COUNT(*) FROM core_user
+                WHERE is_updated = true
+            '''))[0])
+
+            return {
+                'number_of_users': number_of_users,
+                'number_of_updated_users': number_of_updated_users,
+            }
+
+        raise MethodIsNotAllowedException()
+
+
 async def main():
     await asyncpgsa.pg.init(
         user=settings.DATABASES['default']['USER'],
@@ -63,6 +88,8 @@ async def main():
         '127.0.0.1',
         access_log_format='%Tfs %a %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"')
     server.set_base_address('/api')
+
+    server.register_resource('index', Index())
 
     server.register_resource('users', PostgreSQLReadOnlyResource(
         sqlalchemy_table=models.core_user,
@@ -85,7 +112,7 @@ async def main():
 
     server.register_resource('pikabu_users', PostgreSQLReadOnlyResource(
         sqlalchemy_table=models.core_pikabuuser,
-        fields=('pikabu_id', 'username', 'is_processed' ),
+        fields=('pikabu_id', 'username', 'is_processed'),
         id_field='pikabu_id',
         order_by=('pikabu_id', 'username', ),
         search_by=('username', ),

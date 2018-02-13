@@ -8,10 +8,8 @@ const apiUrl = '/rest';
 
 @Injectable()
 export class GraphService {
-
-	constructor(private api: ApiService) { }
-
-	getGraph(type: string, id: string): Observable<any> {
+    constructor(private api: ApiService) { }
+    getGraph(type: string, id: string): Observable<any> {
         return this.api.get(`${ApiConfig.GRAPH_URL}/${type}/${id}`);
-	}
+    }
 }

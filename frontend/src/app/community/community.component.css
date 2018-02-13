@@ -34,3 +34,7 @@ h1 > a {
 .header {
 	margin-top: 0;
 }
+
+.block {
+  padding: 0 !important;
+}

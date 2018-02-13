@@ -10,6 +10,7 @@ p {
 
 header {
   padding: 15px 10px;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
   margin: 0;
 }

@@ -87,6 +87,10 @@ img {
 .scoreboard td > *{
 	min-height: 5px !important;
 	max-height: 15px !important;
-	height: auto; 
+	height: auto;
 	vertical-align: middle;
+}
+
+.block {
+  padding: 0 !important;
 }
