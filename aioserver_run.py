@@ -1,9 +1,3 @@
-import asyncio
-import logging
-
-import asyncpgsa
-import sqlalchemy
-
 import models
 from pikabot_graphs import settings
 from restycorn.restycorn.exceptions import MethodIsNotAllowedException, ParamsValidationException
@@ -12,6 +6,12 @@ from restycorn.restycorn.read_only_resource import ReadOnlyResource
 from restycorn.restycorn.restycorn_types import uint
 from restycorn.restycorn.server import Server
 from restycorn.restycorn.postgresql_read_only_resource import PostgreSQLReadOnlyResource
+
+import asyncio
+import logging
+import functools
+import asyncpgsa
+import sqlalchemy
 
 
 class Scoreboards(ReadOnlyResource):
@@ -54,6 +54,9 @@ class Scoreboards(ReadOnlyResource):
 
 
 class Index(ReadOnlyResource):
+    time_cached = True
+    time_cache_seconds = 60
+
     async def list(self) -> list:
         raise MethodIsNotAllowedException()
 
@@ -76,6 +79,9 @@ class Index(ReadOnlyResource):
 
 
 class UserDistributions(ReadOnlyResource):
+    time_cached = True
+    time_cache_seconds = 5 * 60
+
     async def list(self) -> list:
         raise MethodIsNotAllowedException()
 
@@ -85,12 +91,15 @@ class UserDistributions(ReadOnlyResource):
         if field_name not in [
             'rating',
             'comments_count',
+            'posts_count',
             'hot_posts_count',
             'pluses_count',
             'minuses_count',
             'subscribers_count',
             'updating_period',
             'signup_timestamp',
+            'last_update_timestamp',
+            # 'gender',
         ]:
             raise MethodIsNotAllowedException()
 
@@ -116,7 +125,7 @@ class UserDistributions(ReadOnlyResource):
 
         items = await asyncpgsa.pg.fetch(sql_request)
 
-        return [PostgreSQLSerializer(['x', 'y']).serialize(item) for item in items]
+        return [PostgreSQLSerializer(['x', 'y']).serialize(item) for item in items if item['y'] != 0]
 
 
 async def main():

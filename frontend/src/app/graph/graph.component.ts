@@ -20,6 +20,8 @@ export class GraphComponent implements OnInit {
     // xMultiplier = 1000;
     @Input()
     xIsTimestamp = true;
+    @Input()
+    isLogarithmic = false;
     @ViewChild('graphWrapper')
     graphWrapper: ElementRef;
     data: any[] = [];
@@ -54,6 +56,7 @@ export class GraphComponent implements OnInit {
             'marginTop': 7,
             'dataProvider': data,
             'valueAxes': [{
+                'logarithmic': this.isLogarithmic,
                 /*'axisAlpha': 0.2,
                 'dashLength': 1,*/
                 'position': 'left'
@@ -61,6 +64,7 @@ export class GraphComponent implements OnInit {
             'mouseWheelZoomEnabled': false,
             'graphs': [{
                 'id': 'g1',
+                'fillAlphas': 0.2,
                 'balloonText': '[[y]]',
                 'bullet': 'round',
                 'bulletBorderAlpha': 1,
