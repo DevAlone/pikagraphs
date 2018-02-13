@@ -113,7 +113,7 @@ class UsersModule(Module):
         try:
             await self._update_user(sql_user, user_data['user'], self._logger)
         except BaseException as ex:
-            self._logger("Exception during processing user \"{}\"".format(sql_user))
+            self._logger.error("Exception during processing user \"{}\"".format(sql_user))
             raise ex
 
     @staticmethod
