@@ -164,7 +164,6 @@ class UsersModule(Module):
         user.pluses_count = int(user_data['pluses_count'])
         user.minuses_count = int(user_data['minuses_count'])
 
-        self._logger.error("111\"{}\", type = \"{}\"111".format(user_data['gender'], type(user_data['gender'])))
         user.gender = str(user_data['gender'])
         user.approved = str(user_data['approved'])
         user.awards = json.dumps(user_data['awards'])
@@ -210,8 +209,6 @@ class UsersModule(Module):
         user.updating_period = self._calculate_user_updating_period(sql_user, was_data_changed)
 
         user.last_update_timestamp = current_timestamp
-
-        self._logger.error("@@@\"{}\", type = \"{}\"@@@".format(user.gender, type(user.gender)))
 
         async with self.pool.acquire() as connection:
             async with connection.transaction():
