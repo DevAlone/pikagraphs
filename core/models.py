@@ -26,6 +26,7 @@ class User(models.Model):
 
     updating_period = models.IntegerField(default=60)
     is_updated = models.BooleanField(default=False, db_index=True)
+    deleted = models.BooleanField(default=False)
 
     last_update_timestamp = models.IntegerField(default=0, db_index=True)
 

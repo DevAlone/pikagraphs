@@ -25,6 +25,7 @@ core_user = Table(
     Column('approved', String),
     Column('awards', String),
     Column('signup_timestamp', BigInteger),
+    Column('deleted', Boolean),
 )
 
 

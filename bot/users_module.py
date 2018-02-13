@@ -1,5 +1,6 @@
 import json
 
+from bot.api.pikabu_api.pikabu import PikabuNotFoundException
 from bot.module import Module
 from core.models import User
 from pikabot_graphs import settings
@@ -12,7 +13,7 @@ import time
 
 
 class UsersModule(Module):
-    processing_period = 10
+    processing_period = 5
     # processing_period = 1
 
     def __init__(self):
@@ -30,7 +31,7 @@ class UsersModule(Module):
             async with self.pool.acquire() as connection:
                 # TODO: consider using cursor
                 users = await connection.fetch('''
-                    SELECT * FROM core_user 
+                    SELECT * FROM core_user
                     WHERE is_updated = true and last_update_timestamp <= $1 - updating_period LIMIT $2''',
                     int(time.time()), settings.BOT_CONCURRENT_TASKS)
 
@@ -39,6 +40,8 @@ class UsersModule(Module):
 
             if tasks:
                 await asyncio.wait(tasks)
+
+            await self.process_pikabu_users(client)
 
     async def process_pikabu_users(self, client):
         tasks = []
@@ -52,32 +55,47 @@ class UsersModule(Module):
 
             for user in users:
                 tasks.append(self._call_coroutine_with_logging_exception(
-                    self.process_pikabu_user(user, client, connection)))
+                    self.process_pikabu_user(user, client)))
 
         if tasks:
             await asyncio.wait(tasks)
 
-    async def process_pikabu_user(self, sql_pikabu_user, client, connection):
-        username = sql_pikabu_user['username'].strip().lower()
-        pikabu_id = sql_pikabu_user['pikabu_id']
-        await connection.execute('''
-            INSERT INTO core_user 
-                (username, rating, comments_count, posts_count, hot_posts_count, pluses_count, minuses_count, 
-                 subscribers_count, is_rating_ban, updating_period, avatar_url, info, is_updated, 
-                 last_update_timestamp, approved, awards, gender, pikabu_id, signup_timestamp)     
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
-        ''', username, 0, 0, 0, 0, 0, 0, 0, False, 1, '', '', False, 0, '', '', '-', pikabu_id, 0)
-        await connection.execute('''
-            UPDATE core_pikabuuser
-            SET is_processed = true
-            WHERE pikabu_id = $1
-        ''', pikabu_id)
+    async def process_pikabu_user(self, sql_pikabu_user, client):
+        self._logger.debug("start processing pikabu_user: {}".format(sql_pikabu_user))
+        async with self.pool.acquire() as connection:
+            username = sql_pikabu_user['username'].strip().lower()
+            pikabu_id = sql_pikabu_user['pikabu_id']
+            if username != '<font rel="tooltip" ' \
+                           'title="oriflame-line.livejournal.com">oriflame-line.livejournal.co...</font>':
+                await connection.execute('''
+                    INSERT INTO core_user 
+                        (username, rating, comments_count, posts_count, hot_posts_count, pluses_count, minuses_count, 
+                         subscribers_count, is_rating_ban, updating_period, avatar_url, info, is_updated, 
+                         last_update_timestamp, approved, awards, gender, pikabu_id, signup_timestamp, deleted)     
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+                    ON CONFLICT (username) DO NOTHING;
+                ''', username, 0, 0, 0, 0, 0, 0, 0, False, 1, '', '', True, 0, '', '', '-', pikabu_id, 0, False)
+            await connection.execute('''
+                UPDATE core_pikabuuser
+                SET is_processed = true
+                WHERE pikabu_id = $1
+            ''', pikabu_id)
 
     async def process_user(self, user: dict, client):
         self._logger.debug('start processing user {}'.format(user['username']))
-
+        """bot.api.pikabu_api.pikabu.PikabuNotFoundException: Requested page could not be found"""
         try:
             return await self._process_user(user, client)
+        except PikabuNotFoundException as ex:
+            message = str(ex).strip().lower()
+            if message == 'requested page could not be found':
+                async with self.pool.acquire() as connection:
+                    await connection.execute('''
+                        UPDATE core_user SET deleted = true, updating_period = $1, last_update_timestamp = $2
+                        WHERE id = $3
+                    ''', settings.USERS_MODULE['MAX_UPDATING_PERIOD'], int(time.time()), user['id'])
+
+            raise ex
         except PikabuError as ex:
             updating_period = self._calculate_user_updating_period(user, False)
             async with self.pool.acquire() as connection:
@@ -197,7 +215,7 @@ class UsersModule(Module):
                                          user.updating_period, user.avatar_url, user.info,
                                          user.is_updated, user.last_update_timestamp, user.approved,
                                          user.awards, user.gender, user.pikabu_id,
-                                         user.signup_timestamp
+                                         user.signup_timestamp, False
                                          )
 
                 # await connection.executemany("""
@@ -317,9 +335,9 @@ class UsersModule(Module):
 INSERT INTO core_user 
     (username, rating, comments_count, posts_count, hot_posts_count, pluses_count, minuses_count, subscribers_count, 
      is_rating_ban, updating_period, avatar_url, info, is_updated, last_update_timestamp, approved, awards, gender, 
-     pikabu_id, signup_timestamp) 
+     pikabu_id, signup_timestamp, deleted) 
     
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
 
 ON CONFLICT (username) DO UPDATE 
 SET rating = excluded.rating, 
@@ -339,4 +357,5 @@ SET rating = excluded.rating,
     awards = excluded.awards, 
     gender = excluded.gender, 
     pikabu_id = excluded.pikabu_id, 
-    signup_timestamp = excluded.signup_timestamp;"""
+    signup_timestamp = excluded.signup_timestamp,
+    deleted = excluded.deleted;"""

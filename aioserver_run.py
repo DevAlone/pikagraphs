@@ -68,7 +68,8 @@ async def main():
         sqlalchemy_table=models.core_user,
         fields=('id', 'username', 'info', 'avatar_url', 'rating', 'comments_count', 'posts_count', 'hot_posts_count',
                 'pluses_count', 'minuses_count', 'last_update_timestamp', 'subscribers_count', 'is_rating_ban',
-                'updating_period', 'is_updated', 'pikabu_id', 'gender', 'approved', 'awards', 'signup_timestamp',),
+                'updating_period', 'is_updated', 'pikabu_id', 'gender', 'approved', 'awards', 'signup_timestamp',
+                'deleted'),
         id_field='username',
         order_by=('id', 'rating', 'username', 'subscribers_count', 'comments_count', 'posts_count',
                   'hot_posts_count', 'pluses_count', 'minuses_count', 'last_update_timestamp', 'updating_period',
@@ -77,6 +78,7 @@ async def main():
         filter_by={
             'username': ('=',),
             'rating': ('=', '>', '<'),
+            'deleted': ('=', ),
         },
         page_size=50,
     ))
