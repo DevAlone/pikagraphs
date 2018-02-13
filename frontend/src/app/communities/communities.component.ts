@@ -17,6 +17,7 @@ export class CommunitiesComponent implements OnInit {
     communities: Community[] = [];
     timers: any[] = [];
     subscriptions: any[] = [];
+    count_subscription: any;
     page = 0;
     count: any = 0;
 
@@ -38,7 +39,10 @@ export class CommunitiesComponent implements OnInit {
         this.loadMore();
 
         this.count = '-';
-        this.communitiesService.count(this.searchParams, 0).subscribe(result => {
+        if (this.count_subscription) {
+          this.count_subscription.unsubscribe();
+        }
+        this.count_subscription = this.communitiesService.count(this.searchParams, 0).subscribe(result => {
             this.count = result.count;
         });
     }

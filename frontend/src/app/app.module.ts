@@ -25,6 +25,7 @@ import { NewYear2018GameComponent } from './new-year-2018-game/new-year-2018-gam
 import { AboutComponent } from './about/about.component';
 import { LoadingAnimationComponent } from './loading-animation/loading-animation.component';
 import { LoadingAnimationService } from './loading-animation.service';
+import { IndexComponent } from './index/index.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { LoadingAnimationService } from './loading-animation.service';
     CommunityComponent,
     NewYear2018GameComponent,
     AboutComponent,
-    LoadingAnimationComponent
+    LoadingAnimationComponent,
+    IndexComponent
     ],
     imports: [
         BrowserModule,

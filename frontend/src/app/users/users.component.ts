@@ -21,6 +21,7 @@ export class UsersComponent implements OnInit {
     users: User[] = [];
     timers: any[] = [];
     subscriptions: any[] = [];
+    count_subscription: any;
     count: any = 0;
 
     private page = 0;
@@ -43,7 +44,10 @@ export class UsersComponent implements OnInit {
         this.loadMore();
 
         this.count = '-';
-        this.userService.count(this.searchParameters, 0).subscribe(result => {
+        if (this.count_subscription) {
+            this.count_subscription.unsubscribe();
+        }
+        this.count_subscription = this.userService.count(this.searchParameters, 0).subscribe(result => {
             this.count = result.count;
         });
     }
@@ -55,7 +59,7 @@ export class UsersComponent implements OnInit {
     loadMore() {
         this.loadingAnimationService.start();
         this.subscriptions.push(
-            this.userService.search(this.searchParameters, this.page).subscribe(result => {
+          this.userService.search(this.searchParameters, this.page).subscribe(result => {
                 this.loadingAnimationService.stop();
                 ++this.page;
 

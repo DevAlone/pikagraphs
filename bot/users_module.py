@@ -40,6 +40,39 @@ class UsersModule(Module):
             if tasks:
                 await asyncio.wait(tasks)
 
+    async def process_pikabu_users(self, client):
+        tasks = []
+
+        async with self.pool.acquire() as connection:
+            users = await connection.fetch('''
+                SELECT * FROM core_pikabuuser
+                WHERE is_processed = false 
+                LIMIT $1
+            ''', settings.BOT_CONCURRENT_TASKS)
+
+            for user in users:
+                tasks.append(self._call_coroutine_with_logging_exception(
+                    self.process_pikabu_user(user, client, connection)))
+
+        if tasks:
+            await asyncio.wait(tasks)
+
+    async def process_pikabu_user(self, sql_pikabu_user, client, connection):
+        username = sql_pikabu_user['username'].strip().lower()
+        pikabu_id = sql_pikabu_user['pikabu_id']
+        await connection.execute('''
+            INSERT INTO core_user 
+                (username, rating, comments_count, posts_count, hot_posts_count, pluses_count, minuses_count, 
+                 subscribers_count, is_rating_ban, updating_period, avatar_url, info, is_updated, 
+                 last_update_timestamp, approved, awards, gender, pikabu_id, signup_timestamp)     
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+        ''', username, 0, 0, 0, 0, 0, 0, 0, False, 1, '', '', False, 0, '', '', '-', pikabu_id, 0)
+        await connection.execute('''
+            UPDATE core_pikabuuser
+            SET is_processed = true
+            WHERE pikabu_id = $1
+        ''', pikabu_id)
+
     async def process_user(self, user: dict, client):
         self._logger.debug('start processing user {}'.format(user['username']))
 

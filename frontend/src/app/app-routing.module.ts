@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { UsersComponent } from './users/users.component';
 import { UserComponent } from './user/user.component';
 import { CommunityComponent } from './community/community.component';
@@ -7,9 +6,11 @@ import { CommunitiesComponent } from './communities/communities.component';
 import { NewYear2018GameComponent } from './new-year-2018-game/new-year-2018-game.component';
 import { RouterModule, Routes } from '@angular/router';
 import {AboutComponent} from './about/about.component';
+import {IndexComponent} from './index/index.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: 'users', pathMatch: 'full' },
+    { path: '', redirectTo: 'index', pathMatch: 'full' },
+    { path: 'index', component: IndexComponent },
     { path: 'about', component: AboutComponent },
     { path: 'users', component: UsersComponent },
     { path: 'communities', component: CommunitiesComponent },
