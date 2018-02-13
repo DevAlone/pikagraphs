@@ -210,6 +210,8 @@ class UsersModule(Module):
 
         user.last_update_timestamp = current_timestamp
 
+        self._logger.error("@@@\"{}\", type = \"{}\"@@@".format(user.gender, type(user.gender)))
+
         async with self.pool.acquire() as connection:
             async with connection.transaction():
                 await connection.execute(self.insert_user_sql,
@@ -344,7 +346,8 @@ INSERT INTO core_user
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
 
 ON CONFLICT (username) DO UPDATE 
-SET rating = excluded.rating, 
+SET 
+    rating = excluded.rating, 
     comments_count = excluded.comments_count, 
     posts_count = excluded.posts_count, 
     hot_posts_count = excluded.hot_posts_count, 
