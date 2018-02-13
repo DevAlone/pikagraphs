@@ -16,6 +16,10 @@ export class GraphComponent implements OnInit {
     graphType: string;
     @Input()
     graphId: string;
+    // @Input()
+    // xMultiplier = 1000;
+    @Input()
+    xIsTimestamp = true;
     @ViewChild('graphWrapper')
     graphWrapper: ElementRef;
     data: any[] = [];
@@ -39,8 +43,9 @@ export class GraphComponent implements OnInit {
         this.graphWrapper.nativeElement.appendChild(graphElement);
         graphElement.className = 'graphElement';
         for (let i = 0; i < data.length; ++i) {
-            data[i].date = data[i].timestamp * 1000;
+            data[i].x = data[i].x * (this.xIsTimestamp ?  1000 : 1);
         }
+
         const chart = AmCharts.makeChart(graphElement, {
             'type': 'serial',
             'theme': 'light',
@@ -56,13 +61,13 @@ export class GraphComponent implements OnInit {
             'mouseWheelZoomEnabled': false,
             'graphs': [{
                 'id': 'g1',
-                'balloonText': '[[value]]',
+                'balloonText': '[[y]]',
                 'bullet': 'round',
                 'bulletBorderAlpha': 1,
                 'bulletColor': '#FFFFFF',
                 'hideBulletsCount': 50,
                 'title': 'red line',
-                'valueField': 'value',
+                'valueField': 'y',
                 'useLineColorForBulletBorder': true,
                 'balloon': {
                     'drop': true
@@ -76,10 +81,10 @@ export class GraphComponent implements OnInit {
             'chartCursor': {
                'limitToGraph': 'g1'
             },
-            'categoryField': 'date',
+            'categoryField': 'x',
             'categoryAxis': {
                 'minPeriod': 'mm',
-                'parseDates': true,
+                'parseDates': this.xIsTimestamp,
                 'axisColor': '#DADADA',
                 'dashLength': 1,
                 'minorGridEnabled': true

@@ -110,7 +110,11 @@ class UsersModule(Module):
 
     async def _process_user(self, sql_user: dict, client):
         user_data = await client.user_profile_get(sql_user['username'])
-        await self._update_user(sql_user, user_data['user'], self._logger)
+        try:
+            await self._update_user(sql_user, user_data['user'], self._logger)
+        except BaseException as ex:
+            self._logger("Exception during processing user \"{}\"".format(sql_user))
+            raise ex
 
     @staticmethod
     def record_to_user(sql_user: dict) -> User:

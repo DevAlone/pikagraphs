@@ -6,7 +6,7 @@ import sqlalchemy
 
 import models
 from pikabot_graphs import settings
-from restycorn.restycorn.exceptions import MethodIsNotAllowedException
+from restycorn.restycorn.exceptions import MethodIsNotAllowedException, ParamsValidationException
 from restycorn.restycorn.postgresql_serializer import PostgreSQLSerializer
 from restycorn.restycorn.read_only_resource import ReadOnlyResource
 from restycorn.restycorn.restycorn_types import uint
@@ -75,6 +75,50 @@ class Index(ReadOnlyResource):
         raise MethodIsNotAllowedException()
 
 
+class UserDistributions(ReadOnlyResource):
+    async def list(self) -> list:
+        raise MethodIsNotAllowedException()
+
+    async def get(self, item_id: str, window_size: uint=100) -> object:
+        table_name = 'core_user'
+        field_name = item_id
+        if field_name not in [
+            'rating',
+            'comments_count',
+            'hot_posts_count',
+            'pluses_count',
+            'minuses_count',
+            'subscribers_count',
+            'updating_period',
+            'signup_timestamp',
+        ]:
+            raise MethodIsNotAllowedException()
+
+        sql_request = '''
+            WITH stats AS (
+                SELECT MIN(:field_name) as min_value, MAX(:field_name) as max_value
+                FROM :table_name
+            )
+            SELECT 
+                width_bucket(:field_name, min_value, max_value, :window_size) as bucket,
+                -- int4range(MIN(:field_name), MAX(:field_name), '[]') as x,
+                MIN(:field_name) as x,
+                COUNT(*) AS y
+            FROM 
+                :table_name, stats
+            GROUP BY
+                bucket
+            ORDER BY
+                bucket;
+        '''.replace(':field_name', field_name)\
+            .replace(':table_name', table_name)\
+            .replace(':window_size', str(window_size))
+
+        items = await asyncpgsa.pg.fetch(sql_request)
+
+        return [PostgreSQLSerializer(['x', 'y']).serialize(item) for item in items]
+
+
 async def main():
     await asyncpgsa.pg.init(
         user=settings.DATABASES['default']['USER'],
@@ -90,6 +134,8 @@ async def main():
     server.set_base_address('/api')
 
     server.register_resource('index', Index())
+
+    server.register_resource('graph/distribution/user', UserDistributions())
 
     server.register_resource('users', PostgreSQLReadOnlyResource(
         sqlalchemy_table=models.core_user,
@@ -137,7 +183,7 @@ async def main():
     def register_user_graph_item_resource(resource_name, sqlalchemy_table):
         server.register_resource(resource_name, PostgreSQLReadOnlyResource(
             sqlalchemy_table=sqlalchemy_table,
-            fields=('timestamp', 'value',),
+            fields=('timestamp as x', 'value as y',),
             id_field='id',
             order_by=('id',),
             filter_by={
@@ -157,7 +203,7 @@ async def main():
     def register_community_graph_item_resource(resource_name):
         server.register_resource('graph/community/' + resource_name, PostgreSQLReadOnlyResource(
             sqlalchemy_table=models.communities_app_communitycountersentry,
-            fields=('timestamp', '{} as value'.format(resource_name)),
+            fields=('timestamp as x', '{} as y'.format(resource_name)),
             id_field='community_id',
             order_by=('id',),
             filter_by={

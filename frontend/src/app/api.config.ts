@@ -4,14 +4,7 @@ import { isDevMode } from '@angular/core';
 
 
 export class ApiConfig {
-	public static _API_URL = "/api";
-	public static get API_URL(): string {
-		if (isDevMode())
-			return 'https://pikagraphs.d3d.info' + this._API_URL;
-
-		return this._API_URL;
-	};
-	// public static API_URL = "/api";
+	public static API_URL = "/api";
 	public static USER_API_URL = `${ApiConfig.API_URL}/users`;
 	public static USERS_API_URL = `${ApiConfig.API_URL}/users`;
 

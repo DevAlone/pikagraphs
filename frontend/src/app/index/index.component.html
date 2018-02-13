@@ -6,3 +6,11 @@
   производительности. Сейчас в базе {{ number_of_users }} пользователей, из которых обновляются
   {{ number_of_updated_users }}.
 </div>
+
+<div>
+  <h2>Распределение пользователей по дате регистрации</h2>
+  <app-graph graphType="distribution" graphId="user/signup_timestamp?window_size=3600"></app-graph>
+
+  <h2>Распределение пользователей по рейтингу</h2>
+  <app-bar-chart graphType="distribution" graphId="user/rating" windowSize="1000" isLogarithmic="true"></app-bar-chart>
+</div>
