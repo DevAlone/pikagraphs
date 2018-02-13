@@ -164,6 +164,7 @@ class UsersModule(Module):
         user.pluses_count = int(user_data['pluses_count'])
         user.minuses_count = int(user_data['minuses_count'])
 
+        self._logger.error("111\"{}\", type = \"{}\"111".format(user_data['gender'], type(user_data['gender'])))
         user.gender = str(user_data['gender'])
         user.approved = str(user_data['approved'])
         user.awards = json.dumps(user_data['awards'])
