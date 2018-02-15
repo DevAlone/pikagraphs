@@ -14,9 +14,11 @@
   </app-graph>
 
   <h2>Распределение пользователей по рейтингу</h2>
+  <!--[xIsTimestamp]="false"-->
   <app-graph
     graphType="distribution"
     graphId="user/rating"
+    type="barchart"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -26,6 +28,7 @@
   <app-graph
     graphType="distribution"
     graphId="user/comments_count"
+    type="barchart"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -35,6 +38,7 @@
   <app-graph
     graphType="distribution"
     graphId="user/posts_count"
+    type="barchart"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -44,6 +48,7 @@
   <app-graph
     graphType="distribution"
     graphId="user/hot_posts_count"
+    type="barchart"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -53,6 +58,7 @@
   <app-graph
     graphType="distribution"
     graphId="user/pluses_count"
+    type="barchart"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -62,6 +68,7 @@
   <app-graph
     graphType="distribution"
     graphId="user/minuses_count"
+    type="barchart"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -71,6 +78,7 @@
   <app-graph
     graphType="distribution"
     graphId="user/subscribers_count"
+    type="barchart"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -80,6 +88,7 @@
   <app-graph
     graphType="distribution"
     graphId="user/updating_period"
+    type="barchart"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -89,8 +98,8 @@
   <app-graph
     graphType="distribution"
     graphId="user/last_update_timestamp"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    type="barchart"
+    [isLogarithmic]="true">
 
   </app-graph>
 </div>

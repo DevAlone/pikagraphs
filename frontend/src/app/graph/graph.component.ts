@@ -22,6 +22,8 @@ export class GraphComponent implements OnInit {
     xIsTimestamp = true;
     @Input()
     isLogarithmic = false;
+    @Input()
+    type = 'line';
     @ViewChild('graphWrapper')
     graphWrapper: ElementRef;
     data: any[] = [];
@@ -35,8 +37,9 @@ export class GraphComponent implements OnInit {
 
     }
     hover() {
-        if (this.isVisible)
+        if (this.isVisible) {
             return;
+        }
 
         this.isVisible = true;
         const self = this;
@@ -55,6 +58,14 @@ export class GraphComponent implements OnInit {
         graphElement.className = 'graphElement';
         for (let i = 0; i < data.length; ++i) {
             data[i].x = data[i].x * (this.xIsTimestamp ?  1000 : 1);
+        }
+
+        let graph_type;
+
+        if (this.type === 'barchart') {
+          graph_type = 'column';
+        } else {
+          graph_type = 'line';
         }
 
         const chart = AmCharts.makeChart(graphElement, {
@@ -82,6 +93,7 @@ export class GraphComponent implements OnInit {
                 'title': 'red line',
                 'valueField': 'y',
                 'useLineColorForBulletBorder': true,
+                'type': graph_type,
                 'balloon': {
                     'drop': true
                 }

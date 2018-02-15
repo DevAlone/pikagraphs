@@ -26,7 +26,6 @@ import { AboutComponent } from './about/about.component';
 import { LoadingAnimationComponent } from './loading-animation/loading-animation.component';
 import { LoadingAnimationService } from './loading-animation.service';
 import { IndexComponent } from './index/index.component';
-import { BarChartComponent } from './bar-chart/bar-chart.component';
 
 
 @NgModule({
@@ -44,7 +43,6 @@ import { BarChartComponent } from './bar-chart/bar-chart.component';
     AboutComponent,
     LoadingAnimationComponent,
     IndexComponent,
-    BarChartComponent
     ],
     imports: [
         BrowserModule,

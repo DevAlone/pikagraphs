@@ -1,5 +1,5 @@
 <div class="container fakeContainer" *ngIf="!isVisible" >
-  <div (mouseover)="hover()">Наведите, чтобы показать</div>
+  <div class="block" (mouseover)="hover()">Наведите, чтобы показать</div>
 </div>
 <div class="container" *ngIf="isVisible">
   <div #graphWrapper class="graphWrapper"></div>
