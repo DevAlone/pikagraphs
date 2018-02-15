@@ -5,3 +5,18 @@
 h3 {
 	text-align: center;
 }
+
+.container {
+  height: 500px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  font-size: 18px;
+}
+
+.fakeContainer {
+
+}

@@ -25,19 +25,28 @@ export class GraphComponent implements OnInit {
     @ViewChild('graphWrapper')
     graphWrapper: ElementRef;
     data: any[] = [];
+    public isVisible = false;
+
     constructor(
         private loadingAnimationService: LoadingAnimationService,
         private graphService: GraphService
     ) { }
     ngOnInit() {
+
+    }
+    hover() {
+        if (this.isVisible)
+            return;
+
+        this.isVisible = true;
         const self = this;
         this.loadingAnimationService.start();
         this.graphService.getGraph(this.graphType, this.graphId).subscribe(result => {
-            this.loadingAnimationService.stop();
-            if (result.data && result.data.length) {
-              self.data = result.data;
-              self.renderGraph(self.data);
-            }
+          this.loadingAnimationService.stop();
+          if (result.data && result.data.length) {
+            self.data = result.data;
+            self.renderGraph(self.data);
+          }
         });
     }
     renderGraph(data) {

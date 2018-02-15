@@ -10,6 +10,7 @@ import {ApiService} from '../api.service';
 export class IndexComponent implements OnInit {
     number_of_users: any = '∞';
     number_of_updated_users: any = '∞';
+    graphsAreVisible = false;
 
     constructor(private api: ApiService) { }
 
@@ -19,5 +20,6 @@ export class IndexComponent implements OnInit {
             this.number_of_users = result.number_of_users;
             this.number_of_updated_users = result.number_of_updated_users;
         });
+        setTimeout(() => this.graphsAreVisible = true, 500);
     }
 }

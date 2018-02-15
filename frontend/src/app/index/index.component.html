@@ -7,16 +7,16 @@
   {{ number_of_updated_users }}.
 </div>
 
-<div>
+<div *ngIf="graphsAreVisible">
   <h2>Распределение пользователей по дате регистрации</h2>
-  <app-graph graphType="distribution" graphId="user/signup_timestamp?window_size=3600">
+  <app-graph graphType="distribution" graphId="user/signup_timestamp">
 
   </app-graph>
 
   <h2>Распределение пользователей по рейтингу</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/rating?window_size=5000"
+    graphId="user/rating"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -25,7 +25,7 @@
   <h2>Распределение пользователей по comments_count</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/comments_count?window_size=1000"
+    graphId="user/comments_count"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -34,7 +34,7 @@
   <h2>Распределение пользователей по posts_count</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/posts_count?window_size=1000"
+    graphId="user/posts_count"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -43,7 +43,7 @@
   <h2>Распределение пользователей по hot_posts_count</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/hot_posts_count?window_size=1000"
+    graphId="user/hot_posts_count"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -52,7 +52,7 @@
   <h2>Распределение пользователей по pluses_count</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/pluses_count?window_size=1000"
+    graphId="user/pluses_count"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -61,7 +61,7 @@
   <h2>Распределение пользователей по minuses_count</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/minuses_count?window_size=1000"
+    graphId="user/minuses_count"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -70,7 +70,7 @@
   <h2>Распределение пользователей по subscribers_count</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/subscribers_count?window_size=1000"
+    graphId="user/subscribers_count"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -79,7 +79,7 @@
   <h2>Распределение пользователей по updating_period</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/updating_period?window_size=1000"
+    graphId="user/updating_period"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
@@ -88,7 +88,7 @@
   <h2>Распределение пользователей по last_update_timestamp</h2>
   <app-graph
     graphType="distribution"
-    graphId="user/last_update_timestamp?window_size=1000"
+    graphId="user/last_update_timestamp"
     [isLogarithmic]="true"
     [xIsTimestamp]="false">
 
