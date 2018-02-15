@@ -75,8 +75,7 @@ class UserDistributions(ReadOnlyResource):
         while True:
             try:
                 await self.update_storage()
-                # await asyncio.sleep(10 * 60)
-                await asyncio.sleep(10)
+                await asyncio.sleep(10 * 60)
             except NotInitializedError:
                 await asyncio.sleep(10)
 
