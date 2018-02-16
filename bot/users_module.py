@@ -31,9 +31,9 @@ class UsersModule(Module):
             async with self.pool.acquire() as connection:
                 # TODO: consider using cursor
                 users = await connection.fetch('''
-                    SELECT * FROM core_user
-                    WHERE is_updated = true and last_update_timestamp <= $1 - updating_period LIMIT $2''',
-                    int(time.time()), settings.BOT_CONCURRENT_TASKS)
+                            SELECT * FROM core_user
+                            WHERE is_updated = true and last_update_timestamp <= $1 - updating_period LIMIT $2
+                            ''', int(time.time()), settings.BOT_CONCURRENT_TASKS)
 
                 for user in users:
                     tasks.append(self._call_coroutine_with_logging_exception(self.process_user(user, client)))
@@ -41,9 +41,9 @@ class UsersModule(Module):
             if tasks:
                 await asyncio.wait(tasks)
 
-            await self.process_pikabu_users(client)
+            await self.process_pikabu_users()
 
-    async def process_pikabu_users(self, client):
+    async def process_pikabu_users(self):
         tasks = []
 
         async with self.pool.acquire() as connection:
@@ -55,12 +55,12 @@ class UsersModule(Module):
 
             for user in users:
                 tasks.append(self._call_coroutine_with_logging_exception(
-                    self.process_pikabu_user(user, client)))
+                    self.process_pikabu_user(user)))
 
         if tasks:
             await asyncio.wait(tasks)
 
-    async def process_pikabu_user(self, sql_pikabu_user, client):
+    async def process_pikabu_user(self, sql_pikabu_user):
         self._logger.debug("start processing pikabu_user: {}".format(sql_pikabu_user))
         async with self.pool.acquire() as connection:
             username = sql_pikabu_user['username'].strip().lower()

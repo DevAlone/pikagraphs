@@ -1,12 +1,9 @@
-import asyncio
-
-import os
-
 from bot.db import DB
 from bot.module import Module
 from bot.api.client import Client
 from pikabot_graphs import settings
 
+import asyncio
 import time
 
 
