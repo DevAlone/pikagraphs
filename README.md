@@ -2,7 +2,7 @@
 
 Pikagraphs is a project collecting statistics of site pikabu.ru
 
-It consists of two parts: django web site and script for collecting statistics. Script has modules for processing users and communities. 
+Built with angular for frontend and [https://github.com/DevAlone/restycorn](restycorn) it effectively collects statisticts of more than 2000000 users.
 
 See how it works here https://pikagraphs.d3d.info/
 
