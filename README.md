@@ -6,11 +6,6 @@ Built with angular for frontend and [restycorn](https://github.com/DevAlone/rest
 
 See how it works here https://pikagraphs.d3d.info/
 
-Dependencies:
-
-- django
-- aiohttp
-
 # Build
 
 ```bash
