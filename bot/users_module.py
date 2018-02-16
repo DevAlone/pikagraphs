@@ -321,8 +321,8 @@ class UsersModule(Module):
             updating_period += delta
 
         # limiting depend on subscribers count or rating
-        period_limiter_by_rating = get_with_limiter(updating_period, user['rating'], 8000000)
-        period_limiter_by_subscrebers_count = get_with_limiter(updating_period, user['subscribers_count'], 50000)
+        period_limiter_by_rating = get_with_limiter(updating_period, user['rating'], 50000)
+        period_limiter_by_subscrebers_count = get_with_limiter(updating_period, user['subscribers_count'], 500)
         period_limiter = max(period_limiter_by_rating, period_limiter_by_subscrebers_count)
 
         if updating_period < period_limiter:
