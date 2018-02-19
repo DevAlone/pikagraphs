@@ -1,3 +1,24 @@
+<div class="block warning">
+  <p>К сожалению, администрация pikabu запретила собирать статистику, поэтому проект pikagraphs закрывается.</p>
+
+  <p>Если вам интересна собранная статистика, вы можете скачать базу данных. Для этого нужно проделать следующие шаги:</p>
+  <ol>
+    <li>
+      Скачать дамп базы по ссылке
+      <a href="http://test.d3d.info/ueh2iPhaeCoir8jo/pikabot_graphs.db">
+        http://test.d3d.info/ueh2iPhaeCoir8jo/pikabot_graphs.db
+      </a>
+    </li>
+    <li>Установить postgresql
+      <a href="https://help.ubuntu.com/lts/serverguide/postgresql.html" target="_blank" rel="noopener nofollow">
+        https://help.ubuntu.com/lts/serverguide/postgresql.html
+      </a>
+    </li>
+    <li>Создать пользователя pikabot_graphs и базу данных pikabot_graphs</li>
+    <li>Залогиниться под пользователем postgres <code>sudo su postgres</code></li>
+    <li>Загрузить базу данных из дампа <code>pg_restore -Fc -d pikabot_graphs pikabot_graphs.db</code></li>
+  </ol>
+</div>
 <h1>Pikagraphs - статистика Пикабу</h1>
 <div class="block">
   Pikagrahps - проект по сбору статистики с сайта
