@@ -3,7 +3,7 @@ import asyncio
 import logging
 
 import time
-from django.conf import settings
+from pikabot_graphs import settings
 
 
 class Module:

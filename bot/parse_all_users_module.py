@@ -3,8 +3,6 @@ from bot.db import DB
 from bot.module import Module
 from bot.api.pikabu_api.mobile import MobilePikabu as Client
 
-from core.models import PikabuUser
-
 import json
 import asyncio
 import random

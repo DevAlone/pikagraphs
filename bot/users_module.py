@@ -2,7 +2,6 @@ import json
 
 from bot.api.pikabu_api.pikabu import PikabuNotFoundException
 from bot.module import Module
-from core.models import User
 from pikabot_graphs import settings
 from bot.api.pikabu_api.mobile import MobilePikabu as Client, PikabuException as PikabuError
 from .db import DB
@@ -116,32 +115,32 @@ class UsersModule(Module):
             self._logger.error("Exception during processing user \"{}\"".format(sql_user))
             raise ex
 
-    @staticmethod
-    def record_to_user(sql_user: dict) -> User:
-        user = User()
-
-        user.pk = sql_user['id']
-        user.pikabu_id = sql_user['pikabu_id']
-        user.username = sql_user['username']
-        user.avatar_url = sql_user['avatar_url']
-        user.rating = sql_user['rating']
-        user.comments_count = sql_user['comments_count']
-        user.posts_count = sql_user['posts_count']
-        user.hot_posts_count = sql_user['hot_posts_count']
-        user.pluses_count = sql_user['pluses_count']
-        user.minuses_count = sql_user['minuses_count']
-        user.subscribers_count = sql_user['subscribers_count']
-        user.is_rating_ban = sql_user['is_rating_ban']
-        user.gender = sql_user['gender']
-        user.approved = sql_user['approved']
-        user.awards = sql_user['awards']
-        user.signup_timestamp = sql_user['signup_timestamp']
-        user.info = sql_user['info']
-        user.updating_period = sql_user['updating_period']
-        user.is_updated = sql_user['is_updated']
-        user.last_update_timestamp = sql_user['last_update_timestamp']
-
-        return user
+    # @staticmethod
+    # def record_to_user(sql_user: dict) -> User:
+    #     user = User()
+    #
+    #     user.pk = sql_user['id']
+    #     user.pikabu_id = sql_user['pikabu_id']
+    #     user.username = sql_user['username']
+    #     user.avatar_url = sql_user['avatar_url']
+    #     user.rating = sql_user['rating']
+    #     user.comments_count = sql_user['comments_count']
+    #     user.posts_count = sql_user['posts_count']
+    #     user.hot_posts_count = sql_user['hot_posts_count']
+    #     user.pluses_count = sql_user['pluses_count']
+    #     user.minuses_count = sql_user['minuses_count']
+    #     user.subscribers_count = sql_user['subscribers_count']
+    #     user.is_rating_ban = sql_user['is_rating_ban']
+    #     user.gender = sql_user['gender']
+    #     user.approved = sql_user['approved']
+    #     user.awards = sql_user['awards']
+    #     user.signup_timestamp = sql_user['signup_timestamp']
+    #     user.info = sql_user['info']
+    #     user.updating_period = sql_user['updating_period']
+    #     user.is_updated = sql_user['is_updated']
+    #     user.last_update_timestamp = sql_user['last_update_timestamp']
+    #
+    #     return user
 
     async def _update_user(self, sql_user: dict, user_data: dict, logger):
         current_timestamp = int(time.time())

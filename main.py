@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import bot.init_django_models
 
 from pikabot_graphs import settings
 from bot.users_module import UsersModule
@@ -14,17 +11,17 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
 
     modules = [
-        UsersModule(),
+        # UsersModule(),
         CommunitiesModule(),
-        ParseAllUsersModule()
+        # ParseAllUsersModule()
     ]
-
-    if settings.DEBUG:
-        modules = [
-            UsersModule(),
-            # CommunitiesModule(),
-            # ParseAllUsersModule(),
-        ]
+    #
+    # if settings.DEBUG:
+    #     modules = [
+    #         UsersModule(),
+    #         # CommunitiesModule(),
+    #         # ParseAllUsersModule(),
+    #     ]
 
     tasks = []
 

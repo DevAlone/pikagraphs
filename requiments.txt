@@ -1,4 +1,4 @@
-aiohttp
+aiohttp==2.3.10
 psycopg2
 ntplib
 aiosocks==0.2.5

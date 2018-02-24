@@ -16,6 +16,8 @@ class CommunitiesModule(Module):
         self.pool = None
 
     async def _process(self):
+        self._logger.debug('start processing communities')
+
         if self.pool is None:
             self.pool = await self.db.get_pool()
 
@@ -23,7 +25,8 @@ class CommunitiesModule(Module):
             tasks = []
 
             for i in range(1, 10000):
-                res = await client.get_communities(page=i, sort='act', community_type='all')
+                self._logger.debug('got communities page {}'.format(i))
+                res = await client.communities_get(page=i, sort='act', community_type='all')
                 communities = res['list']
                 if len(communities) == 0:
                     break
