@@ -181,9 +181,11 @@ async def default_route(request: aiohttp.ClientRequest):
         except (FileNotFoundError, IsADirectoryError):
             pass
 
-    return web.Response(text="""
-    <img src="http://richdoctor.ru/wp-content/uploads/2018/01/Prekratite-zapreshheno.jpg">
-    """, headers={'Content-Type': 'text/html'})
+    return web.FileResponse('./frontend/dist/index.html')
+
+    # return web.Response(text="""
+    # <img src="http://richdoctor.ru/wp-content/uploads/2018/01/Prekratite-zapreshheno.jpg">
+    # """, headers={'Content-Type': 'text/html'})
 
 
 async def create_server():
