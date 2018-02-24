@@ -8,13 +8,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^secret_page_for_lactarius/$', communities_app.views.secret_page_for_lactarius,
         name='secret_page_for_lactarius'),
-    url(r'^secret_page_for_l4rever/$', core.views.secret_page_for_l4rever,
-        name='secret_page_for_l4rever'),
-    url(r'^OK/$', core.views.ok),
-    # API
-    url(r'^api/', include('core.urls')),
-    url(r'^api/', include('communities_app.urls')),
-    url(r'^api/', include('pikabu_new_year_18_game_app.urls')),
 ]
 
 
