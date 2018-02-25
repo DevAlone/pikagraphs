@@ -12,8 +12,8 @@ if __name__ == "__main__":
 
     modules = [
         # UsersModule(),
-        CommunitiesModule(),
-        # ParseAllUsersModule()
+        # CommunitiesModule(),
+        ParseAllUsersModule()
     ]
     #
     # if settings.DEBUG:

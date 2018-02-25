@@ -1,11 +1,13 @@
 from bot.api.pikabu_api.pikabu import PikabuException
 from bot.db import DB
 from bot.module import Module
-from bot.api.pikabu_api.mobile import MobilePikabu as Client
+from bot.api.client import Client
 
 import json
 import asyncio
 import random
+
+from pikabot_graphs import settings
 
 
 class ParseAllUsersModule(Module):
@@ -19,10 +21,25 @@ class ParseAllUsersModule(Module):
         self.pool = None
 
     async def _process(self):
-        with open('.parse_all_users_module_user_state') as file:
-            state = json.loads(file.readline().strip())
+        try:
+            with open('.parse_all_users_module_user_state', 'r') as file:
+                state = json.loads(file.readline().strip())
+        except FileNotFoundError:
+            state = None
 
-        with Client(requests_only_over_proxy=False, saved_state=state) as client:
+        with Client(saved_state=state) as client:
+            if state is None:
+                if settings.PARSE_ALL_USERS_MODULE['USERNAME'] is None \
+                        or settings.PARSE_ALL_USERS_MODULE['PASSWORD'] is None:
+                    self._logger.error("Please, add user")
+                    return
+                await client.login(
+                    settings.PARSE_ALL_USERS_MODULE['USERNAME'],
+                    settings.PARSE_ALL_USERS_MODULE['PASSWORD'],
+                )
+                with open('.parse_all_users_module_user_state', 'w') as file:
+                    file.write(json.dumps(client.get_state()))
+
             try:
                 for _ in range(self.processing_cycles):
                     await self._call_coroutine_with_logging_exception(self._process_as_user(client))
@@ -58,7 +75,7 @@ class ParseAllUsersModule(Module):
         #     max_user_id = last_id + self.parsing_gap_size
 
         if max_user_id != 0:
-            self.set_last_id(max_user_id )
+            self.set_last_id(max_user_id)
 
     def get_last_id(self):
         try:
@@ -129,5 +146,4 @@ class ParseAllUsersModule(Module):
                 
                 ON CONFLICT (pikabu_id) DO UPDATE
                 SET username = excluded.username;
-                ''', noted_user_id, noted_user_name
-            )
+                ''', noted_user_id, noted_user_name)

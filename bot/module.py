@@ -3,6 +3,9 @@ import asyncio
 import logging
 
 import time
+
+import os
+
 from pikabot_graphs import settings
 
 
@@ -55,4 +58,7 @@ class Module:
             """.format(repr(ex), traceback, str(exc_type) + str(value))
             self._logger.error(exception_string)
             self._logger.exception(ex)
+            if settings.DEBUG:
+                os._exit(1)
+
             await asyncio.sleep(1)
