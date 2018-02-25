@@ -3,7 +3,8 @@ import json
 from bot.api.pikabu_api.pikabu import PikabuNotFoundException
 from bot.module import Module
 from pikabot_graphs import settings
-from bot.api.pikabu_api.mobile import MobilePikabu as Client, PikabuException as PikabuError
+from bot.api.client import Client
+from bot.api.pikabu_api.mobile import PikabuException as PikabuError
 from .db import DB
 
 import copy
@@ -12,8 +13,7 @@ import time
 
 
 class UsersModule(Module):
-    processing_period = 5
-    # processing_period = 1
+    processing_period = settings.USERS_MODULE['UPDATING_PERIOD']
 
     def __init__(self):
         super(UsersModule, self).__init__('users_module')
@@ -24,7 +24,7 @@ class UsersModule(Module):
         if self.pool is None:
             self.pool = await self.db.get_pool()
 
-        with Client(requests_only_over_proxy=False) as client:
+        with Client() as client:
             tasks = []
 
             async with self.pool.acquire() as connection:
@@ -115,32 +115,32 @@ class UsersModule(Module):
             self._logger.error("Exception during processing user \"{}\"".format(sql_user))
             raise ex
 
-    # @staticmethod
-    # def record_to_user(sql_user: dict) -> User:
-    #     user = User()
-    #
-    #     user.pk = sql_user['id']
-    #     user.pikabu_id = sql_user['pikabu_id']
-    #     user.username = sql_user['username']
-    #     user.avatar_url = sql_user['avatar_url']
-    #     user.rating = sql_user['rating']
-    #     user.comments_count = sql_user['comments_count']
-    #     user.posts_count = sql_user['posts_count']
-    #     user.hot_posts_count = sql_user['hot_posts_count']
-    #     user.pluses_count = sql_user['pluses_count']
-    #     user.minuses_count = sql_user['minuses_count']
-    #     user.subscribers_count = sql_user['subscribers_count']
-    #     user.is_rating_ban = sql_user['is_rating_ban']
-    #     user.gender = sql_user['gender']
-    #     user.approved = sql_user['approved']
-    #     user.awards = sql_user['awards']
-    #     user.signup_timestamp = sql_user['signup_timestamp']
-    #     user.info = sql_user['info']
-    #     user.updating_period = sql_user['updating_period']
-    #     user.is_updated = sql_user['is_updated']
-    #     user.last_update_timestamp = sql_user['last_update_timestamp']
-    #
-    #     return user
+    @staticmethod
+    def record_to_user(sql_user: dict) -> dict:
+        user = dict()
+
+        user['pk'] = sql_user['id']
+        user['pikabu_id'] = sql_user['pikabu_id']
+        user['username'] = sql_user['username']
+        user['avatar_url'] = sql_user['avatar_url']
+        user['rating'] = sql_user['rating']
+        user['comments_count'] = sql_user['comments_count']
+        user['posts_count'] = sql_user['posts_count']
+        user['hot_posts_count'] = sql_user['hot_posts_count']
+        user['pluses_count'] = sql_user['pluses_count']
+        user['minuses_count'] = sql_user['minuses_count']
+        user['subscribers_count'] = sql_user['subscribers_count']
+        user['is_rating_ban'] = sql_user['is_rating_ban']
+        user['gender'] = sql_user['gender']
+        user['approved'] = sql_user['approved']
+        user['awards'] = sql_user['awards']
+        user['signup_timestamp'] = sql_user['signup_timestamp']
+        user['info'] = sql_user['info']
+        user['updating_period'] = sql_user['updating_period']
+        user['is_updated'] = sql_user['is_updated']
+        user['last_update_timestamp'] = sql_user['last_update_timestamp']
+
+        return user
 
     async def _update_user(self, sql_user: dict, user_data: dict, logger):
         current_timestamp = int(time.time())
@@ -150,75 +150,76 @@ class UsersModule(Module):
 
         previous_user_state = copy.copy(user)
 
-        user.rating = int(float(user_data['rating']))
+        user['rating'] = int(float(user_data['rating']))
 
         if user_data['avatar']:
-            user.avatar_url = str(user_data['avatar'])
+            user['avatar_url'] = str(user_data['avatar'])
         else:
-            user.avatar_url = ""
+            user['avatar_url'] = ""
 
-        user.comments_count = int(user_data['comments_count'])
-        user.posts_count = int(user_data['stories_count'])
-        user.hot_posts_count = int(user_data['stories_hot_count'])
-        user.pluses_count = int(user_data['pluses_count'])
-        user.minuses_count = int(user_data['minuses_count'])
+        user['comments_count'] = int(user_data['comments_count'])
+        user['posts_count'] = int(user_data['stories_count'])
+        user['hot_posts_count'] = int(user_data['stories_hot_count'])
+        user['pluses_count'] = int(user_data['pluses_count'])
+        user['minuses_count'] = int(user_data['minuses_count'])
 
-        user.gender = str(user_data['gender'])
-        user.approved = str(user_data['approved'])
-        user.awards = json.dumps(user_data['awards'])
-        user.signup_timestamp = int(user_data['signup_date'])
-        user.pikabu_id = int(user_data['user_id'])
+        user['gender'] = str(user_data['gender'])
+        user['approved'] = str(user_data['approved'])
+        user['awards'] = json.dumps(user_data['awards'])
+        user['signup_timestamp'] = int(user_data['signup_date'])
+        user['pikabu_id'] = int(user_data['user_id'])
 
-        user.is_updated = False
-        if abs(user.rating) >= settings.USERS_MODULE['PROCESSING_ON_RATING'] \
-                or user.subscribers_count >= settings.USERS_MODULE['PROCESSING_ON_SUBSCRIBERS_COUNT']\
-                or (settings.USERS_MODULE['PROCESSING_ON_APPROVED'] and user.approved is not None and user.approved):
-            user.is_updated = True
+        user['is_updated'] = False
+        if abs(user['rating']) >= settings.USERS_MODULE['PROCESSING_ON_RATING'] \
+                or user['subscribers_count'] >= settings.USERS_MODULE['PROCESSING_ON_SUBSCRIBERS_COUNT']\
+                or (settings.USERS_MODULE['PROCESSING_ON_APPROVED']
+                    and user['approved'])is not None and user['approved']:
+            user['is_updated'] = True
 
         try:
-            user.subscribers_count = int(user_data['subscribers_count'])
+            user['subscribers_count'] = int(user_data['subscribers_count'])
         except KeyError:
             logger.warning("subscribers_count disappeared")
         try:
             if type(user_data['is_rating_ban']) is bool:
-                user.is_rating_ban = user_data['is_rating_ban']
+                user['is_rating_ban'] = user_data['is_rating_ban']
             else:
-                user.is_rating_ban = user_data['is_rating_ban'].lower().strip() == 'true'
+                user['is_rating_ban'] = user_data['is_rating_ban'].lower().strip() == 'true'
         except KeyError:
             logger.warning("is_rating_ban disappeared")
 
         was_data_changed = False
 
-        if user.rating != previous_user_state.rating or \
-                user.comments_count != previous_user_state.comments_count or \
-                user.posts_count != previous_user_state.posts_count or \
-                user.hot_posts_count != previous_user_state.hot_posts_count or \
-                user.pluses_count != previous_user_state.pluses_count or \
-                user.minuses_count != previous_user_state.minuses_count:
+        if user['rating'] != previous_user_state['rating'] or \
+                user['comments_count'] != previous_user_state['comments_count'] or \
+                user['posts_count'] != previous_user_state['posts_count'] or \
+                user['hot_posts_count'] != previous_user_state['hot_posts_count'] or \
+                user['pluses_count'] != previous_user_state['pluses_count'] or \
+                user['minuses_count'] != previous_user_state['minuses_count']:
             was_data_changed = True
 
         if 'subscribers_count' in user_data:
-            if user.subscribers_count != previous_user_state.subscribers_count:
+            if user['subscribers_count'] != previous_user_state['subscribers_count']:
                 was_data_changed = True
 
         if 'is_rating_ban' in user_data:
-            if user.is_rating_ban != previous_user_state.is_rating_ban:
+            if user['is_rating_ban'] != previous_user_state['is_rating_ban']:
                 was_data_changed = True
 
-        user.updating_period = self._calculate_user_updating_period(sql_user, was_data_changed)
+        user['updating_period'] = self._calculate_user_updating_period(sql_user, was_data_changed)
 
-        user.last_update_timestamp = current_timestamp
+        user['last_update_timestamp'] = current_timestamp
 
         async with self.pool.acquire() as connection:
             async with connection.transaction():
                 await connection.execute(self.insert_user_sql,
-                                         user.username, user.rating, user.comments_count,
-                                         user.posts_count, user.hot_posts_count, user.pluses_count,
-                                         user.minuses_count, user.subscribers_count, user.is_rating_ban,
-                                         user.updating_period, user.avatar_url, user.info,
-                                         user.is_updated, user.last_update_timestamp, user.approved,
-                                         user.awards, user.gender, user.pikabu_id,
-                                         user.signup_timestamp, False
+                                         user['username'], user['rating'], user['comments_count'],
+                                         user['posts_count'], user['hot_posts_count'], user['pluses_count'],
+                                         user['minuses_count'], user['subscribers_count'], user['is_rating_ban'],
+                                         user['updating_period'], user['avatar_url'], user['info'],
+                                         user['is_updated'], user['last_update_timestamp'], user['approved'],
+                                         user['awards'], user['gender'], user['pikabu_id'],
+                                         user['signup_timestamp'], False
                                          )
 
                 # await connection.executemany("""
@@ -228,13 +229,13 @@ class UsersModule(Module):
                 #         SELECT * FROM $1 WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
                 #     );
                 #     """, [
-                #     ('core_userratingentry', current_timestamp, user.rating, sql_user['id']),
-                #     ('core_usercommentscountentry', current_timestamp, user.comments_count, sql_user['id']),
-                #     ('core_userpostscountentry', current_timestamp, user.posts_count, sql_user['id']),
-                #     ('core_userhotpostscountentry', current_timestamp, user.hot_posts_count, sql_user['id']),
-                #     ('core_userplusescountentry', current_timestamp, user.pluses_count, sql_user['id']),
-                #     ('core_userminusescountentry', current_timestamp, user.minuses_count, sql_user['id']),
-                #     ('core_usersubscriberscountentry', current_timestamp, user.subscribers_count, sql_user['id'])]
+                #     ('core_userratingentry', current_timestamp, user['rating'], sql_user['id']),
+                #     ('core_usercommentscountentry', current_timestamp, user['comments_count'], sql_user['id']),
+                #     ('core_userpostscountentry', current_timestamp, user['posts_count'], sql_user['id']),
+                #     ('core_userhotpostscountentry', current_timestamp, user['hot_posts_count'], sql_user['id']),
+                #     ('core_userplusescountentry', current_timestamp, user['pluses_count'], sql_user['id']),
+                #     ('core_userminusescountentry', current_timestamp, user['minuses_count'], sql_user['id']),
+                #     ('core_usersubscriberscountentry', current_timestamp, user['subscribers_count'], sql_user['id'])]
                 # )
                 await connection.execute(
                     """
@@ -242,42 +243,42 @@ class UsersModule(Module):
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userratingentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.rating, sql_user['id'])
+                    );""", current_timestamp, user['rating'], sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_usercommentscountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_usercommentscountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.comments_count, sql_user['id'])
+                    );""", current_timestamp, user['comments_count'], sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_userpostscountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userpostscountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.posts_count, sql_user['id'])
+                    );""", current_timestamp, user['posts_count'], sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_userhotpostscountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userhotpostscountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.hot_posts_count, sql_user['id'])
+                    );""", current_timestamp, user['hot_posts_count'], sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_userplusescountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userplusescountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.pluses_count, sql_user['id'])
+                    );""", current_timestamp, user['pluses_count'], sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_userminusescountentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
                         SELECT * FROM core_userminusescountentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                    );""", current_timestamp, user.minuses_count, sql_user['id'])
+                    );""", current_timestamp, user['minuses_count'], sql_user['id'])
                 await connection.execute(
                     """
                     INSERT INTO core_usersubscriberscountentry (timestamp, value, user_id) 
@@ -287,9 +288,9 @@ class UsersModule(Module):
                         WHERE value = $2 and user_id = $3 
                         ORDER BY -id 
                         LIMIT 1
-                    );""", current_timestamp, user.subscribers_count, sql_user['id'])
+                    );""", current_timestamp, user['subscribers_count'], sql_user['id'])
 
-        logger.debug('end processing user {}'.format(user.username))
+        logger.debug('end processing user {}'.format(user['username']))
 
     @staticmethod
     def _calculate_user_updating_period(user: dict, was_data_changed: bool) -> int:
@@ -321,8 +322,8 @@ class UsersModule(Module):
 
         # limiting depend on subscribers count or rating
         period_limiter_by_rating = get_with_limiter(updating_period, user['rating'], 50000)
-        period_limiter_by_subscrebers_count = get_with_limiter(updating_period, user['subscribers_count'], 500)
-        period_limiter = max(period_limiter_by_rating, period_limiter_by_subscrebers_count)
+        period_limiter_by_subscribers_count = get_with_limiter(updating_period, user['subscribers_count'], 500)
+        period_limiter = max(period_limiter_by_rating, period_limiter_by_subscribers_count)
 
         if updating_period < period_limiter:
             updating_period = period_limiter

@@ -11,17 +11,17 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
 
     modules = [
-        # UsersModule(),
-        # CommunitiesModule(),
+        UsersModule(),
+        CommunitiesModule(),
         ParseAllUsersModule()
     ]
-    #
-    # if settings.DEBUG:
-    #     modules = [
-    #         UsersModule(),
-    #         # CommunitiesModule(),
-    #         # ParseAllUsersModule(),
-    #     ]
+
+    if settings.DEBUG:
+        modules = [
+            UsersModule(),
+            # CommunitiesModule(),
+            # ParseAllUsersModule(),
+        ]
 
     tasks = []
 
