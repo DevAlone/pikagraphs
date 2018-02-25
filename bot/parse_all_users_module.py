@@ -11,7 +11,7 @@ from pikabot_graphs import settings
 
 
 class ParseAllUsersModule(Module):
-    processing_period = 10
+    processing_period = 60
     parsing_gap_size = 10
     processing_cycles = 1
 

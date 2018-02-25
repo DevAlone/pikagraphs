@@ -15,6 +15,7 @@ from server.communities import communities, get_community_graph_item_resource
 from server.index import index, user_distributions
 from server.pikabu_new_year_18_game import top_items, scoreboards
 from server.users import pikabu_users, users, get_user_graph_item_resource
+from server.secret_page_for_lactarius import secret_page_for_lactarius
 
 
 async def pre_request(request: aiohttp.ClientRequest):
@@ -227,6 +228,8 @@ async def create_server():
 
     server.register_resource('new_year_2018_game/top_items', top_items)
     server.register_resource('new_year_2018_game/scoreboards', scoreboards)
+
+    server.register_resource('secret_page_for_lactarius', secret_page_for_lactarius)
 
     # logging
     logger = logging.getLogger('aiohttp.access')

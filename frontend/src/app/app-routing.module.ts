@@ -7,6 +7,7 @@ import { NewYear2018GameComponent } from './new-year-2018-game/new-year-2018-gam
 import { RouterModule, Routes } from '@angular/router';
 import {AboutComponent} from './about/about.component';
 import {IndexComponent} from './index/index.component';
+import { SecretPageForLactariusComponent } from './secret-page-for-lactarius/secret-page-for-lactarius.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'index', pathMatch: 'full' },
@@ -17,6 +18,7 @@ const routes: Routes = [
     { path: 'user/:username', component: UserComponent },
     { path: 'community/:url_name', component: CommunityComponent },
     { path: 'new_year_2018_game', component:  NewYear2018GameComponent},
+    { path: 'secret_page_for_lactarius', component:  SecretPageForLactariusComponent},
 ];
 
 @NgModule({

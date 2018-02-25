@@ -26,6 +26,7 @@ import { AboutComponent } from './about/about.component';
 import { LoadingAnimationComponent } from './loading-animation/loading-animation.component';
 import { LoadingAnimationService } from './loading-animation.service';
 import { IndexComponent } from './index/index.component';
+import { SecretPageForLactariusComponent } from './secret-page-for-lactarius/secret-page-for-lactarius.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { IndexComponent } from './index/index.component';
     AboutComponent,
     LoadingAnimationComponent,
     IndexComponent,
+    SecretPageForLactariusComponent,
     ],
     imports: [
         BrowserModule,
