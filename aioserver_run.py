@@ -137,7 +137,7 @@ async def pre_request(request: aiohttp.ClientRequest):
             <input name="q" id="googleSearchText" type="text" required>
             <div>
                 <input name="btnK" value="Not Google Search" type="submit">
-                <input name="btnI" value="I'm not Feeling Lucky" type="submit">
+                <input name="btnI" value="I'm not feeling Lucky" type="submit">
             </div>
         </form>
     </div>
