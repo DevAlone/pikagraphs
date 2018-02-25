@@ -173,8 +173,8 @@ BOT_CONCURRENT_TASKS = 100
 BOT_CLIENT_TIMEOUT = 10
 
 PARSE_ALL_USERS_MODULE = {
-    'USERNAME': 'g7ik0q3bqj',
-    'PASSWORD': 'HLlgeI1s44lVNUrsr0g',
+    'USERNAME': None,
+    'PASSWORD': None,
 }
 
 # / Bot settings
