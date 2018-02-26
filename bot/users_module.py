@@ -294,6 +294,9 @@ class UsersModule(Module):
 
     @staticmethod
     def _calculate_user_updating_period(user: dict, was_data_changed: bool) -> int:
+        if user['signup_timestamp'] >= time.time() - 3600 * 24:
+            return 3600 * (24 + 12)
+        
         def get_with_limiter(period, limiter_value, limiter_max):
             limiter_value = abs(limiter_value)
             if limiter_value > limiter_max:
