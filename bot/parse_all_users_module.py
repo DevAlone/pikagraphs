@@ -11,9 +11,9 @@ from pikabot_graphs import settings
 
 
 class ParseAllUsersModule(Module):
-    processing_period = 30
-    parsing_gap_size = 10
-    processing_cycles = 1
+    processing_period = settings.PARSE_ALL_USERS_MODULE['PROCESSING_PERIOD']
+    parsing_gap_size = settings.PARSE_ALL_USERS_MODULE['PROCESSING_GAP_SIZE']
+    processing_cycles = settings.PARSE_ALL_USERS_MODULE['PROCESSING_CYCLES']
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')
