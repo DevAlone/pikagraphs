@@ -29,7 +29,7 @@ class ParseAllUsersModule(Module):
 
         with Client(saved_state=state) as client:
             if state is None:
-                self.authorize_client(client)
+                await self.authorize_client(client)
 
             try:
                 for _ in range(self.processing_cycles):
