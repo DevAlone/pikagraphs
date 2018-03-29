@@ -1,50 +1,58 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-	<meta charset="utf-8">
-	<title>Pikagraphs - статистика Пикабу</title>
-	<base href="/">
+    <meta charset="utf-8">
+    <title>Pikagraphs - статистика Пикабу</title>
+    <base href="/">
 
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="referrer" content="no-referrer">
 
-	<script src="/assets/amcharts/amcharts.js"></script>
-	<script src="/assets/amcharts/serial.js"></script>
-	<script src="/assets/amcharts/export.min.js"></script>
-	<script src="/assets/amcharts/light.js"></script>
-	<link rel="stylesheet" href="/assets/amcharts/export.css" type="text/css" media="all" />
+    <script src="/assets/amcharts/amcharts.js"></script>
+    <script src="/assets/amcharts/serial.js"></script>
+    <script src="/assets/amcharts/export.min.js"></script>
+    <script src="/assets/amcharts/light.js"></script>
+    <link rel="stylesheet" href="/assets/amcharts/export.css" type="text/css" media="all" />
 
-	<!-- Yandex.Metrika counter -->
-	<script type="text/javascript" >
-	    (function (d, w, c) {
-	        (w[c] = w[c] || []).push(function() {
-	            try {
-	                w.yaCounter45667752 = new Ya.Metrika({
-	                    id:45667752,
-	                    clickmap:true,
-	                    trackLinks:true,
-	                    accurateTrackBounce:true,
-	                    webvisor:true
-	                });
-	            } catch(e) { }
-	        });
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(d, w, c) {
+            (w[c] = w[c] || []).push(function() {
+                try {
+                    w.yaCounter45667752 = new Ya.Metrika({
+                        id: 45667752,
+                        clickmap: true,
+                        trackLinks: true,
+                        accurateTrackBounce: true,
+                        webvisor: true
+                    });
+                } catch (e) {}
+            });
 
-	        var n = d.getElementsByTagName("script")[0],
-	            s = d.createElement("script"),
-	            f = function () { n.parentNode.insertBefore(s, n); };
-	        s.type = "text/javascript";
-	        s.async = true;
-	        s.src = "https://mc.yandex.ru/metrika/watch.js";
+            var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function() {
+                    n.parentNode.insertBefore(s, n);
+                };
+            s.type = "text/javascript";
+            s.async = true;
+            s.src = "https://mc.yandex.ru/metrika/watch.js";
 
-	        if (w.opera == "[object Opera]") {
-	            d.addEventListener("DOMContentLoaded", f, false);
-	        } else { f(); }
-	    })(document, window, "yandex_metrika_callbacks");
-	</script>
-	<noscript><div><img src="https://mc.yandex.ru/watch/45667752" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-	<!-- /Yandex.Metrika counter -->
+            if (w.opera == "[object Opera]") {
+                d.addEventListener("DOMContentLoaded", f, false);
+            } else {
+                f();
+            }
+        })(document, window, "yandex_metrika_callbacks");
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/45667752" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
 </head>
+
 <body>
-	<app-root></app-root>
+    <app-root></app-root>
 </body>
+
 </html>

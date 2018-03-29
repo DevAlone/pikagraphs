@@ -1,7 +1,7 @@
 <div id="usersComponent" class="usersComponent">
     <app-search-box #searchBox [parent]="this" [callback]="'searchParametersChanged'" [sortByFields]="sortByFields"></app-search-box>
     <div id="usersBox" class="users itemList" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
-        <app-nice-link class="user item" *ngFor="let user of users" routerLink="/user/{{ user.username }}">
+        <a class="niceLink user item" *ngFor="let user of users" routerLink="/user/{{ user.username }}">
             <span>
                 <img class="avatar" src="{{ user.avatar_url }}">
                 <span>{{ user.username }}</span>
@@ -21,6 +21,6 @@
                     </span>
             </span>
             </span>
-        </app-nice-link>
+        </a>
     </div>
 </div>

@@ -3,27 +3,25 @@
     height: 100%;
 
     display: flex;
-	flex-direction: column;
-	flex-wrap: nowrap;
-	justify-content: flex-start;
-	align-items: stretch;
-	align-content: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: center;
 }
 
 .approved {
-	background: #b4ffa3;
-	padding: 3px 6px;
-	border-radius: 3px;
-	/*border: 1px solid #000;*/
+    background: #b4ffa3;
+    padding: 3px 6px;
+    border-radius: 3px;
+    /*border: 1px solid #000;*/
 }
 
 .item:hover .approved {
-	/*color: #000;*/
-	background: none;
+    /*color: #000;*/
+    background: none;
 }
 
 .checkMark {
-	/*font-weight: 100;*/
+    /*font-weight: 100;*/
 }
-
-
