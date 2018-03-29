@@ -35,14 +35,6 @@ class ParseAllUsersModule(Module):
                 for _ in range(self.processing_cycles):
                     await self._call_coroutine_with_logging_exception(
                         self._process_as_user(client))
-            except PikabuException as ex:
-                ex_str = str(ex).lower().strip()
-                self.logger.error("ex_str = {}".format(ex_str))
-                if ex_str == 'unauthorized':
-                    await self.authorize_client(client)
-                else:
-                    self._logger.exception(ex)
-                    await asyncio.sleep(10)
             except BaseException as ex:
                 self._logger.exception(ex)
                 await asyncio.sleep(10)
