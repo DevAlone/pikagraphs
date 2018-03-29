@@ -29,23 +29,33 @@ class ParseAllUsersModule(Module):
 
         with Client(saved_state=state) as client:
             if state is None:
-                if settings.PARSE_ALL_USERS_MODULE['USERNAME'] is None \
-                        or settings.PARSE_ALL_USERS_MODULE['PASSWORD'] is None:
-                    self._logger.error("Please, add user")
-                    return
-                await client.login(
-                    settings.PARSE_ALL_USERS_MODULE['USERNAME'],
-                    settings.PARSE_ALL_USERS_MODULE['PASSWORD'],
-                )
-                with open('.parse_all_users_module_user_state', 'w') as file:
-                    file.write(json.dumps(client.get_state()))
+                self.authorize_client()
 
             try:
                 for _ in range(self.processing_cycles):
-                    await self._call_coroutine_with_logging_exception(self._process_as_user(client))
+                    await self._call_coroutine_with_logging_exception(
+                        self._process_as_user(client))
+            except PikabuException as ex:
+                ex_str = str(ex).lower().strip()
+                if ex_str == 'unauthorized':
+                    await self.authorize_client(client)
+                else:
+                    self._logger.exception(ex)
+                    await asyncio.sleep(10)
             except BaseException as ex:
                 self._logger.exception(ex)
                 await asyncio.sleep(10)
+
+    async def authorize_client(self, client):
+        if settings.PARSE_ALL_USERS_MODULE['USERNAME'] is None or settings.PARSE_ALL_USERS_MODULE['PASSWORD'] is None:
+            raise Exception("Please, add user")
+
+        await client.login(
+            settings.PARSE_ALL_USERS_MODULE['USERNAME'],
+            settings.PARSE_ALL_USERS_MODULE['PASSWORD'],
+        )
+        with open('.parse_all_users_module_user_state', 'w') as file:
+            file.write(json.dumps(client.get_state()))
 
     async def _process_as_user(self, client):
         last_id = self.get_last_id() + 1
@@ -92,7 +102,8 @@ class ParseAllUsersModule(Module):
 
     async def add_note(self, user_id: int, client):
         note_text = str(random.randint(1, 999999))
-        self._logger.debug('adding note "{}" for user with id "{}"'.format(note_text, user_id))
+        self._logger.debug('adding note "{}" for user with id "{}"'.format(
+            note_text, user_id))
 
         try:
             await client.user_note_set(note_text, user_id)
@@ -100,7 +111,8 @@ class ParseAllUsersModule(Module):
             message = str(ex).strip()
             if message == 'Добавлять заметку самому себе деструктивно и неразумно' \
                     or message == 'Указанный пользователь не найден':
-                self._logger.warning('Пользователь с id "{}" не найден'.format(user_id))
+                self._logger.warning(
+                    'Пользователь с id "{}" не найден'.format(user_id))
             else:
                 raise ex
 
@@ -143,7 +155,7 @@ class ParseAllUsersModule(Module):
                 INSERT INTO core_pikabuuser
                     (pikabu_id, username, is_processed)
                 VALUES ($1, $2, false)
-                
+
                 ON CONFLICT (pikabu_id) DO UPDATE
                 SET username = excluded.username;
                 ''', noted_user_id, noted_user_name)
