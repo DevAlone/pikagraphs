@@ -1,126 +1,79 @@
 <div class="block warning">
-  <p>К сожалению, администрация pikabu запретила собирать статистику, поэтому проект pikagraphs закрывается.</p>
+    <p>К сожалению, администрация pikabu запретила собирать статистику, поэтому проект pikagraphs закрывается.</p>
 
-  <p>Если вам интересна собранная статистика, вы можете скачать базу данных. Для этого нужно проделать следующие шаги:</p>
-  <ol>
-    <li>
-      Скачать дамп базы по ссылке
-      <a href="http://test.d3d.info/ueh2iPhaeCoir8jo/pikabot_graphs.db">
+    <p>Если вам интересна собранная статистика, вы можете скачать базу данных. Для этого нужно проделать следующие шаги:</p>
+    <ol>
+        <li>
+            Скачать дамп базы по ссылке
+            <a href="http://test.d3d.info/ueh2iPhaeCoir8jo/pikabot_graphs.db">
         http://test.d3d.info/ueh2iPhaeCoir8jo/pikabot_graphs.db
       </a>
-    </li>
-    <li>Установить postgresql
-      <a href="https://help.ubuntu.com/lts/serverguide/postgresql.html" target="_blank" rel="noopener nofollow">
-        https://help.ubuntu.com/lts/serverguide/postgresql.html
-      </a>
-    </li>
-    <li>Создать пользователя pikabot_graphs и базу данных pikabot_graphs</li>
-    <li>Залогиниться под пользователем postgres <code>sudo su postgres</code></li>
-    <li>Загрузить базу данных из дампа <code>pg_restore -Fc -d pikabot_graphs pikabot_graphs.db</code></li>
-  </ol>
+        </li>
+        <li>Установить postgresql
+            <app-nice-link href="https://help.ubuntu.com/lts/serverguide/postgresql.html">
+                https://help.ubuntu.com/lts/serverguide/postgresql.html
+            </app-nice-link>
+        </li>
+        <li>Создать пользователя pikabot_graphs и базу данных pikabot_graphs</li>
+        <li>Залогиниться под пользователем postgres <code>sudo su postgres</code></li>
+        <li>Загрузить базу данных из дампа <code>pg_restore -Fc -d pikabot_graphs pikabot_graphs.db</code></li>
+    </ol>
 </div>
 <h1>Pikagraphs - статистика Пикабу</h1>
 <div class="block">
-  Pikagrahps - проект по сбору статистики с сайта
-  <a href="https://pikabu.ru" target="_blank" rel="nofollow noopener">Пикабу</a>, запущенный 19 августа
-  2017 года. За время существования был несколько раз переписан на различных технологиях для достижения большей
-  производительности. Сейчас в базе {{ number_of_users }} пользователей, из которых обновляются
-  {{ number_of_updated_users }}.
+    Pikagrahps - проект по сбору статистики с сайта
+    <app-nice-link href="https://pikabu.ru">Пикабу</app-nice-link>, запущенный 19 августа 2017 года. За время существования был несколько раз переписан на различных технологиях для достижения большей производительности. Сейчас в базе {{ number_of_users }} пользователей, из которых обновляются {{ number_of_updated_users }}.
 </div>
 
 <div *ngIf="graphsAreVisible">
-  <h2>Распределение пользователей по дате регистрации</h2>
-  <app-graph graphType="distribution" graphId="user/signup_timestamp">
+    <h2>Распределение пользователей по дате регистрации</h2>
+    <app-graph graphType="distribution" graphId="user/signup_timestamp">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по рейтингу</h2>
-  <!--[xIsTimestamp]="false"-->
-  <app-graph
-    graphType="distribution"
-    graphId="user/rating"
-    type="barchart"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    <h2>Распределение пользователей по рейтингу</h2>
+    <!--[xIsTimestamp]="false"-->
+    <app-graph graphType="distribution" graphId="user/rating" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по comments_count</h2>
-  <app-graph
-    graphType="distribution"
-    graphId="user/comments_count"
-    type="barchart"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    <h2>Распределение пользователей по comments_count</h2>
+    <app-graph graphType="distribution" graphId="user/comments_count" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по posts_count</h2>
-  <app-graph
-    graphType="distribution"
-    graphId="user/posts_count"
-    type="barchart"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    <h2>Распределение пользователей по posts_count</h2>
+    <app-graph graphType="distribution" graphId="user/posts_count" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по hot_posts_count</h2>
-  <app-graph
-    graphType="distribution"
-    graphId="user/hot_posts_count"
-    type="barchart"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    <h2>Распределение пользователей по hot_posts_count</h2>
+    <app-graph graphType="distribution" graphId="user/hot_posts_count" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по pluses_count</h2>
-  <app-graph
-    graphType="distribution"
-    graphId="user/pluses_count"
-    type="barchart"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    <h2>Распределение пользователей по pluses_count</h2>
+    <app-graph graphType="distribution" graphId="user/pluses_count" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по minuses_count</h2>
-  <app-graph
-    graphType="distribution"
-    graphId="user/minuses_count"
-    type="barchart"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    <h2>Распределение пользователей по minuses_count</h2>
+    <app-graph graphType="distribution" graphId="user/minuses_count" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по subscribers_count</h2>
-  <app-graph
-    graphType="distribution"
-    graphId="user/subscribers_count"
-    type="barchart"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    <h2>Распределение пользователей по subscribers_count</h2>
+    <app-graph graphType="distribution" graphId="user/subscribers_count" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по updating_period</h2>
-  <app-graph
-    graphType="distribution"
-    graphId="user/updating_period"
-    type="barchart"
-    [isLogarithmic]="true"
-    [xIsTimestamp]="false">
+    <h2>Распределение пользователей по updating_period</h2>
+    <app-graph graphType="distribution" graphId="user/updating_period" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
 
-  </app-graph>
+    </app-graph>
 
-  <h2>Распределение пользователей по last_update_timestamp</h2>
-  <app-graph
-    graphType="distribution"
-    graphId="user/last_update_timestamp"
-    type="barchart"
-    [isLogarithmic]="true">
+    <h2>Распределение пользователей по last_update_timestamp</h2>
+    <app-graph graphType="distribution" graphId="user/last_update_timestamp" type="barchart" [isLogarithmic]="true">
 
-  </app-graph>
+    </app-graph>
 </div>

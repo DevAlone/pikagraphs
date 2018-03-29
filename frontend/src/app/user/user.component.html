@@ -1,13 +1,9 @@
 <div *ngIf="user">
     <h1>
         <img class="avatar" src="{{ user.avatar_url }}">
-        <a title="Посмотреть на пикабу"
-                class="niceLink"
-                href="https://pikabu.ru/profile/{{ user.username }}"
-                target="_blank"
-                rel="nofollow noopener">
+        <app-nice-link title="Посмотреть на пикабу" href="https://pikabu.ru/profile/{{ user.username }}">
             {{ user.username }}
-        </a>
+        </app-nice-link>
     </h1>
     <div class="info block" *ngIf="user.info">
         {{ user.info }}

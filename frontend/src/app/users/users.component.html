@@ -1,38 +1,26 @@
 <div id="usersComponent" class="usersComponent">
-    <app-search-box 
-        #searchBox
-        [parent]="this" 
-        [callback]="'searchParametersChanged'" 
-        [sortByFields]="sortByFields"></app-search-box>
-    <div id="usersBox" class="users itemList"
-            infiniteScroll
-            [infiniteScrollDistance]="2"
-            [infiniteScrollThrottle]="50"
-            (scrolled)="onScroll()"
-            [scrollWindow]="false">
-        <a class="user niceLink item"
-                *ngFor="let user of users"
-                routerLink="/user/{{ user.username }}">
+    <app-search-box #searchBox [parent]="this" [callback]="'searchParametersChanged'" [sortByFields]="sortByFields"></app-search-box>
+    <div id="usersBox" class="users itemList" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
+        <app-nice-link class="user item" *ngFor="let user of users" routerLink="/user/{{ user.username }}">
             <span>
                 <img class="avatar" src="{{ user.avatar_url }}">
                 <span>{{ user.username }}</span>
-                <a href="https://pikabu.ru/profile/{{ user.username }}" target="_blank"
-                        rel="nofollow noopener"
-                        (click)="$event.stopPropagation();">
-                    <img src="https://s.pikabu.ru/favicon.ico" title="Показать на пикабу">
-                </a>
+            <app-nice-link href="https://pikabu.ru/profile/{{ user.username }}" (click)="$event.stopPropagation();">
+                <img src="https://s.pikabu.ru/favicon.ico" title="Показать на пикабу">
+            </app-nice-link>
             </span>
             <span class="right">
-                <span class="approved" *ngIf="user.approved"><span class="checkMark">✔</span><!-- <img src="https://cs.pikabu.ru/images/approved.png" style="height:7px"> --> {{ user.approved }}</span>
-                <!-- Рейтинг <span class="value">{{ user.rating }}</span>
+                <span class="approved" *ngIf="user.approved"><span class="checkMark">✔</span>
+            <!-- <img src="https://cs.pikabu.ru/images/approved.png" style="height:7px"> -->{{ user.approved }}</span>
+            <!-- Рейтинг <span class="value">{{ user.rating }}</span>
                 Подписчиков <span class="value">{{ user.subscribers_count }}</span> -->
-                <span *ngIf="searchBox.currentSortByField.fieldName != 'username'">
+            <span *ngIf="searchBox.currentSortByField.fieldName != 'username'">
                     <span>{{ searchBox.currentSortByField.humanReadableName.name }}</span>
-                    <span class="value">
+            <span class="value">
                         {{ user[searchBox.currentSortByField.fieldName] }}
                     </span>
-                </span>
             </span>
-        </a>
+            </span>
+        </app-nice-link>
     </div>
 </div>

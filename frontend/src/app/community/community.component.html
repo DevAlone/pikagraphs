@@ -1,19 +1,16 @@
 <div class="communityComponent" *ngIf="community">
-	<div class="block header">
-		<img class="communityBackground" src="{{ community.background_image_url }}">
+    <div class="block header">
+        <img class="communityBackground" src="{{ community.background_image_url }}">
 
-		<h1>
-	        <img class="avatar" src="{{ community.avatar_url }}">
-	        <a title="Посмотреть на пикабу"
-	                class="niceLink"
-	                href="https://pikabu.ru/community/{{ community.url_name }}"
-	                target="_blank"
-	                rel="nofollow noopener">
-	            {{ community.name }}
-	        </a>
-	    </h1>
-	</div>
-    
+        <h1>
+            <img class="avatar" src="{{ community.avatar_url }}">
+            <app-nice-link title="Посмотреть на пикабу" href="https://pikabu.ru/community/{{ community.url_name }}">
+
+                {{ community.name }}
+            </app-nice-link>
+        </h1>
+    </div>
+
     <div class="infoBlock block">
         <div class="row">
             <div class="column key">Подписчиков</div>
