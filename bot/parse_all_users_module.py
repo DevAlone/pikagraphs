@@ -37,6 +37,7 @@ class ParseAllUsersModule(Module):
                         self._process_as_user(client))
             except PikabuException as ex:
                 ex_str = str(ex).lower().strip()
+                self.logger.error("ex_str = {}".format(ex_str))
                 if ex_str == 'unauthorized':
                     await self.authorize_client(client)
                 else:
