@@ -199,7 +199,7 @@ async def create_server():
     )
 
     server = Server(
-        '127.0.0.1',
+        settings.API_SERVER_ADDRESS,
         access_log_format='%Tfs %a %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"')
     server.set_base_address('/api')
 
