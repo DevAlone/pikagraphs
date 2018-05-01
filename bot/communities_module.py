@@ -16,7 +16,7 @@ class CommunitiesModule(Module):
         self.pool = None
 
     async def _process(self):
-        self._logger.debug('start processing communities')
+        self.logger.debug('start processing communities')
 
         if self.pool is None:
             self.pool = await self.db.get_pool()
@@ -25,7 +25,7 @@ class CommunitiesModule(Module):
             tasks = []
 
             for i in range(1, 10000):
-                self._logger.debug('got communities page {}'.format(i))
+                self.logger.debug('got communities page {}'.format(i))
                 res = await client.communities_get(page=i, sort='act', community_type='all')
                 communities = res['list']
                 if len(communities) == 0:
@@ -67,7 +67,7 @@ class CommunitiesModule(Module):
                         current_timestamp:
                     return
 
-                self._logger.debug('start processing community {}'.format(community_url_name))
+                self.logger.debug('start processing community {}'.format(community_url_name))
 
                 subscribers_count = json_data['subscribers']
                 stories_count = json_data['stories']
@@ -100,7 +100,7 @@ class CommunitiesModule(Module):
                     );''', current_timestamp, subscribers_count, stories_count, community_sql['id']
                 )
 
-        self._logger.debug('end processing community {}'.format(community_url_name))
+        self.logger.debug('end processing community {}'.format(community_url_name))
 #
 #     insert_community_sql = """
 # INSERT INTO communities_app_community

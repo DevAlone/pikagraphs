@@ -18,17 +18,11 @@ if __name__ == "__main__":
 
     if settings.DEBUG:
         modules = [
-            # UsersModule(),
-            # CommunitiesModule(),
+            UsersModule(),
+            CommunitiesModule(),
             ParseAllUsersModule(),
         ]
 
-    tasks = []
+    tasks = [module.process() for module in modules]
 
-    for module in modules:
-        tasks.append(module.process())
-        # if module.last_processing_timestamp + module.processing_period < int(time.time()):
-        #     tasks.append(module.process())
-        #     module.lastProcessTimestamp = int(time.time())
-
-    loop.run_until_complete(asyncio.wait(tasks))
+    loop.run_until_complete(asyncio.gather(*tasks))

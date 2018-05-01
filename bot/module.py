@@ -1,16 +1,14 @@
+from pikabot_graphs import settings
+
 import sys
 import asyncio
 import logging
-
 import time
-
 import os
-
-from pikabot_graphs import settings
 
 
 class Module:
-    _logger = None
+    logger = None
     processing_period = 1
     last_processing_timestamp = 0
 
@@ -19,23 +17,15 @@ class Module:
         pass
 
     def __init__(self, module_name):
-        self._logger = logging.getLogger('pikabot_graphs/{}'.format(module_name))
-        self._logger.setLevel(logging.DEBUG)
+        self.logger = logging.getLogger('pikabot_graphs/{}'.format(module_name))
+        self.logger.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
-        error_file_handler = logging.FileHandler('logs/{}.error.log'.format(module_name))
-        error_file_handler.setLevel(logging.ERROR)
-        info_file_handler = logging.FileHandler('logs/{}.log'.format(module_name))
-        info_file_handler.setLevel(logging.INFO)
+        logger_file_handler = logging.FileHandler('logs/{}.log'.format(module_name))
+        logger_file_handler.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
+        logger_file_handler.setFormatter(logging.Formatter(settings.LOGS_FORMAT))
+        self.logger.addHandler(logger_file_handler)
 
-        if settings.DEBUG:
-            debug_file_handler = logging.FileHandler('logs/{}.debug.log'.format(module_name))
-            debug_file_handler.setLevel(logging.DEBUG)
-            self._logger.addHandler(debug_file_handler)
-
-        self._logger.addHandler(error_file_handler)
-        self._logger.addHandler(info_file_handler)
-
-        self._logger.info('{} initialization...'.format(module_name))
+        self.logger.info('{} initialization...'.format(module_name))
 
     async def process(self):
         while True:
@@ -51,14 +41,15 @@ class Module:
         except KeyboardInterrupt as ex:
             raise ex
         except BaseException as ex:
+            # TODO: fix logging this shit
             exc_type, value, traceback = sys.exc_info()
             exception_string = """Error during processing module: {}
             Traceback: {}
             Some other information: {}
             """.format(repr(ex), traceback, str(exc_type) + str(value))
-            self._logger.error(exception_string)
-            self._logger.exception(ex)
+            self.logger.error(exception_string)
+            self.logger.exception(ex)
             if settings.DEBUG:
                 os._exit(1)
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(10)

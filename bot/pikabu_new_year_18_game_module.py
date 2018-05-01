@@ -13,7 +13,7 @@ class PikabuNewYear18GameModule(Module):
         super(PikabuNewYear18GameModule, self).__init__('pikabu_new_year_18_game_module')
 
     async def _process(self):
-        self._logger.debug("pikabu_new_year_18_game_module is processing...")
+        self.logger.debug("pikabu_new_year_18_game_module is processing...")
         top_url = "https://pikabu.ru/page/newyear2018/api/controller.php?action=get_top"
         async with aiohttp.ClientSession() as session:
             async with session.get("http://d3d.info:55555/get/best/http/proxy/") as resp:

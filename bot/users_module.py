@@ -60,7 +60,7 @@ class UsersModule(Module):
             await asyncio.wait(tasks)
 
     async def process_pikabu_user(self, sql_pikabu_user):
-        self._logger.debug("start processing pikabu_user: {}".format(sql_pikabu_user))
+        self.logger.debug("start processing pikabu_user: {}".format(sql_pikabu_user))
         async with self.pool.acquire() as connection:
             username = sql_pikabu_user['username'].strip().lower()
             pikabu_id = sql_pikabu_user['pikabu_id']
@@ -81,7 +81,7 @@ class UsersModule(Module):
             ''', pikabu_id)
 
     async def process_user(self, user: dict, client):
-        self._logger.debug('start processing user {}'.format(user['username']))
+        self.logger.debug('start processing user {}'.format(user['username']))
         """bot.api.pikabu_api.pikabu.PikabuNotFoundException: Requested page could not be found"""
         try:
             return await self._process_user(user, client)
@@ -110,9 +110,9 @@ class UsersModule(Module):
     async def _process_user(self, sql_user: dict, client):
         user_data = await client.user_profile_get(sql_user['username'])
         try:
-            await self._update_user(sql_user, user_data['user'], self._logger)
+            await self._update_user(sql_user, user_data['user'], self.logger)
         except BaseException as ex:
-            self._logger.error("Exception during processing user \"{}\"".format(sql_user))
+            self.logger.error("Exception during processing user \"{}\"".format(sql_user))
             raise ex
 
     @staticmethod

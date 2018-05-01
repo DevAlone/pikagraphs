@@ -10,7 +10,7 @@ class DB:
 
     def __init__(self):
         self._pool = None
-        self.users = UsersModule(self)
+        # self.users = UsersModule(self)
 
     async def get_pool(self):
         if self._pool is None:
@@ -24,11 +24,12 @@ class DB:
         return self._pool
 
 
-class UsersModule:
-    def __init__(self, db):
-        self.db = db
+# class UsersModule:
+#     def __init__(self, db):
+#         self.db = db
+#
+#     # async def save_user(self, user):
+#     #     pass
 
-    # async def save_user(self, user):
-    #     pass
 
 _db = DB()

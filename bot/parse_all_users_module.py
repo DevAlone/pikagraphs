@@ -1,3 +1,5 @@
+import os
+
 from bot.api.pikabu_api.pikabu import PikabuException
 from bot.db import DB
 from bot.module import Module
@@ -31,13 +33,8 @@ class ParseAllUsersModule(Module):
             if state is None:
                 await self.authorize_client(client)
 
-            try:
-                for _ in range(self.processing_cycles):
-                    await self._call_coroutine_with_logging_exception(
-                        self._process_as_user(client))
-            except BaseException as ex:
-                self._logger.exception(ex)
-                await asyncio.sleep(10)
+            for _ in range(self.processing_cycles):
+                await self._process_as_user(client)
 
     async def authorize_client(self, client):
         if settings.PARSE_ALL_USERS_MODULE['USERNAME'] is None or settings.PARSE_ALL_USERS_MODULE['PASSWORD'] is None:
@@ -51,66 +48,55 @@ class ParseAllUsersModule(Module):
             file.write(json.dumps(client.get_state()))
 
     async def _process_as_user(self, client):
-        last_id = self.get_last_id() + 1
+        last_id = (await self.get_last_id()) + 1
 
-        tasks = []
-
-        for i in range(last_id, last_id + self.parsing_gap_size):
-            tasks.append(self.add_note(i, client))
+        tasks = [
+            self.add_note(i, client)
+            for i in range(last_id, last_id + self.parsing_gap_size)
+        ]
 
         await asyncio.gather(*tasks)
         tasks.clear()
 
         notes = await self.get_notes(client)
 
-        max_user_id = 0
-
-        for note in notes:
-            max_user_id = max(max_user_id, note['user_id'])
-
-            tasks.append(self.process_note(note))
+        tasks = [
+            self.process_note(note)
+            for note in notes
+        ]
 
         await asyncio.gather(*tasks)
         tasks.clear()
 
-        # if max_user_id == 0:
-        #     self._logger.error("max_user_id == 0")
-        #     max_user_id = last_id + self.parsing_gap_size
+    async def get_last_id(self):
+        async with (await self.db.get_pool()).acquire() as connection:
+            # TODO: fix error on empty database
+            max_id = await connection.fetchval('SELECT MAX(pikabu_id) FROM core_pikabuuser')
+            return max_id
 
-        if max_user_id != 0:
-            self.set_last_id(max_user_id)
-
-    def get_last_id(self):
-        try:
-            with open('.parse_all_users_module_last_id') as file:
-                return int(file.readline().strip())
-        except FileNotFoundError:
-            self.set_last_id(1)
-            return self.get_last_id()
-
-    @staticmethod
-    def set_last_id(last_id: int):
-        with open('.parse_all_users_module_last_id', 'w') as file:
-            file.write(str(last_id))
+    # @staticmethod
+    # def set_last_id(last_id: int):
+    #     with open('.parse_all_users_module_last_id', 'w') as file:
+    #         file.write(str(last_id))
 
     async def add_note(self, user_id: int, client):
         note_text = str(random.randint(1, 999999))
-        self._logger.debug('adding note "{}" for user with id "{}"'.format(
+        self.logger.debug('adding note "{}" for user with id "{}"'.format(
             note_text, user_id))
 
         try:
             await client.user_note_set(note_text, user_id)
         except PikabuException as ex:
             message = str(ex).strip()
-            if message == 'Добавлять заметку самому себе деструктивно и неразумно' \
+            if message.lower() == 'добавлять заметку самому себе деструктивно и неразумно' \
                     or message == 'Указанный пользователь не найден':
-                self._logger.warning(
+                self.logger.debug(
                     'Пользователь с id "{}" не найден'.format(user_id))
             else:
                 raise ex
 
     async def get_notes(self, client):
-        self._logger.debug('getting notes...')
+        self.logger.debug('getting notes...')
         result = []
 
         while True:
@@ -138,7 +124,7 @@ class ParseAllUsersModule(Module):
         return result
 
     async def process_note(self, note):
-        self._logger.debug('processing note...')
+        self.logger.debug('processing note...')
 
         noted_user_id = note['user_id']
         noted_user_name = note['user_name']
