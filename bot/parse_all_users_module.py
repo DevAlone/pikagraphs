@@ -70,9 +70,8 @@ class ParseAllUsersModule(Module):
 
     async def get_last_id(self):
         async with (await self.db.get_pool()).acquire() as connection:
-            # TODO: fix error on empty database
             max_id = await connection.fetchval('SELECT MAX(pikabu_id) FROM core_pikabuuser')
-            return max_id
+            return max_id if max_id is not None else 0
 
     # @staticmethod
     # def set_last_id(last_id: int):

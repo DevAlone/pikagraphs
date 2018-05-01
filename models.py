@@ -29,20 +29,6 @@ core_user = Table(
 )
 
 
-communities_app_community = Table(
-    'communities_app_community', metadata,
-    Column('id', BigInteger, primary_key=True),
-    Column('url_name', String),
-    Column('name', String),
-    Column('description', String),
-    Column('avatar_url', String),
-    Column('background_image_url', String),
-    Column('subscribers_count', Integer),
-    Column('stories_count', Integer),
-    Column('last_update_timestamp', BigInteger),
-)
-
-
 def generate_graph_item_table(table_name):
     return Table(
         table_name, metadata,
@@ -61,6 +47,18 @@ core_userhotpostscountentry = generate_graph_item_table('core_userhotpostscounte
 core_userplusescountentry = generate_graph_item_table('core_userplusescountentry')
 core_userminusescountentry = generate_graph_item_table('core_userminusescountentry')
 
+communities_app_community = Table(
+    'communities_app_community', metadata,
+    Column('id', BigInteger, primary_key=True),
+    Column('url_name', String),
+    Column('name', String),
+    Column('description', String),
+    Column('avatar_url', String),
+    Column('background_image_url', String),
+    Column('subscribers_count', Integer),
+    Column('stories_count', Integer),
+    Column('last_update_timestamp', BigInteger),
+)
 
 communities_app_communitycountersentry = Table(
     'communities_app_communitycountersentry', metadata,

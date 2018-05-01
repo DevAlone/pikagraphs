@@ -38,7 +38,7 @@ class UsersModule(Module):
                     tasks.append(self._call_coroutine_with_logging_exception(self.process_user(user, client)))
 
             if tasks:
-                await asyncio.wait(tasks)
+                await asyncio.gather(*tasks)
 
             await self.process_pikabu_users()
 
@@ -57,7 +57,7 @@ class UsersModule(Module):
                     self.process_pikabu_user(user)))
 
         if tasks:
-            await asyncio.wait(tasks)
+            await asyncio.gather(*tasks)
 
     async def process_pikabu_user(self, sql_pikabu_user):
         self.logger.debug("start processing pikabu_user: {}".format(sql_pikabu_user))
@@ -143,6 +143,8 @@ class UsersModule(Module):
         return user
 
     async def _update_user(self, sql_user: dict, user_data: dict, logger):
+        # TODO: refactor this shit
+
         current_timestamp = int(time.time())
         logger.debug('start processing user {}'.format(sql_user['username']))
 
@@ -151,6 +153,8 @@ class UsersModule(Module):
         previous_user_state = copy.copy(user)
 
         user['rating'] = int(float(user_data['rating']))
+
+        previous_avatar_url = user['avatar_url']
 
         if user_data['avatar']:
             user['avatar_url'] = str(user_data['avatar'])
@@ -222,27 +226,28 @@ class UsersModule(Module):
                                          user['signup_timestamp'], False
                                          )
 
-                # await connection.executemany("""
-                #     INSERT INTO $1 (timestamp, value, user_id)
-                #     SELECT $1, $2, $3
-                #     WHERE NOT EXISTS (
-                #         SELECT * FROM $1 WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
-                #     );
-                #     """, [
-                #     ('core_userratingentry', current_timestamp, user['rating'], sql_user['id']),
-                #     ('core_usercommentscountentry', current_timestamp, user['comments_count'], sql_user['id']),
-                #     ('core_userpostscountentry', current_timestamp, user['posts_count'], sql_user['id']),
-                #     ('core_userhotpostscountentry', current_timestamp, user['hot_posts_count'], sql_user['id']),
-                #     ('core_userplusescountentry', current_timestamp, user['pluses_count'], sql_user['id']),
-                #     ('core_userminusescountentry', current_timestamp, user['minuses_count'], sql_user['id']),
-                #     ('core_usersubscriberscountentry', current_timestamp, user['subscribers_count'], sql_user['id'])]
-                # )
+                if previous_avatar_url is not None \
+                        and previous_avatar_url \
+                        and previous_avatar_url != user['avatar_url']:
+                    await connection.execute(
+                        """
+                        INSERT INTO user_avatar_url_versions (timestamp, item_id, value)
+                        SELECT $1, $2, $3
+                        WHERE NOT EXISTS (
+                            SELECT * FROM user_avatar_url_versions 
+                            WHERE value = $3 and item_id = $2 
+                            ORDER BY timestamp DESC
+                            LIMIT 1
+                        );
+                        """, current_timestamp, sql_user['id'], previous_avatar_url
+                    )
+
                 await connection.execute(
                     """
                     INSERT INTO core_userratingentry (timestamp, value, user_id) 
                     SELECT $1, $2, $3
                     WHERE NOT EXISTS (
-                        SELECT * FROM core_userratingentry WHERE value = $2 and user_id = $3 ORDER BY -id LIMIT 1
+                        SELECT * FROM core_userratingentry WHERE value = $2 and user_id = $3 ORDER BY id DESC LIMIT 1
                     );""", current_timestamp, user['rating'], sql_user['id'])
                 await connection.execute(
                     """
