@@ -5,7 +5,6 @@ from asyncpgsa.pgsingleton import NotInitializedError
 from restycorn.restycorn.exceptions import MethodIsNotAllowedException
 from restycorn.restycorn.postgresql_serializer import PostgreSQLSerializer
 from restycorn.restycorn.read_only_resource import ReadOnlyResource
-from restycorn.restycorn.restycorn_types import uint
 
 
 class Index(ReadOnlyResource):
@@ -94,7 +93,7 @@ class UserDistributions(ReadOnlyResource):
                 FROM core_user
             )
             SELECT 
-                width_bucket(signup_timestamp, min_value, max_value, (max_value - min_value) / $1) as bucket,
+                width_bucket(signup_timestamp, min_value, max_value, (max_value - min_value) / ($1)) as bucket,
                 MIN(signup_timestamp) as x,
                 COUNT(*) AS y
             FROM 
