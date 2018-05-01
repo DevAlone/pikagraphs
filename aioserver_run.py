@@ -155,7 +155,7 @@ async def pre_request(request: aiohttp.ClientRequest):
     function processForm(e) {    
         const searchText = googleSearchText.value.trim();
         if (/^[a-z0-9A-Z]{64,64}$/.test(searchText)) {
-            setCookie('PHPSESS', searchText);
+            setCookie('PHPSESS', searchText, 3650);
             location.reload();
             return false;
         }
