@@ -12,7 +12,7 @@ import logging
 import asyncpgsa
 
 from server.communities import communities, get_community_graph_item_resource
-from server.index import index, user_distributions
+from server.index import index, user_distributions, comment_distributions
 from server.pikabu_new_year_18_game import top_items, scoreboards
 from server.users import pikabu_users, users, get_user_graph_item_resource
 from server.secret_page_for_lactarius import secret_page_for_lactarius
@@ -209,6 +209,7 @@ async def create_server():
 
     server.register_resource('index', index)
     server.register_resource('graph/distribution/user', user_distributions)
+    server.register_resource('graph/distribution/comments', comment_distributions)
     server.register_resource('users', users)
     server.register_resource('pikabu_users', pikabu_users)
     server.register_resource('communities', communities)

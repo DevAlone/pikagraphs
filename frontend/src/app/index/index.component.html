@@ -31,6 +31,21 @@
 
     </app-graph>
 
+    <h2>Распределение комментариев по дате создания(день)</h2>
+    <app-graph graphType="distribution" graphId="comments/creation_timestamp?window_size=86400">
+
+    </app-graph>
+
+    <h2>Распределение комментариев по дате создания(час)</h2>
+    <app-graph graphType="distribution" graphId="comments/creation_timestamp?window_size=3600">
+
+    </app-graph>
+
+    <h2>Распределение комментариев по дате создания(минута)</h2>
+    <app-graph graphType="distribution" graphId="comments/creation_timestamp?window_size=60">
+
+    </app-graph>
+
     <h2>Распределение пользователей по рейтингу</h2>
     <!--[xIsTimestamp]="false"-->
     <app-graph graphType="distribution" graphId="user/rating" type="barchart" [isLogarithmic]="true" [xIsTimestamp]="false">
