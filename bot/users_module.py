@@ -155,6 +155,7 @@ class UsersModule(Module):
         user['rating'] = int(float(user_data['rating']))
 
         previous_avatar_url = user['avatar_url']
+        previous_timestamp = user['last_update_timestamp']
 
         if user_data['avatar']:
             user['avatar_url'] = str(user_data['avatar'])
@@ -239,7 +240,7 @@ class UsersModule(Module):
                             ORDER BY timestamp DESC
                             LIMIT 1
                         );
-                        """, current_timestamp, sql_user['id'], previous_avatar_url
+                        """, previous_timestamp, sql_user['id'], previous_avatar_url
                     )
 
                 await connection.execute(
