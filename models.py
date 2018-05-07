@@ -100,3 +100,22 @@ core_pikabuuser = Table(
     Column('username', String),
     Column('is_processed', Boolean),
 )
+
+
+comments = Table(
+    'comments', metadata,
+    Column('id', BigInteger, primary_key=True),
+    Column('parent_id', BigInteger),
+    Column('creation_timestamp', Integer),
+    Column('first_parsing_timestamp', Integer),
+    Column('last_parsing_timestamp', Integer),
+    Column('rating', Integer),
+    Column('story_id', BigInteger),
+    Column('user_id', Integer),
+    Column('author_username', String),
+    Column('is_hidden', Boolean),
+    Column('is_deleted', Boolean),
+    Column('is_author_community_moderator', Boolean),
+    Column('is_author_pikabu_team', Boolean),
+    Column('text', String),
+)
