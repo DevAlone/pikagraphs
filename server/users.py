@@ -12,7 +12,7 @@ users = PostgreSQLReadOnlyResource(
     order_by=('id', 'rating', 'username', 'subscribers_count', 'comments_count', 'posts_count',
               'hot_posts_count', 'pluses_count', 'minuses_count', 'last_update_timestamp', 'updating_period',
               'pikabu_id', 'approved', 'signup_timestamp',),
-    search_by=('username', 'info',),
+    search_by=('username', ),
     filter_by={
         'username': ('=',),
         'rating': ('=', '>', '<'),
