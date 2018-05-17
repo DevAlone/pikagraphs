@@ -119,3 +119,10 @@ comments = Table(
     Column('is_author_pikabu_team', Boolean),
     Column('text', String),
 )
+
+
+statistics_users_in_queue_counts = Table(
+    'statistics_users_in_queue_counts', metadata,
+    Column('timestamp', BigInteger, primary_key=True),
+    Column('value', Integer),
+)

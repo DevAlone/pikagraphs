@@ -1,4 +1,5 @@
 from pikabot_graphs import settings
+from .db import DB
 
 import sys
 import asyncio
@@ -17,6 +18,8 @@ class Module:
         pass
 
     def __init__(self, module_name):
+        self.db = DB.get_instance()
+        self.pool = None
         self.logger = logging.getLogger('pikabot_graphs/{}'.format(module_name))
         self.logger.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
@@ -28,6 +31,9 @@ class Module:
         self.logger.info('{} initialization...'.format(module_name))
 
     async def process(self):
+        if self.pool is None:
+            self.pool = await self.db.get_pool()
+
         while True:
             if self.last_processing_timestamp + self.processing_period < int(time.time()):
                 await self._call_coroutine_with_logging_exception(self._process())

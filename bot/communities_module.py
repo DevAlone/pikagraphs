@@ -1,4 +1,3 @@
-from bot.db import DB
 from bot.module import Module
 from bot.api.client import Client
 from pikabot_graphs import settings
@@ -12,14 +11,9 @@ class CommunitiesModule(Module):
 
     def __init__(self):
         super(CommunitiesModule, self).__init__('communities_module')
-        self.db = DB.get_instance()
-        self.pool = None
 
     async def _process(self):
         self.logger.debug('start processing communities')
-
-        if self.pool is None:
-            self.pool = await self.db.get_pool()
 
         with Client() as client:
             tasks = []

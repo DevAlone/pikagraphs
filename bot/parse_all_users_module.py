@@ -1,7 +1,4 @@
-import os
-
 from bot.api.pikabu_api.pikabu import PikabuException
-from bot.db import DB
 from bot.module import Module
 from bot.api.client import Client
 
@@ -19,8 +16,6 @@ class ParseAllUsersModule(Module):
 
     def __init__(self):
         super(ParseAllUsersModule, self).__init__('parse_all_users_module')
-        self.db = DB.get_instance()
-        self.pool = None
 
     async def _process(self):
         try:
@@ -69,7 +64,7 @@ class ParseAllUsersModule(Module):
         tasks.clear()
 
     async def get_last_id(self):
-        async with (await self.db.get_pool()).acquire() as connection:
+        async with self.pool.acquire() as connection:
             max_id = await connection.fetchval('SELECT MAX(pikabu_id) FROM core_pikabuuser')
             return max_id if max_id is not None else 0
 
@@ -128,7 +123,7 @@ class ParseAllUsersModule(Module):
         noted_user_id = note['user_id']
         noted_user_name = note['user_name']
 
-        async with (await self.db.get_pool()).acquire() as connection:
+        async with self.pool.acquire() as connection:
             await connection.execute('''
                 INSERT INTO core_pikabuuser
                     (pikabu_id, username, is_processed)

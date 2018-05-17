@@ -4,6 +4,7 @@ from pikabot_graphs import settings
 from bot.users_module import UsersModule
 from bot.communities_module import CommunitiesModule
 from bot.parse_all_users_module import ParseAllUsersModule
+from bot.statistics_module import StatisticsModule
 
 import asyncio
 
@@ -13,14 +14,16 @@ if __name__ == "__main__":
     modules = [
         UsersModule(),
         CommunitiesModule(),
-        ParseAllUsersModule()
+        ParseAllUsersModule(),
+        StatisticsModule(),
     ]
 
     if settings.DEBUG:
         modules = [
             UsersModule(),
-            CommunitiesModule(),
-            ParseAllUsersModule(),
+            StatisticsModule(),
+            # CommunitiesModule(),
+            # ParseAllUsersModule(),
         ]
 
     tasks = [module.process() for module in modules]

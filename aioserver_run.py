@@ -15,6 +15,7 @@ from server.communities import communities, get_community_graph_item_resource
 from server.index import index, user_distributions, comment_distributions
 from server.pikabu_new_year_18_game import top_items, scoreboards
 from server.users import pikabu_users, users, get_user_graph_item_resource
+from server.statistics import get_statistics_graph_item_resource
 from server.comments import comments
 from server.secret_page_for_lactarius import secret_page_for_lactarius
 
@@ -228,6 +229,10 @@ async def create_server():
     server.register_resource('graph/community/subscribers_count',
                              get_community_graph_item_resource('subscribers_count'))
     server.register_resource('graph/community/stories_count', get_community_graph_item_resource('stories_count'))
+
+    server.register_resource('graph/statistics/users_in_queue_count', get_statistics_graph_item_resource(
+        models.statistics_users_in_queue_counts
+    ))
 
     server.register_resource('new_year_2018_game/top_items', top_items)
     server.register_resource('new_year_2018_game/scoreboards', scoreboards)
