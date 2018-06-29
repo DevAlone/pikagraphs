@@ -205,7 +205,7 @@ async def create_server():
         access_log_format='%Tfs %a %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"')
     server.set_base_address('/api')
 
-    server.pre_request_function = pre_request
+    # server.pre_request_function = pre_request
 
     server.set_default_route(default_route)
 

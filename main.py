@@ -20,10 +20,10 @@ if __name__ == "__main__":
 
     if settings.DEBUG:
         modules = [
-            UsersModule(),
+            # UsersModule(),
             StatisticsModule(),
             # CommunitiesModule(),
-            # ParseAllUsersModule(),
+            ParseAllUsersModule(),
         ]
 
     tasks = [module.process() for module in modules]
