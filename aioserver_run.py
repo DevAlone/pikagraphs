@@ -179,12 +179,12 @@ async def default_route(request: aiohttp.ClientRequest):
 
     if re.match(r'^(/([a-zA-Z0-9_]+(.[a-zA-Z0-9]+)*)?)+$', path):
         try:
-            with open('./frontend/dist/' + path, 'r'):
-                return web.FileResponse('./frontend/dist/' + path)
+            with open('./frontend/dist/frontend/' + path, 'r'):
+                return web.FileResponse('./frontend/dist/frontend/' + path)
         except (FileNotFoundError, IsADirectoryError):
             pass
 
-    return web.FileResponse('./frontend/dist/index.html')
+    return web.FileResponse('./frontend/dist/frontend/index.html')
 
     # return web.Response(text="""
     # <img src="http://richdoctor.ru/wp-content/uploads/2018/01/Prekratite-zapreshheno.jpg">
