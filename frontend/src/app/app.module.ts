@@ -28,6 +28,7 @@ import { LoadingAnimationService } from './loading-animation.service';
 import { IndexComponent } from './index/index.component';
 import { SecretPageForLactariusComponent } from './secret-page-for-lactarius/secret-page-for-lactarius.component';
 import { NiceLinkComponent } from './nice-link/nice-link.component';
+import { DonateComponent } from './donate/donate.component';
 
 
 @NgModule({
@@ -47,6 +48,7 @@ import { NiceLinkComponent } from './nice-link/nice-link.component';
     IndexComponent,
     SecretPageForLactariusComponent,
     NiceLinkComponent,
+    DonateComponent,
     ],
     imports: [
         BrowserModule,

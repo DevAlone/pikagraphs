@@ -24,3 +24,18 @@
     bottom: 0;
     z-index: 99;
 }
+
+#helpTape {
+  position: fixed;
+  width: 250px;
+  right: -50px;
+  top: 50px;
+  transform: rotate(45deg);
+  opacity: 0.3;
+}
+#helpTape:hover {
+  opacity: 0.8;
+}
+#helpTape img {
+  width: 100%;
+}

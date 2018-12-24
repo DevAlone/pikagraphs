@@ -64,7 +64,7 @@ h2 {
 }
 
 .niceLink {
-    color: inherit;
+    color: #00007d;
     text-decoration: none;
     transition: 0.25s;
     cursor: pointer;
@@ -156,4 +156,8 @@ table {
     box-shadow: 1px 1px 3px 0px #aeaeae;
     margin: 20px 0;
     padding: 10px;
+}
+
+header {
+  font-size: 20px;
 }

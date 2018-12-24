@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 

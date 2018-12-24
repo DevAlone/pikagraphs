@@ -8,11 +8,13 @@ import { RouterModule, Routes } from '@angular/router';
 import {AboutComponent} from './about/about.component';
 import {IndexComponent} from './index/index.component';
 import { SecretPageForLactariusComponent } from './secret-page-for-lactarius/secret-page-for-lactarius.component';
+import {DonateComponent} from './donate/donate.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'index', pathMatch: 'full' },
     { path: 'index', component: IndexComponent },
     { path: 'about', component: AboutComponent },
+    { path: 'donate', component: DonateComponent},
     { path: 'users', component: UsersComponent },
     { path: 'communities', component: CommunitiesComponent },
     { path: 'user/:username', component: UserComponent },
