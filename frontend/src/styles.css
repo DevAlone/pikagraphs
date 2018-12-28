@@ -161,3 +161,7 @@ table {
 header {
   font-size: 20px;
 }
+
+p {
+  padding: 10px 5px;
+}
